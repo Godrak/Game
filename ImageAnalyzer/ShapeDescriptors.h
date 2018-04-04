@@ -86,8 +86,8 @@ namespace ShapeDescriptors {
     class LightningDescriptor : public ShapeDescriptor {
     private:
         float2 top{0.7,0.05};
-        float2 right{0.2,0.6};
-        float2 left{0.8,0.4};
+        float2 right{0.2,0.55};
+        float2 left{0.8,0.45};
         float2 bottom{0.3,0.95};
     public:
         Shape GetName() const override;

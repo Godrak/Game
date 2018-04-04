@@ -343,7 +343,7 @@
 		<Unit filename="/home/free/dev/Runecraft/Game/GameSource/Entity.h">
 			<Option target="Game"/>
 		</Unit>
-		<Unit filename="/home/free/dev/Runecraft/Game/GameSource/FireBurstComponent.h">
+		<Unit filename="/home/free/dev/Runecraft/Game/GameSource/FireComponent.h">
 			<Option target="Game"/>
 		</Unit>
 		<Unit filename="/home/free/dev/Runecraft/Game/GameSource/HitPointsComponent.h">
@@ -469,19 +469,19 @@
 		<Unit filename="/home/free/dev/Runecraft/Game/CMakeLists.txt">
 			<Option virtualFolder="CMake Files\"/>
 		</Unit>
-		<Unit filename="/home/free/dev/Runecraft/Game/CMake/Modules/UrhoCommon.cmake">
+		<Unit filename="/home/free/dev/Runecraft/Game/CMake/Modules/CheckCompilerToolchain.cmake">
 			<Option virtualFolder="CMake Files\CMake\Modules\"/>
 		</Unit>
 		<Unit filename="/home/free/dev/Runecraft/Game/CMake/Modules/CheckHost.cmake">
-			<Option virtualFolder="CMake Files\CMake\Modules\"/>
-		</Unit>
-		<Unit filename="/home/free/dev/Runecraft/Game/CMake/Modules/CheckCompilerToolchain.cmake">
 			<Option virtualFolder="CMake Files\CMake\Modules\"/>
 		</Unit>
 		<Unit filename="/home/free/dev/Runecraft/Game/CMake/Modules/FindUrho3D.cmake">
 			<Option virtualFolder="CMake Files\CMake\Modules\"/>
 		</Unit>
 		<Unit filename="/home/free/dev/Runecraft/Game/CMake/Modules/GenerateExportHeader.cmake">
+			<Option virtualFolder="CMake Files\CMake\Modules\"/>
+		</Unit>
+		<Unit filename="/home/free/dev/Runecraft/Game/CMake/Modules/UrhoCommon.cmake">
 			<Option virtualFolder="CMake Files\CMake\Modules\"/>
 		</Unit>
 	</Project>

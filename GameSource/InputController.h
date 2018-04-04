@@ -1,5 +1,5 @@
 #include "UrhoIncludeAll.h"
-#include "FireBurstComponent.h"
+#include "FireComponent.h"
 #include "TimeOutComponent.h"
 #include "Entity.h"
 #include "DrawableTexture.h"

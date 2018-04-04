@@ -6,11 +6,11 @@ using namespace std;
 using namespace LineDrawer;
 using namespace LinAlgExtended;
 
-Shape AnalyzeImageLines(ImageLines imageLines, float3x3 &matchingRotation) {
+Shape AnalyzeImageLines(ImageLines imageLines, float &matchingRotation) {
     imageLines.Normalize();
     auto translation = CreateTranslationMatrix({-0.5f, -0.5f});
     vector<vector<float>> outputs;
-    vector<float3x3> rotations;
+    vector<float> rotations;
     float t = 0.f;
     int iterations = 0;
 
@@ -21,7 +21,7 @@ Shape AnalyzeImageLines(ImageLines imageLines, float3x3 &matchingRotation) {
         copy.Normalize();
         GrayScaleImage image = DrawLines(copy);
         outputs.push_back(NETWORK.Calculate(image.Serialize()));
-        rotations.push_back(rotation);
+        rotations.push_back(t);
         t += 1 / 36.f;
         iterations++;
     }
@@ -39,7 +39,7 @@ Shape AnalyzeImageLines(ImageLines imageLines, float3x3 &matchingRotation) {
     for (int i = 0; i < outputs[0].size(); ++i) {
         float sum = 0;
         for (auto &output : outputs) {
-            sum += output[i];
+            sum += std::max((output[i] - 0.85f)*5, 0.f);
         }
         if (sum > maxShapeValue) {
             maxShapeValue = sum;
@@ -48,7 +48,7 @@ Shape AnalyzeImageLines(ImageLines imageLines, float3x3 &matchingRotation) {
     }
 
     Shape shape = UNKNOWN;
-    if (maxShapeValue > iterations / 3.f) {
+    if (maxShapeValue > 0.1f) {
         shape = Shape(maxIndex);
         int rotationRow = 0;
         float rotationMax = 0;
@@ -66,8 +66,8 @@ Shape AnalyzeImageLines(ImageLines imageLines, float3x3 &matchingRotation) {
 
 
 Shape AnalyzeImageLines(ImageLines imageLines) {
-    float3x3 matrix;
-    return AnalyzeImageLines(imageLines, matrix);
+    float rotation;
+    return AnalyzeImageLines(imageLines, rotation);
 };
 
 Line::Line(const float2 &startPoint, const float2 &endPoint) {
@@ -80,14 +80,15 @@ Line::Line(const float3 &start, const float3 &end) : start(start), end(end) {}
 
 ShapeNode ImageAnalyzer::Analyze(ImageLines imageLines) {
     ShapeNode node;
-    float3x3 matchingRotation;
+    float matchingRotation;
     imageLines.Normalize();
     node.shape = AnalyzeImageLines(imageLines, matchingRotation);
 
     if (DEBUG_IMAGE_SAVE) {
         DrawLines(imageLines).SaveToFile("debug/im" + to_string(RANDOMIZER.ratio()));
     }
-    cout << ShapeToString(node.shape) << endl;
+    cout << endl;
+    cout << ShapeToString(node.shape) << "  " << "rotation: " << matchingRotation << endl;
     return node;
 
     if (node.shape != UNKNOWN) {

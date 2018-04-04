@@ -2,16 +2,15 @@
 #include "Ninja.h"
 #include "Mutant.h"
 #include "SimpleAI.h"
-#include "Caster.h"
 
 Runecraft::Runecraft(Context *context) : Application(context) {
     context->RegisterFactory<InputController>();
     context->RegisterFactory<CameraController>();
     context->RegisterFactory<TimeOutComponent>();
-    context->RegisterFactory<FireBurstComponent>();
-    context->RegisterFactory<BlueFireBurstComponent>();
-    context->RegisterFactory<PurpleFireBurstComponent>();
-    context->RegisterFactory<GreenFireBurstComponent>();
+    context->RegisterFactory<FireComponent>();
+    context->RegisterFactory<BlueFireComponent>();
+    context->RegisterFactory<PurpleFireComponent>();
+    context->RegisterFactory<GreenFireComponent>();
     context->RegisterFactory<DrawableTexture>();
     context->RegisterFactory<SpellSystem>();
     context->RegisterFactory<Curve>();
@@ -21,6 +20,7 @@ Runecraft::Runecraft(Context *context) : Application(context) {
     context->RegisterFactory<Mutant>();
     context->RegisterFactory<Caster>();
     context->RegisterFactory<SimpleAI>();
+    context->RegisterFactory<Projectile>();
 
     SubscribeToEvent(E_KEYDOWN, URHO3D_HANDLER(Runecraft, HandleKeyDown));
 }

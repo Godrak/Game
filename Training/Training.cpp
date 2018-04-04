@@ -39,7 +39,7 @@ const ShapeDescriptor *RandomShapeDescriptor() {
     return SHAPE_DESCRIPTORS[RANDOMIZER.next(SHAPE_DESCRIPTORS.size())];
 }
 
-ImageLines OffsetPoints(const ShapeDescriptor *base, float offsetSize, float start) {
+ImageLines OffsetPoints(const ShapeDescriptor *base, float offsetSize, float start, float momentum) {
     float t = 0;
     vector<Line> lines;
     float2 lastBasePoint = base->GetPoint(t);
@@ -58,11 +58,11 @@ ImageLines OffsetPoints(const ShapeDescriptor *base, float offsetSize, float sta
             if (RANDOMIZER.yesOrNo()) {
                 target *= -1;
             }
-            step = (target - offset) * 0.05f;
+            step = (target - offset) * momentum;
         }
         offset += step;
-        if (offset > target) {
-            step = (target - offset) * 0.05f;
+        if (abs(offset) > abs(target)) {
+            step = (target - offset) * momentum;
         }
 
         nextBasePoint = base->GetPoint(t);
@@ -127,15 +127,16 @@ void generateInvalidData(ofstream &trainingData,
         }
 
         ImageLines image;
-        if (RANDOMIZER.ratio() > 0.05) {
+        if (RANDOMIZER.ratio() > 0.2) {
             float offset = RANDOMIZER.ratio() + 1.f;
             if (RANDOMIZER.yesOrNo()) {
                 offset *= -1.f;
             }
-            image = OffsetPoints(RandomShapeDescriptor(), offset, RANDOMIZER.ratio() * 0.8f);
+            image = OffsetPoints(RandomShapeDescriptor(), offset, RANDOMIZER.ratio() * 0.8f,
+                                 RANDOMIZER.ratio() * 0.1f + 0.05f);
         }
 
-        if (RANDOMIZER.ratio() > 0.8f) {
+        if (RANDOMIZER.ratio() > 0.5f) {
             vector<Line> lines;
             float2 start{RANDOMIZER.ratio(), RANDOMIZER.ratio()};
             float2 end;
@@ -192,9 +193,10 @@ void Training::generateData(const std::string &filename, int validDataCount,
         ImageLines image;
         if (RANDOMIZER.ratio() > 0.5f)
             image = ComposeShapes(activeDescriptor, activeModifier, RANDOMIZER.next(8, 14));
-        else
-            image = OffsetPoints(activeDescriptor, 0.1f, RANDOMIZER.ratio());
-
+        else {
+            float offset = (RANDOMIZER.ratio() * 0.4f - 0.2f);
+            image = OffsetPoints(activeDescriptor, offset, RANDOMIZER.ratio()*0.8f, RANDOMIZER.ratio() * 0.01f);
+        }
         image.Normalize();
 
         auto poi = activeDescriptor->GetPointsOfInterest();
@@ -214,7 +216,7 @@ void Training::generateData(const std::string &filename, int validDataCount,
         image.Normalize();
 
         vector<Line> randomLines;
-        for (int k = 0; k < (int) RANDOMIZER.next(0, 5); ++k) {
+        for (int k = 0; k < RANDOMIZER.next(0, 5); ++k) {
             randomLines.push_back(CreateRandomLine());
         }
         image.Add(ImageLines(randomLines));
@@ -251,10 +253,8 @@ Training::TrainingCase::TrainingCase(string networkName, vector<unsigned int> ne
     ann = fann_create_standard_array(networkStructure.size(), networkStructure.data());
 
     fann_set_activation_function_hidden(ann, FANN_ELLIOT);
-    fann_set_training_algorithm(ann, FANN_TRAIN_RPROP);
-    fann_randomize_weights(ann, 0, 1);
+    fann_set_training_algorithm(ann, FANN_TRAIN_INCREMENTAL);
     fann_set_train_stop_function(ann, FANN_STOPFUNC_BIT);
-
 }
 
 void Training::TrainingCase::Train(int epochCount) {
@@ -303,6 +303,12 @@ Training::TrainingCase::BatchTrain(uint validDataCount, uint invalidDataCount, u
         cout << "data generated" << endl;
         Train(epochsPerBatch);
     }
+}
+
+void Training::TrainingCase::SetLearningParams(float learningRate, float learningMomentum) {
+    fann_set_learning_rate(ann, learningRate);
+    fann_set_learning_momentum(ann, learningMomentum);
+
 }
 
 

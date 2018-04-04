@@ -1,13 +1,14 @@
 #pragma once
 
 #include "UrhoIncludeAll.h"
+#include "Entity.h"
 
 using namespace Urho3D;
 
-class FireBurstComponent : public LogicComponent {
-URHO3D_OBJECT(FireBurstComponent, LogicComponent);
+class FireComponent : public LogicComponent {
+URHO3D_OBJECT(FireComponent, LogicComponent);
 public:
-    explicit FireBurstComponent(Context *context) : LogicComponent(context) {
+    explicit FireComponent(Context *context) : LogicComponent(context) {
     }
 
 protected:
@@ -20,12 +21,20 @@ public:
         particleEmitter->SetEffect(effect);
     }
 
+    void Update(float timeStep) override {
+        LogicComponent::Update(timeStep);
+        auto *entity = GetNode()->GetDerivedComponent<Entity>();
+        if (entity != NULL) {
+            entity->Damage((int) timeStep * FIRE_DAMAGE_PER_MILLISECOND);
+        }
+    }
+
 };
 
-class GreenFireBurstComponent : public LogicComponent {
-URHO3D_OBJECT(GreenFireBurstComponent, LogicComponent);
+class GreenFireComponent : public LogicComponent {
+URHO3D_OBJECT(GreenFireComponent, LogicComponent);
 public:
-    explicit GreenFireBurstComponent(Context *context) : LogicComponent(context) {
+    explicit GreenFireComponent(Context *context) : LogicComponent(context) {
     }
 
 protected:
@@ -40,10 +49,10 @@ public:
 
 };
 
-class BlueFireBurstComponent : public LogicComponent {
-URHO3D_OBJECT(BlueFireBurstComponent, LogicComponent);
+class BlueFireComponent : public LogicComponent {
+URHO3D_OBJECT(BlueFireComponent, LogicComponent);
 public:
-    explicit BlueFireBurstComponent(Context *context) : LogicComponent(context) {
+    explicit BlueFireComponent(Context *context) : LogicComponent(context) {
     }
 
 protected:
@@ -58,10 +67,10 @@ public:
 
 };
 
-class PurpleFireBurstComponent : public LogicComponent {
-URHO3D_OBJECT(PurpleFireBurstComponent, LogicComponent);
+class PurpleFireComponent : public LogicComponent {
+URHO3D_OBJECT(PurpleFireComponent, LogicComponent);
 public:
-    explicit PurpleFireBurstComponent(Context *context) : LogicComponent(context) {
+    explicit PurpleFireComponent(Context *context) : LogicComponent(context) {
     }
 
 protected:

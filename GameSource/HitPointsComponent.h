@@ -31,10 +31,10 @@ public:
 
     bool ChangeHealth(int health) {
         currentHealth += health;
-        currentHealth = std::max(currentHealth, maxHealth);
-        currentHealth = std::min(currentHealth, 0);
+        currentHealth = std::max(currentHealth, 0);
+        currentHealth = std::min(currentHealth, maxHealth);
 
-        return currentHealth <= 0;
+        return currentHealth > 0;
     }
 
     int GetHealth() {
@@ -44,7 +44,7 @@ public:
     void Update(float timeStep) override {
         LogicComponent::Update(timeStep);
         healthBar->SetWorldPosition(GetNode()->GetPosition() + Vector3::UP * 2);
-        healthBar->SetScale(Vector3(0.1, currentHealth / maxHealth, 0.1));
+        healthBar->SetScale(Vector3(0.1, currentHealth / (float) maxHealth, 0.1));
     }
 
     ~HitPointsComponent() override {

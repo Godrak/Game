@@ -4,7 +4,7 @@
 #include "InputController.h"
 #include "CameraController.h"
 #include "TimeOutComponent.h"
-#include "FireBurstComponent.h"
+#include "FireComponent.h"
 #include "DrawableTexture.h"
 
 using namespace Urho3D;

@@ -75,3 +75,4 @@ static const int MIN_VERTICAL_DISTANCE = 8;
 //DRAWING
 static const float DRAWING_SAMPLE_STEP_SIZE = 0.2f;
 static const float DRAWING_SAMPLE_TIME = 0.05f;
+

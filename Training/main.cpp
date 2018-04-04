@@ -1,9 +1,11 @@
 
+#include <ctime>
 #include "Training.h"
 
 void ManualTraining() {
     using namespace Training;
-    TrainingCase network("network.net", vector<unsigned int>{NETWORK_INPUT_SIZE, 8, 8, NETWORK_OUTPUT_SIZE});
+    TrainingCase network("network.net",
+                         vector<unsigned int>{NETWORK_INPUT_SIZE, 64, 16, NETWORK_OUTPUT_SIZE});
     string dataName = "data.data";
     string networkName = "network.net";
 
@@ -11,6 +13,8 @@ void ManualTraining() {
     int invalidDataCount;
     int epochCount;
     int repetitions;
+    float learningRate;
+    float learningMomentum;
 
     while (true) {
         char command;
@@ -39,6 +43,13 @@ void ManualTraining() {
             case 't':
                 network.Test(cout);
                 continue;
+            case 'm':
+                cout << "learning rate (default 0.7): " << endl;
+                cin >> learningRate;
+                cout << "learning momentum (default 0): " << endl;
+                cin >> learningMomentum;
+                network.SetLearningParams(learningRate, learningMomentum);
+                continue;
             case 'q':
                 network.Save(networkName);
                 return;
@@ -52,6 +63,8 @@ void ManualTraining() {
                 cout << "repetitions:" << endl;
                 cin >> repetitions;
                 for (int i = 0; i < repetitions; ++i) {
+                    auto t = std::time(nullptr);
+                    cout << "time: " << std::asctime(std::localtime(&t)) << endl;
                     cout << "repetition: " << i << " from " << repetitions << endl;
                     Training::generateData(dataName, validDataCount, invalidDataCount);
                     network.LoadData(dataName);
@@ -64,6 +77,8 @@ void ManualTraining() {
             default:
                 cout << "invalid command" << endl;
                 cout << "g generate" << endl;
+                cout << "c complex" << endl;
+                cout << "m learning params" << endl;
                 cout << "e train" << endl;
                 cout << "t test" << endl;
                 cout << "s save" << endl;

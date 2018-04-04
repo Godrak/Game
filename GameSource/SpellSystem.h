@@ -4,9 +4,10 @@
 #include "../ImageAnalyzer/GrayScaleImage.h"
 #include "../ImageAnalyzer/Params.h"
 #include "../ImageAnalyzer/ImageAnalyzer.h"
-#include "FireBurstComponent.h"
+#include "FireComponent.h"
 #include "TimeOutComponent.h"
 #include "DrawableTexture.h"
+#include "Spell.h"
 #include <iostream>
 
 using namespace Urho3D;
@@ -17,33 +18,12 @@ public:
     explicit SpellSystem(Context *context) : LogicComponent(context) {}
 
     void castSpell(Node *caster, vector<Line> lines) {
-        ImageAnalyzer::Analyze(ImageLines{lines});
+        auto result = ImageAnalyzer::Analyze(ImageLines{lines});
+
+
+        auto *spell = GetScene()->CreateChild();
+        auto *projectile = spell->CreateComponent<Projectile>();
+        projectile->SetUp(Vector3::UP * 10, caster->GetPosition() + Vector3::UP * 3);
+
     }
-
-//    void CreateFire(Vector3 position, Shape type, Vector3 scale = Vector3::ONE) {
-//        auto *fireNode = GetScene()->CreateChild("Fire");
-//        fireNode->SetPosition(position);
-//        fireNode->SetScale(scale);
-//
-//        switch (type) {
-//            case RECTANGLE:
-//                fireNode->CreateComponent<BlueFireBurstComponent>();
-//                break;
-//            case CIRCLE:
-//                fireNode->CreateComponent<FireBurstComponent>();
-//                break;
-//            case CROSS:
-//                fireNode->CreateComponent<GreenFireBurstComponent>();
-//                break;
-//            case DIAGONAL_CROSS:
-//                fireNode->CreateComponent<PurpleFireBurstComponent>();
-//                break;
-//            case UNKNOWN:
-//                break;
-//        }
-//
-//        auto *timeOutComponent = fireNode->CreateComponent<TimeOutComponent>();
-//        timeOutComponent->SetTimeToLive(3);
-//    }
-
 };
