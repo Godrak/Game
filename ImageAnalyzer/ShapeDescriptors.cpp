@@ -52,7 +52,7 @@ namespace ShapeDescriptors {
     }
 
     vector<float3> CircleDescriptor::GetPointsOfInterest() const {
-        return vector<float3>{float3{center.x - 0.4f, center.y - 0.4f, 0.8}};
+        return vector<float3>{float3{center.x - 0.3f, center.y - 0.3f, 0.6}};
     }
 
     Shape RectangleDescriptor::GetName() const {
@@ -74,7 +74,7 @@ namespace ShapeDescriptors {
     }
 
     vector<float3> RectangleDescriptor::GetPointsOfInterest() const {
-        return vector<float3>{float3(topLeft.x * 2, topLeft.y * 2, 0.85f)};
+        return vector<float3>{float3(topLeft.x * 4, topLeft.y * 4, 0.6f)};
     }
 
     Shape TriangleDescriptor::GetName() const {
@@ -130,8 +130,8 @@ namespace ShapeDescriptors {
     float2 WaterDropDescriptor::GetPoint(float t) const {
         NormalizeParam(t);
         return float2{
-                0.5f + 0.5f * (1 - cos(2 * (float)M_PI * t)) * sin(2 * (float)M_PI * t)/2.f,
-                0.5f - cos(2 * (float)M_PI * t) / 2.f
+                0.5f + 0.5f * (1 - cos(2 * (float) M_PI * t)) * sin(2 * (float) M_PI * t) / 2.f,
+                0.5f - cos(2 * (float) M_PI * t) / 2.f
         };
     }
 

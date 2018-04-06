@@ -38,6 +38,45 @@ private:
     float duration = FIRE_DURATION;
 };
 
+class FrozenComponent : public LogicComponent {
+URHO3D_OBJECT(FrozenComponent, LogicComponent);
+public:
+    explicit FrozenComponent(Context *context) : LogicComponent(context) {
+    }
+
+    void Start() override {
+        LogicComponent::Start();
+        particleEmitter = GetNode()->CreateComponent<ParticleEmitter>();
+        auto effect = GetSubsystem<ResourceCache>()->GetResource<ParticleEffect>("Data/Particle/GreenSmoke.xml");
+        particleEmitter->SetEffect(effect);
+        auto *entity = GetNode()->GetDerivedComponent<Entity>();
+        if (entity != NULL) {
+            oldSpeedValue = entity->GetSpeed();
+            entity->SetSpeed(oldSpeedValue * FROZEN_SLOW_FACTOR);
+        }
+    }
+
+    void Update(float timeStep) override {
+        LogicComponent::Update(timeStep);
+        duration -= timeStep;
+        if (duration < 0) {
+            auto *entity = GetNode()->GetDerivedComponent<Entity>();
+            if (entity != NULL) {
+                entity->SetSpeed(oldSpeedValue);
+            }
+            Remove();
+            if (particleEmitter != NULL) {
+                particleEmitter->Remove();
+            }
+        }
+    }
+
+private:
+    ParticleEmitter *particleEmitter;
+    float duration = FROZEN_DURATION;
+    float oldSpeedValue;
+};
+
 class HealingComponent : public LogicComponent {
 URHO3D_OBJECT(HealingComponent, LogicComponent);
 public:

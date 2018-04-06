@@ -53,6 +53,16 @@ public:
     }
 };
 
+class FrozenEffect : public Effect {
+URHO3D_OBJECT(FrozenEffect, Effect);
+public:
+    FrozenEffect(Context *context) : Effect(context) {}
+
+    void ApplyEffect(Node *node) override {
+        node->CreateComponent<FrozenComponent>();
+    }
+};
+
 
 class SpellBase : public LogicComponent {
 URHO3D_OBJECT(SpellBase, LogicComponent);
@@ -106,6 +116,68 @@ public:
 
 private:
     Node *spellNode;
+};
+
+class WallSpell : public SpellBase {
+URHO3D_OBJECT(WallSpell, SpellBase);
+public:
+    WallSpell(Context *context) : SpellBase(context) {}
+
+    void ActivateSpell(Vector3 position, Node *caster) override {
+        casterNode = caster;
+
+        for (int node = 0; node < WALL_NODE_COUNT; ++node) {
+
+            Node *spellNode = GetScene()->CreateTemporaryChild();
+            spellNode->SetWorldPosition(
+                    position + Vector3{(RANDOMIZER.ratio() * WALL_AREA_SCALE) - WALL_AREA_SCALE / 2, 0,
+                                       (RANDOMIZER.ratio() * WALL_AREA_SCALE) - WALL_AREA_SCALE / 2});
+            spellNode->SetScale(WALL_NODE_SCALE);
+
+            staticModel = spellNode->CreateComponent<StaticModel>();
+            auto *sphereModel = cache->GetResource<Model>("Models/Sphere.mdl");
+            auto *stoneMaterial = cache->GetResource<Material>("Materials/StoneBlack.xml");
+            staticModel->SetModel(sphereModel);
+            staticModel->SetMaterial(stoneMaterial);
+
+            rigidBody = spellNode->CreateComponent<RigidBody>();
+            rigidBody->SetCollisionLayer(1);
+
+            collisionShape = spellNode->CreateComponent<CollisionShape>();
+            collisionShape->SetShapeType(SHAPE_SPHERE);
+
+            SubscribeToEvent(spellNode, E_NODECOLLISIONSTART, URHO3D_HANDLER(WallSpell, HandleNodeCollision));
+
+            spellNodes.Push(spellNode);
+        }
+        active = true;
+    }
+
+    void HandleNodeCollision(StringHash eventType, VariantMap &eventData) {
+        using namespace NodeCollision;
+        auto *otherNode = (Node *) eventData[P_OTHERNODE].GetPtr();
+        auto *entity = otherNode->GetDerivedComponent<Entity>();
+        if (entity != NULL && additionalEffect != NULL) {
+            additionalEffect->ApplyEffect(otherNode);
+        }
+    }
+
+    void Update(float timeStep) override {
+        if (!active) return;
+        time += timeStep;
+        if (!removed && time > WALL_TIME_LIMIT) {
+            for (auto *node : spellNodes) {
+                ActivateNextSpell(node->GetPosition());
+                node->Remove();
+            }
+            removed = true;
+        }
+    }
+
+private:
+    Vector<Node *> spellNodes{};
+    float time = 0;
+
 };
 
 class CasterTarget : public SpellBase {

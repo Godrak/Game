@@ -84,8 +84,20 @@ static const float FIRE_DURATION = 6;
 static const float HEALING_PER_SECOND = 3;
 static const float HEALING_DURATION = 5;
 
+//FROZEN
+static const float FROZEN_DURATION = 5;
+static const float FROZEN_SLOW_FACTOR = 0.5f;
+
+
 //SHIELD_EFFECT
 static const int SHIELD_POWER = 50;
+
+//WALL_SPELL
+static const int WALL_NODE_COUNT = 5;
+static const float WALL_AREA_SCALE = 6.f;
+static const float WALL_NODE_SCALE = 2.f;
+static const float WALL_TIME_LIMIT = 5;
+
 
 //PROJECTILE
 static const float PROJECTILE_MIN_LINEAR_VELOCITY_LENGTH = 7;

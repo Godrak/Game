@@ -27,6 +27,10 @@ Runecraft::Runecraft(Context *context) : Application(context) {
     context->RegisterFactory<CasterTarget>();
     context->RegisterFactory<HealingEffect>();
     context->RegisterFactory<EndOfSpell>();
+    context->RegisterFactory<WallSpell>();
+    context->RegisterFactory<ShieldEffect>();
+    context->RegisterFactory<FrozenComponent>();
+    context->RegisterFactory<FrozenEffect>();
 
     SubscribeToEvent(E_KEYDOWN, URHO3D_HANDLER(Runecraft, HandleKeyDown));
 }

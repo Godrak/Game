@@ -67,6 +67,14 @@ URHO3D_OBJECT(Entity, LogicComponent);
         GetNode()->Remove();
     }
 
+    void SetSpeed(float speed) {
+        maxSpeed = speed;
+    }
+
+    float GetSpeed() {
+        return maxSpeed;
+    }
+
 protected:
     enum EntityState {
         IDLE, WALKING,

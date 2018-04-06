@@ -39,7 +39,7 @@ public:
                 result = spellNode->CreateComponent<Explosion>();
                 break;
             case LIGHTNING:
-                result = spellNode->CreateComponent<Projectile>();
+                result = spellNode->CreateComponent<WallSpell>();
                 break;
             case WAVY:
                 result = spellNode->CreateComponent<Projectile>();
@@ -63,7 +63,7 @@ public:
                 additionalEffect = spellNode->CreateComponent<FireEffect>();
                 break;
             case LIGHTNING:
-                additionalEffect = spellNode->CreateComponent<HealingEffect>();
+                additionalEffect = spellNode->CreateComponent<FrozenEffect>();
                 break;
             case WAVY:
                 additionalEffect = spellNode->CreateComponent<FireEffect>();
