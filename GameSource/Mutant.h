@@ -32,7 +32,7 @@ URHO3D_OBJECT(Mutant, Entity);
         auto *collisionShape = GetNode()->CreateComponent<CollisionShape>();
         collisionShape->SetCapsule(0.7, 1.8, Vector3(0, 0.9, 0));
 
-        health->SetHealth(150);
+        health->SetHealth(MUTANT_HEALTH);
         maxSpeed = 0.3f;
         idleAnim = "Models/Mutant/Mutant_Idle0.ani";
         walkAnim = "Models/Mutant/Mutant_Walk.ani";

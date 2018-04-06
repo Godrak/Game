@@ -15,6 +15,6 @@ namespace LinAlgExtended {
 
     float2 MovePoint(float2 point,float2 vector);
 
-    float2 RotatePoint(float2 point, float3x3 matrix);
+    float2 RotatePoint(float2 point, float rotation);
 
 }

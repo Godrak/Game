@@ -52,7 +52,7 @@ public:
 
     }
 
-    void cast(DrawableTexture *drawableTexture) {
+    void cast(DrawableTexture *drawableTexture, Vector3 position) {
         float top = spellRectangle->GetWorldPosition().z_ - spellRectangle->GetWorldScale().z_ / 2;
         float bottom = spellRectangle->GetWorldPosition().z_ + spellRectangle->GetWorldScale().z_ / 2;
         float left = spellRectangle->GetWorldPosition().x_ - spellRectangle->GetWorldScale().x_ / 2;
@@ -70,25 +70,7 @@ public:
             }
         }
 
-        GetScene()->GetComponent<SpellSystem>()->castSpell(GetNode(), lines);
-    }
-
-private:
-    bool checkLineBounds(Vector3 start, Vector3 end, float top, float bottom, float left, float right) {
-        return (
-                (start.x_ >= left && start.x_ <= right &&
-                 start.z_ >= top && start.z_ <= bottom) ||
-                (end.x_ >= left && end.x_ <= right &&
-                 end.z_ >= top && end.z_ <= bottom)
-        );
-    }
-
-    void createRectangle() {
-        spellRectangle = GetScene()->CreateChild();
-        auto *planeObject = spellRectangle->CreateComponent<StaticModel>();
-        planeObject->SetModel(GetSubsystem<ResourceCache>()->GetResource<Model>("Models/Plane.mdl"));
-        planeObject->SetMaterial(GetSubsystem<ResourceCache>()->GetResource<Material>("Materials/GoldTransparent.xml"));
-        spellRectangle->SetScale(rectangleSize);
+        GetScene()->GetComponent<SpellSystem>()->castSpell(GetNode(), lines, position);
     }
 
     DrawableTexture *RaycastDrawableHit(float maxDistance, Vector3 &hitPos) {
@@ -110,7 +92,6 @@ private:
         GetScene()->GetComponent<Octree>()->Raycast(query);
         if (results.Size()) {
             for (const auto &result : results) {
-//                hitPos = result.position_;
                 drawableTexture = result.node_->GetComponent<DrawableTexture>();
                 if (drawableTexture != NULL) {
                     hitPos = result.position_;
@@ -120,5 +101,23 @@ private:
         }
 
         return drawableTexture;
+    }
+
+private:
+    bool checkLineBounds(Vector3 start, Vector3 end, float top, float bottom, float left, float right) {
+        return (
+                (start.x_ >= left && start.x_ <= right &&
+                 start.z_ >= top && start.z_ <= bottom) ||
+                (end.x_ >= left && end.x_ <= right &&
+                 end.z_ >= top && end.z_ <= bottom)
+        );
+    }
+
+    void createRectangle() {
+        spellRectangle = GetScene()->CreateChild();
+        auto *planeObject = spellRectangle->CreateComponent<StaticModel>();
+        planeObject->SetModel(GetSubsystem<ResourceCache>()->GetResource<Model>("Models/Plane.mdl"));
+        planeObject->SetMaterial(GetSubsystem<ResourceCache>()->GetResource<Material>("Materials/GoldTransparent.xml"));
+        spellRectangle->SetScale(rectangleSize);
     }
 };

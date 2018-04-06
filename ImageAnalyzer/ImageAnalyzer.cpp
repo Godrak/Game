@@ -6,6 +6,28 @@ using namespace std;
 using namespace LineDrawer;
 using namespace LinAlgExtended;
 
+Shape CountShapes(const vector<Shape> &shapes, int &count) {
+    vector<int> results(SHAPE_DESCRIPTORS.size());
+    for (const auto &shape: shapes) {
+        if (shape != UNKNOWN) {
+            results[shape]++;
+        }
+    }
+
+    int maxIndex = -1;
+    count = 0;
+    for (int i = 0; i < results.size(); ++i) {
+        if (results[i] > count) {
+            count = results[i];
+            maxIndex = i;
+        }
+    }
+
+    return Shape(maxIndex);
+
+}
+
+
 Shape AnalyzeImageLines(ImageLines imageLines, float &matchingRotation) {
     imageLines.Normalize();
     auto translation = CreateTranslationMatrix({-0.5f, -0.5f});
@@ -26,39 +48,29 @@ Shape AnalyzeImageLines(ImageLines imageLines, float &matchingRotation) {
         iterations++;
     }
 
-    cout << endl;
-    for (const auto &out: outputs) {
-        cout << endl;
-        for (auto f :out)
-            cout << (int) (f * 100) << '\t';
-    }
+//    cout << endl;
+//    for (const auto &out: outputs) {
+//        cout << endl;
+//        for (auto f :out)
+//            cout << (int) (f * 100) << '\t';
+//    }
 
 
     int maxIndex = -1;
     float maxShapeValue = -1;
-    for (int i = 0; i < outputs[0].size(); ++i) {
-        float sum = 0;
-        for (auto &output : outputs) {
-            sum += std::max((output[i] - 0.85f)*5, 0.f);
-        }
-        if (sum > maxShapeValue) {
-            maxShapeValue = sum;
-            maxIndex = i;
+    for (int row = 0; row < outputs.size(); ++row) {
+        for (int shape = 0; shape < outputs[row].size(); ++shape) {
+            if (outputs[row][shape] > maxShapeValue) {
+                maxShapeValue = outputs[row][shape];
+                matchingRotation = rotations[row];
+                maxIndex = shape;
+            }
         }
     }
 
     Shape shape = UNKNOWN;
-    if (maxShapeValue > 0.1f) {
+    if (maxShapeValue > 0.8f) {
         shape = Shape(maxIndex);
-        int rotationRow = 0;
-        float rotationMax = 0;
-        for (int i = 0; i < outputs.size(); ++i) {
-            if (outputs[i][maxIndex] > rotationMax) {
-                rotationMax = outputs[i][maxIndex];
-                rotationRow = i;
-            }
-        }
-        matchingRotation = rotations[rotationRow];
     }
 
     return shape;
@@ -89,7 +101,6 @@ ShapeNode ImageAnalyzer::Analyze(ImageLines imageLines) {
     }
     cout << endl;
     cout << ShapeToString(node.shape) << "  " << "rotation: " << matchingRotation << endl;
-    return node;
 
     if (node.shape != UNKNOWN) {
         auto *shapeDescriptor = GetShapeDescriptor(node.shape);
@@ -97,23 +108,39 @@ ShapeNode ImageAnalyzer::Analyze(ImageLines imageLines) {
         vector<Shape> pattern;
         while (t < 1) {
             ImageLines copy = imageLines;
+
             float2 point = shapeDescriptor->GetPoint(t);
-//            point = MovePoint(point, float2{-0.5f, -0.5f});
-//            point = RotatePoint(point, (matchingRotation));
-//            copy.Transform(inverse(matchingRotation));
-            copy.Clip(point - float2{0.2f, 0.2f}, point + float2{0.2f, 0.2f});
+            point = MovePoint(point, float2{-0.5f, -0.5f});
+            point = RotatePoint(point, matchingRotation);
+            point = MovePoint(point, float2{0.5f, 0.5f});
+
+            copy.Clip(point - float2{0.1f, 0.1f}, point + float2{0.1f, 0.1f});
 
             pattern.push_back(AnalyzeImageLines(copy));
-            if (!copy.Empty()) {
+            if (!copy.Empty() && DEBUG_IMAGE_SAVE) {
                 copy.Normalize();
                 DrawLines(copy).SaveToFile("debug/pat" + to_string(RANDOMIZER.ratio()));
             }
-            t += 1 / 12.f;
+            t += 1 / 36.f;
         }
-        for (Shape s : pattern) {
-            cout << ShapeToString(s) << " ";
+
+        int count = 0;
+        Shape patternShape = CountShapes(pattern, count);
+        cout << ShapeToString(patternShape) << " " << count << endl;
+        if (count > 6) {
+            node.shapePattern = patternShape;
         }
-        cout << endl;
+
+        for (float3 poi : shapeDescriptor->GetPointsOfInterest()) {
+            float2 middle{poi.x + poi.z / 2, poi.y + poi.z / 2};
+            middle = MovePoint(middle, float2{-0.5f, -0.5f});
+            middle = RotatePoint(middle, matchingRotation);
+            middle = MovePoint(middle, float2{0.5f, 0.5f});
+
+            ImageLines copy = imageLines;
+            copy.Clip(middle - float2{poi.z / 2, poi.z / 2}, middle + float2{poi.z / 2, poi.z / 2});
+            node.childNodes.push_back(Analyze(copy));
+        }
     }
 
     return node;

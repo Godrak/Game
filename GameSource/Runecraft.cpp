@@ -21,6 +21,12 @@ Runecraft::Runecraft(Context *context) : Application(context) {
     context->RegisterFactory<Caster>();
     context->RegisterFactory<SimpleAI>();
     context->RegisterFactory<Projectile>();
+    context->RegisterFactory<Explosion>();
+    context->RegisterFactory<FireEffect>();
+    context->RegisterFactory<HealingComponent>();
+    context->RegisterFactory<CasterTarget>();
+    context->RegisterFactory<HealingEffect>();
+    context->RegisterFactory<EndOfSpell>();
 
     SubscribeToEvent(E_KEYDOWN, URHO3D_HANDLER(Runecraft, HandleKeyDown));
 }

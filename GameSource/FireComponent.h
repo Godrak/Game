@@ -11,12 +11,9 @@ public:
     explicit FireComponent(Context *context) : LogicComponent(context) {
     }
 
-protected:
-
-public:
     void Start() override {
         LogicComponent::Start();
-        auto particleEmitter = GetNode()->CreateComponent<ParticleEmitter>();
+        particleEmitter = GetNode()->CreateComponent<ParticleEmitter>();
         auto effect = GetSubsystem<ResourceCache>()->GetResource<ParticleEffect>("Data/Particle/Fire.xml");
         particleEmitter->SetEffect(effect);
     }
@@ -25,10 +22,53 @@ public:
         LogicComponent::Update(timeStep);
         auto *entity = GetNode()->GetDerivedComponent<Entity>();
         if (entity != NULL) {
-            entity->Damage((int) timeStep * FIRE_DAMAGE_PER_MILLISECOND);
+            entity->Damage(timeStep * FIRE_DAMAGE_PER_SECOND);
+        }
+        duration -= timeStep;
+        if (duration < 0) {
+            Remove();
+            if (particleEmitter != NULL) {
+                particleEmitter->Remove();
+            }
         }
     }
 
+private:
+    ParticleEmitter *particleEmitter;
+    float duration = FIRE_DURATION;
+};
+
+class HealingComponent : public LogicComponent {
+URHO3D_OBJECT(HealingComponent, LogicComponent);
+public:
+    explicit HealingComponent(Context *context) : LogicComponent(context) {
+    }
+
+    void Start() override {
+        LogicComponent::Start();
+        particleEmitter = GetNode()->CreateComponent<ParticleEmitter>();
+        auto effect = GetSubsystem<ResourceCache>()->GetResource<ParticleEffect>("Data/Particle/GreenSmoke.xml");
+        particleEmitter->SetEffect(effect);
+    }
+
+    void Update(float timeStep) override {
+        LogicComponent::Update(timeStep);
+        auto *entity = GetNode()->GetDerivedComponent<Entity>();
+        if (entity != NULL) {
+            entity->Heal(timeStep * HEALING_PER_SECOND);
+        }
+        duration -= timeStep;
+        if (duration < 0) {
+            Remove();
+            if (particleEmitter != NULL) {
+                particleEmitter->Remove();
+            }
+        }
+    }
+
+private:
+    ParticleEmitter *particleEmitter;
+    float duration = HEALING_DURATION;
 };
 
 class GreenFireComponent : public LogicComponent {

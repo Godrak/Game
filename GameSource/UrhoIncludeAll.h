@@ -76,3 +76,26 @@ static const int MIN_VERTICAL_DISTANCE = 8;
 static const float DRAWING_SAMPLE_STEP_SIZE = 0.2f;
 static const float DRAWING_SAMPLE_TIME = 0.05f;
 
+//FIRE
+static const float FIRE_DAMAGE_PER_SECOND = 2;
+static const float FIRE_DURATION = 6;
+
+//HEALING
+static const float HEALING_PER_SECOND = 3;
+static const float HEALING_DURATION = 5;
+
+//SHIELD_EFFECT
+static const int SHIELD_POWER = 50;
+
+//PROJECTILE
+static const float PROJECTILE_MIN_LINEAR_VELOCITY_LENGTH = 7;
+static const float PROJECTILE_SCALE = 0.7f;
+static const float PROJECTILE_STRENGTH = 10;
+
+//EXPLOSION
+static const float EXPLOSION_SCALE = 6.f;
+static const float EXPLOSION_STRENGTH_MULTIPLIER = 20.f;
+static const float EXPLOSION_TIME_LIMIT = 0.3f;
+
+//MUTANT
+static const float MUTANT_HEALTH = 200;

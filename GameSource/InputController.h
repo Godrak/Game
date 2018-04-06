@@ -47,8 +47,9 @@ public:
             caster->moveRectangle(GetNode()->GetPosition(), input->GetMouseMoveWheel());
         } else if (rightMouseButtonDownFlag) {
             rightMouseButtonDownFlag = false;
-            auto *drawableTexture = GetScene()->GetChild("Plane")->GetComponent<DrawableTexture>();
-            caster->cast(drawableTexture);
+            Vector3 position;
+            auto *drawableTexture = caster->RaycastDrawableHit(100, position);
+            caster->cast(drawableTexture, position);
         }
 
         if (!input->GetMouseButtonDown(MOUSEB_RIGHT)) {

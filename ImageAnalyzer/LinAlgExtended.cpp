@@ -38,7 +38,8 @@ linalg::aliases::float2 LinAlgExtended::MovePoint(float2 point, linalg::aliases:
 
 }
 
-linalg::aliases::float2 LinAlgExtended::RotatePoint(linalg::aliases::float2 point, linalg::aliases::float3x3 matrix) {
-    auto result = mul<float, 3>(matrix, float3{point.x, point.y, 1});
+linalg::aliases::float2 LinAlgExtended::RotatePoint(linalg::aliases::float2 point, float rotation) {
+    auto matrix = CreateRotationMatrix(rotation);
+    float3 result = mul<float, 3>(matrix, float3{point.x, point.y, 1});
     return {result.x, result.y};
 }

@@ -16,11 +16,11 @@ URHO3D_OBJECT(Entity, LogicComponent);
         health = GetNode()->CreateComponent<HitPointsComponent>();
     }
 
-    virtual void Heal(int value) {
+    virtual void Heal(float value) {
         health->ChangeHealth(value);
     }
 
-    virtual void Damage(int value) {
+    virtual void Damage(float value) {
         if (shield != NULL) {
             shield->ChangeShieldPower(-value);
         } else if (!health->ChangeHealth(-value)) {

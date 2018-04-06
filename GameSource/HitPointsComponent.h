@@ -21,7 +21,7 @@ public:
         staticModel->SetMaterial(cache->GetResource<Material>("Materials/GreenTransparent.xml"));
     }
 
-    void SetHealth(int maxHealth, int currentHealth = 0) {
+    void SetHealth(float maxHealth, float currentHealth = 0) {
         this->maxHealth = maxHealth;
         if (currentHealth == 0) {
             currentHealth = maxHealth;
@@ -29,22 +29,22 @@ public:
         this->currentHealth = currentHealth;
     }
 
-    bool ChangeHealth(int health) {
+    bool ChangeHealth(float health) {
         currentHealth += health;
-        currentHealth = std::max(currentHealth, 0);
+        currentHealth = std::max(currentHealth, 0.f);
         currentHealth = std::min(currentHealth, maxHealth);
 
         return currentHealth > 0;
     }
 
-    int GetHealth() {
+    float GetHealth() {
         return currentHealth;
     }
 
     void Update(float timeStep) override {
         LogicComponent::Update(timeStep);
         healthBar->SetWorldPosition(GetNode()->GetPosition() + Vector3::UP * 2);
-        healthBar->SetScale(Vector3(0.1, currentHealth / (float) maxHealth, 0.1));
+        healthBar->SetScale(Vector3(0.1, currentHealth / maxHealth, 0.1));
     }
 
     ~HitPointsComponent() override {
@@ -52,8 +52,8 @@ public:
     }
 
 private:
-    int maxHealth;
-    int currentHealth;
+    float maxHealth;
+    float currentHealth;
     Node *healthBar;
 
 };

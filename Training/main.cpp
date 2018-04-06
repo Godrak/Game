@@ -5,7 +5,7 @@
 void ManualTraining() {
     using namespace Training;
     TrainingCase network("network.net",
-                         vector<unsigned int>{NETWORK_INPUT_SIZE, 64, 16, NETWORK_OUTPUT_SIZE});
+                         vector<unsigned int>{NETWORK_INPUT_SIZE, 128, 8, NETWORK_OUTPUT_SIZE});
     string dataName = "data.data";
     string networkName = "network.net";
 

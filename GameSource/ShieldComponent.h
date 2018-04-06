@@ -22,7 +22,7 @@ public:
         staticModel->SetMaterial(material);
     }
 
-    bool ChangeShieldPower(int power) {
+    bool ChangeShieldPower(float power) {
         currentShieldPower += power;
         if (currentShieldPower < 0) {
             Remove();
@@ -30,7 +30,7 @@ public:
         return currentShieldPower <= 0;
     }
 
-    int GetPower() {
+    float GetPower() {
         return currentShieldPower;
     }
 
@@ -49,7 +49,7 @@ private:
         return a < b ? a : b;
     }
 
-    int currentShieldPower;
+    float currentShieldPower;
     Node *shieldSphere;
     Material *material;
 
