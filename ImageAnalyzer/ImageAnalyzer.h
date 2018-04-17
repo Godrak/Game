@@ -1,24 +1,57 @@
 #pragma once
 
 #include <vector>
+#include <memory>
 #include "LinAlgExtended.h"
-#include "ShapeDescriptors.h"
+#include "NeuralNetwork.h"
+#include "Randomizer.h"
 
 namespace ImageAnalyzer {
     using namespace std;
     using namespace LinAlgExtended;
-    using namespace ShapeDescriptors;
 
-    struct ShapeNode {
-        Shape shape;
-        Shape shapePattern;
-        vector<ShapeNode> childNodes{};
+    struct ShapeIndex {
+        int value;
 
-        ShapeNode() {
-            shape = UNKNOWN;
-            shapePattern = UNKNOWN;
+        ShapeIndex() {
+            value = -1;
         }
 
+        explicit ShapeIndex(int val) {
+            value = val;
+        }
+
+        bool operator==(const ShapeIndex &rhs) const {
+            return value == rhs.value;
+        }
+
+        bool operator!=(const ShapeIndex &rhs) const {
+            return !(rhs == *this);
+        }
+
+        bool operator<(const ShapeIndex &rhs) const {
+            return value < rhs.value;
+        }
+
+        bool operator>(const ShapeIndex &rhs) const {
+            return rhs < *this;
+        }
+
+        bool operator<=(const ShapeIndex &rhs) const {
+            return !(rhs < *this);
+        }
+
+        bool operator>=(const ShapeIndex &rhs) const {
+            return !(*this < rhs);
+        }
+    };
+
+    static const ShapeIndex UNKNOWN_SHAPE{};
+
+    struct ShapeNode {
+        ShapeIndex shape{};
+        ShapeIndex shapePattern{};
+        vector<ShapeNode> childNodes{};
     };
 
     class Line {
@@ -131,7 +164,51 @@ namespace ImageAnalyzer {
 
     };
 
+    class ShapeDescriptor {
+    protected:
+        /// linear interpolation between two given points, to expected to be in range 0-1
+        /// \param start
+        /// \param end
+        /// \param t
+        /// \return
+        float2 Interpolate(float2 start, float2 end, float t) const {
+            return start + t * (end - start);
+        }
+
+        /// Normalizes param t to range 0 to 1
+        /// \param t
+        void NormalizeParam(float &t) const {
+            t = abs(t - (int) t);
+        }
+
+    public:
+        virtual string GetName() const = 0;
+
+        /// Method used to generate training data.
+        /// \param last_t param of last requested point.
+        /// \param t tells which point from start to end of picture should be returned. Is in range from 0 to 1, bt it is recommended to normalize it first using NormalizeParam function.
+        /// \param point coordinates of the point represented by t. Has to be in range (0-1,0-1).
+        /// \return True if there is a line between last requested point and this point, otherwise false.
+        virtual bool GetPoint(float last_t, float t, float2 &point) = 0;
+
+        /// Method to inspect lines of shape, searching for composition, thread safety required
+        /// \param t tells which point from start to end of picture should be returned. Is in range from 0 to 1, bt it is recommended to normalize it first using NormalizeParam function.
+        /// \return point represented by t.
+        virtual float2 GetPoint(float t) = 0;
+
+        /// Method to find areas where "inside" shapes might be located. Currently only square shaped locations are supported.
+        /// \return vector of locations in form (leftCornerX, leftCornerY, Size).
+        virtual vector<float3> GetPointsOfInterest() const {
+            return vector<float3>{};
+        };
+    };
 
     ShapeNode Analyze(ImageLines imageLines);
+
+    void RegisterShapeDescriptor(ShapeIndex index, std::unique_ptr<ShapeDescriptor> shapeDescriptor);
+
+    void LoadNetwork(const string &path);
+
+    string GetNameByIndex(ShapeIndex index);
 
 };

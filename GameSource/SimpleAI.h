@@ -10,7 +10,9 @@ URHO3D_OBJECT(SimpleAI, LogicComponent);
 
     explicit SimpleAI(Context *context) : LogicComponent(context) {}
 
-    void GetNewTarget() {}
+    void GetNewTarget() {
+        currentTarget = GetScene()->GetChild("Player");
+    }
 
     void Update(float timeStep) override {
         LogicComponent::Update(timeStep);
@@ -35,10 +37,10 @@ URHO3D_OBJECT(SimpleAI, LogicComponent);
             const Vector3 &targetPos(targetNode->GetPosition());
             float distance = (targetPos - ownPos).Length();
 
-            if (distance < 0.2) {
-                entity->Attack();
+            if (distance < 2.f) {
+                entity->Attack(targetNode);
             } else {
-                entity->Move(targetPos - ownPos,1);
+                entity->Move(targetPos - ownPos, 1);
             }
         } else {
             // If no target, walk idly

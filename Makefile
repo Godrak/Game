@@ -354,65 +354,32 @@ ImageAnalyzer/LineDrawer.cpp.s:
 	$(MAKE) -f CMakeFiles/Game.dir/build.make CMakeFiles/Game.dir/ImageAnalyzer/LineDrawer.cpp.s
 .PHONY : ImageAnalyzer/LineDrawer.cpp.s
 
-ImageAnalyzer/ShapeDescriptors.o: ImageAnalyzer/ShapeDescriptors.cpp.o
+Training/Networks.o: Training/Networks.cpp.o
 
-.PHONY : ImageAnalyzer/ShapeDescriptors.o
-
-# target to build an object file
-ImageAnalyzer/ShapeDescriptors.cpp.o:
-	$(MAKE) -f CMakeFiles/Tests.dir/build.make CMakeFiles/Tests.dir/ImageAnalyzer/ShapeDescriptors.cpp.o
-	$(MAKE) -f CMakeFiles/Training.dir/build.make CMakeFiles/Training.dir/ImageAnalyzer/ShapeDescriptors.cpp.o
-	$(MAKE) -f CMakeFiles/Game.dir/build.make CMakeFiles/Game.dir/ImageAnalyzer/ShapeDescriptors.cpp.o
-.PHONY : ImageAnalyzer/ShapeDescriptors.cpp.o
-
-ImageAnalyzer/ShapeDescriptors.i: ImageAnalyzer/ShapeDescriptors.cpp.i
-
-.PHONY : ImageAnalyzer/ShapeDescriptors.i
-
-# target to preprocess a source file
-ImageAnalyzer/ShapeDescriptors.cpp.i:
-	$(MAKE) -f CMakeFiles/Tests.dir/build.make CMakeFiles/Tests.dir/ImageAnalyzer/ShapeDescriptors.cpp.i
-	$(MAKE) -f CMakeFiles/Training.dir/build.make CMakeFiles/Training.dir/ImageAnalyzer/ShapeDescriptors.cpp.i
-	$(MAKE) -f CMakeFiles/Game.dir/build.make CMakeFiles/Game.dir/ImageAnalyzer/ShapeDescriptors.cpp.i
-.PHONY : ImageAnalyzer/ShapeDescriptors.cpp.i
-
-ImageAnalyzer/ShapeDescriptors.s: ImageAnalyzer/ShapeDescriptors.cpp.s
-
-.PHONY : ImageAnalyzer/ShapeDescriptors.s
-
-# target to generate assembly for a file
-ImageAnalyzer/ShapeDescriptors.cpp.s:
-	$(MAKE) -f CMakeFiles/Tests.dir/build.make CMakeFiles/Tests.dir/ImageAnalyzer/ShapeDescriptors.cpp.s
-	$(MAKE) -f CMakeFiles/Training.dir/build.make CMakeFiles/Training.dir/ImageAnalyzer/ShapeDescriptors.cpp.s
-	$(MAKE) -f CMakeFiles/Game.dir/build.make CMakeFiles/Game.dir/ImageAnalyzer/ShapeDescriptors.cpp.s
-.PHONY : ImageAnalyzer/ShapeDescriptors.cpp.s
-
-Tests/test.o: Tests/test.cpp.o
-
-.PHONY : Tests/test.o
+.PHONY : Training/Networks.o
 
 # target to build an object file
-Tests/test.cpp.o:
-	$(MAKE) -f CMakeFiles/Tests.dir/build.make CMakeFiles/Tests.dir/Tests/test.cpp.o
-.PHONY : Tests/test.cpp.o
+Training/Networks.cpp.o:
+	$(MAKE) -f CMakeFiles/Training.dir/build.make CMakeFiles/Training.dir/Training/Networks.cpp.o
+.PHONY : Training/Networks.cpp.o
 
-Tests/test.i: Tests/test.cpp.i
+Training/Networks.i: Training/Networks.cpp.i
 
-.PHONY : Tests/test.i
+.PHONY : Training/Networks.i
 
 # target to preprocess a source file
-Tests/test.cpp.i:
-	$(MAKE) -f CMakeFiles/Tests.dir/build.make CMakeFiles/Tests.dir/Tests/test.cpp.i
-.PHONY : Tests/test.cpp.i
+Training/Networks.cpp.i:
+	$(MAKE) -f CMakeFiles/Training.dir/build.make CMakeFiles/Training.dir/Training/Networks.cpp.i
+.PHONY : Training/Networks.cpp.i
 
-Tests/test.s: Tests/test.cpp.s
+Training/Networks.s: Training/Networks.cpp.s
 
-.PHONY : Tests/test.s
+.PHONY : Training/Networks.s
 
 # target to generate assembly for a file
-Tests/test.cpp.s:
-	$(MAKE) -f CMakeFiles/Tests.dir/build.make CMakeFiles/Tests.dir/Tests/test.cpp.s
-.PHONY : Tests/test.cpp.s
+Training/Networks.cpp.s:
+	$(MAKE) -f CMakeFiles/Training.dir/build.make CMakeFiles/Training.dir/Training/Networks.cpp.s
+.PHONY : Training/Networks.cpp.s
 
 Training/Training.o: Training/Training.cpp.o
 
@@ -498,12 +465,9 @@ help:
 	@echo "... ImageAnalyzer/LineDrawer.o"
 	@echo "... ImageAnalyzer/LineDrawer.i"
 	@echo "... ImageAnalyzer/LineDrawer.s"
-	@echo "... ImageAnalyzer/ShapeDescriptors.o"
-	@echo "... ImageAnalyzer/ShapeDescriptors.i"
-	@echo "... ImageAnalyzer/ShapeDescriptors.s"
-	@echo "... Tests/test.o"
-	@echo "... Tests/test.i"
-	@echo "... Tests/test.s"
+	@echo "... Training/Networks.o"
+	@echo "... Training/Networks.i"
+	@echo "... Training/Networks.s"
 	@echo "... Training/Training.o"
 	@echo "... Training/Training.i"
 	@echo "... Training/Training.s"

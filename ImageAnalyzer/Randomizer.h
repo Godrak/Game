@@ -11,7 +11,7 @@ private:
     std::uniform_real_distribution<double> Real;
     std::uniform_int_distribution<int> Randmax;
     std::exponential_distribution<float> Exp;
-    //std::mutex Lock;
+    std::mutex Lock;
 public:
     Randomizer() : Real(0, 1), Exp(1 / 4.0f), Randmax(0, RAND_MAX) {
         Generator.seed(static_cast<unsigned long>(time(0)));

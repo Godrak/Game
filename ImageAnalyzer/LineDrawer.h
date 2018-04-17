@@ -2,17 +2,15 @@
 
 #include "GrayScaleImage.h"
 #include "ImageAnalyzer.h"
-#include "Params.h"
 
 using namespace ImageAnalyzer;
 
 namespace LineDrawer {
 
-    void RandomizeData(GrayScaleImage &image);
+    void RandomizeData(GrayScaleImage &image, Randomizer &randomizer);
 
-    void DrawLine(const Line &line, GrayScaleImage &image);
+    void DrawLine(const Line &line, GrayScaleImage &image, int imageSize, float drawingStepSize);
 
-    GrayScaleImage DrawLines(const ImageLines &imageLines);
-
+    GrayScaleImage DrawLines(const ImageLines &imageLines, int imageSize, float drawingStepSize);
 
 };

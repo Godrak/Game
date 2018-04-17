@@ -31,6 +31,7 @@ Runecraft::Runecraft(Context *context) : Application(context) {
     context->RegisterFactory<ShieldEffect>();
     context->RegisterFactory<FrozenComponent>();
     context->RegisterFactory<FrozenEffect>();
+    context->RegisterFactory<LocalSpell>();
 
     SubscribeToEvent(E_KEYDOWN, URHO3D_HANDLER(Runecraft, HandleKeyDown));
 }
@@ -142,7 +143,8 @@ void Runecraft::CreateMutant(Vector3 position) {
     auto *mutantNode = scene_->CreateChild("Mutant");
     mutantNode->SetPosition(position);
 
-    mutantNode->CreateComponent<Mutant>();
+    auto* mutant = mutantNode->CreateComponent<Mutant>();
+    mutant->SetSpeed(MUTANT_SPEED*0.7f);
 
     mutantNode->CreateComponent<SimpleAI>();
 }

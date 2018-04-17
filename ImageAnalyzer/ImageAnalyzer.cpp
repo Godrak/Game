@@ -6,29 +6,41 @@ using namespace std;
 using namespace LineDrawer;
 using namespace LinAlgExtended;
 
-Shape CountShapes(const vector<Shape> &shapes, int &count) {
-    vector<int> results(SHAPE_DESCRIPTORS.size());
+namespace { //private
+    const bool DEBUG_IMAGE_SAVE = true;
+    const int DEBUG_OUTPUT = 1;
+    const int IMAGE_SIDE_SIZE = 32;
+    const float LINE_DRAWING_STEP_SIZE = 0.5f;
+
+    Randomizer randomizer{};
+    std::map<ShapeIndex, std::unique_ptr<ShapeDescriptor>> shapeDescriptors{};
+    NeuralNetwork neuralNetwork{};
+}
+
+ShapeIndex CountShapes(const vector<ShapeIndex> &shapes, int &count) {
+    std::map<ShapeIndex, int> results{};
     for (const auto &shape: shapes) {
-        if (shape != UNKNOWN) {
-            results[shape]++;
+        if (shape != UNKNOWN_SHAPE) {
+            results.operator[](shape)++;
         }
     }
 
-    int maxIndex = -1;
+    ShapeIndex maxIndex = UNKNOWN_SHAPE;
     count = 0;
-    for (int i = 0; i < results.size(); ++i) {
-        if (results[i] > count) {
-            count = results[i];
-            maxIndex = i;
+    auto it = results.begin();
+    while (it != results.end()) {
+        if (it->second > count) {
+            count = it->second;
+            maxIndex = it->first;
         }
+        it++;
     }
 
-    return Shape(maxIndex);
-
+    return maxIndex;
 }
 
 
-Shape AnalyzeImageLines(ImageLines imageLines, float &matchingRotation) {
+ShapeIndex AnalyzeImageLines(ImageLines imageLines, float &matchingRotation) {
     imageLines.Normalize();
     auto translation = CreateTranslationMatrix({-0.5f, -0.5f});
     vector<vector<float>> outputs;
@@ -41,20 +53,23 @@ Shape AnalyzeImageLines(ImageLines imageLines, float &matchingRotation) {
         auto rotation = CreateRotationMatrix(t);
         copy.Transform(mul<float, 3, 3>(rotation, translation));
         copy.Normalize();
-        GrayScaleImage image = DrawLines(copy);
-        outputs.push_back(NETWORK.Calculate(image.Serialize()));
+        GrayScaleImage image = DrawLines(copy, IMAGE_SIDE_SIZE, LINE_DRAWING_STEP_SIZE);
+//        RandomizeData(image, randomizer);
+        auto input = image.Serialize();
+        outputs.push_back(neuralNetwork.Calculate(input));
         rotations.push_back(t);
         t += 1 / 36.f;
         iterations++;
     }
 
-//    cout << endl;
-//    for (const auto &out: outputs) {
-//        cout << endl;
-//        for (auto f :out)
-//            cout << (int) (f * 100) << '\t';
-//    }
-
+    if (DEBUG_OUTPUT > 1) {
+        cout << endl;
+        for (const auto &out: outputs) {
+            cout << endl;
+            for (auto f :out)
+                cout << (int) (f * 100) << '\t';
+        }
+    }
 
     int maxIndex = -1;
     float maxShapeValue = -1;
@@ -68,16 +83,16 @@ Shape AnalyzeImageLines(ImageLines imageLines, float &matchingRotation) {
         }
     }
 
-    Shape shape = UNKNOWN;
+    int shape = -1;
     if (maxShapeValue > 0.8f) {
-        shape = Shape(maxIndex);
+        shape = maxIndex;
     }
 
-    return shape;
+    return ShapeIndex(shape);
 }
 
 
-Shape AnalyzeImageLines(ImageLines imageLines) {
+ShapeIndex AnalyzeImageLines(ImageLines imageLines) {
     float rotation;
     return AnalyzeImageLines(imageLines, rotation);
 };
@@ -97,15 +112,17 @@ ShapeNode ImageAnalyzer::Analyze(ImageLines imageLines) {
     node.shape = AnalyzeImageLines(imageLines, matchingRotation);
 
     if (DEBUG_IMAGE_SAVE) {
-        DrawLines(imageLines).SaveToFile("debug/im" + to_string(RANDOMIZER.ratio()));
+        DrawLines(imageLines, IMAGE_SIDE_SIZE, LINE_DRAWING_STEP_SIZE).SaveToFile("debug/im" + to_string(randomizer.ratio()));
     }
-    cout << endl;
-    cout << ShapeToString(node.shape) << "  " << "rotation: " << matchingRotation << endl;
 
-    if (node.shape != UNKNOWN) {
-        auto *shapeDescriptor = GetShapeDescriptor(node.shape);
+    if (DEBUG_OUTPUT > 0)
+        cout << endl << GetNameByIndex(node.shape) << "  " << "rotation: " << matchingRotation << endl;
+
+    auto shapeDesc = shapeDescriptors.find(node.shape);
+    if (shapeDesc != shapeDescriptors.end()) {
+        auto *shapeDescriptor = shapeDesc->second.get();
         float t = 0;
-        vector<Shape> pattern;
+        vector<ShapeIndex> pattern;
         while (t < 1) {
             ImageLines copy = imageLines;
 
@@ -119,15 +136,18 @@ ShapeNode ImageAnalyzer::Analyze(ImageLines imageLines) {
             pattern.push_back(AnalyzeImageLines(copy));
             if (!copy.Empty() && DEBUG_IMAGE_SAVE) {
                 copy.Normalize();
-                DrawLines(copy).SaveToFile("debug/pat" + to_string(RANDOMIZER.ratio()));
+                DrawLines(copy, IMAGE_SIDE_SIZE, LINE_DRAWING_STEP_SIZE).SaveToFile("debug/pat" + to_string(randomizer.ratio()));
             }
             t += 1 / 36.f;
         }
 
         int count = 0;
-        Shape patternShape = CountShapes(pattern, count);
-        cout << ShapeToString(patternShape) << " " << count << endl;
-        if (count > 6) {
+        ShapeIndex patternShape = CountShapes(pattern, count);
+
+        if (DEBUG_OUTPUT > 0)
+            cout << GetNameByIndex(patternShape) << " " << count << endl;
+
+        if (count > 3) {
             node.shapePattern = patternShape;
         }
 
@@ -145,3 +165,33 @@ ShapeNode ImageAnalyzer::Analyze(ImageLines imageLines) {
 
     return node;
 }
+
+string ImageAnalyzer::GetNameByIndex(ShapeIndex index) {
+    if (index == UNKNOWN_SHAPE) {
+        return "unknown";
+    } else {
+        auto shapeDesc = shapeDescriptors.find(index);
+        if (shapeDesc == shapeDescriptors.end()) {
+            cout << "ERROR: invalid shape index: " << index.value << endl;
+            return "unknown";
+        } else {
+            return shapeDesc->second->GetName();
+        }
+    }
+}
+
+void ImageAnalyzer::LoadNetwork(const string &path) {
+    neuralNetwork.Load(path.c_str());
+}
+
+void ImageAnalyzer::RegisterShapeDescriptor(ShapeIndex index, std::unique_ptr<ShapeDescriptor> shapeDescriptor) {
+    if (shapeDescriptors.find(index) != shapeDescriptors.end()) {
+        cout << "ERROR: shape with index: " << index.value << " already present" << endl;
+    }
+
+    if (index == UNKNOWN_SHAPE) {
+        cout << "ERROR: attempt to register uninitialized index or index of UNKNOWN_SHAPE" << endl;
+    }
+    shapeDescriptors.emplace(index, move(shapeDescriptor));
+}
+

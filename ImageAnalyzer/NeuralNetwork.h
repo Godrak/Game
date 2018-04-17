@@ -7,21 +7,25 @@
 #include <string>
 #include <memory>
 #include <floatfann.h>
+#include <iostream>
 
 
 class NeuralNetwork {
 public:
-    explicit NeuralNetwork(const char *file) {
+    NeuralNetwork() = default;
+
+    void Load(const char *file) {
+        if (loaded) Unload();
         ann = fann_create_from_file(file);
+        loaded = true;
     }
 
-    std::vector<float> Calculate(const std::vector<float> &inputs) const {
-        fann_type input[inputs.size()];
-        for (int i = 0; i < inputs.size(); ++i) {
-            input[i] = inputs[i];
+    std::vector<float> Calculate(std::vector<float> &inputs) const {
+        if (!loaded) {
+            std::cout << "ERROR: NO NEURAL NETWORK LOADED" << std::endl;
         }
 
-        fann_type *calc_out = fann_run(ann, input);
+        fann_type *calc_out = fann_run(ann, inputs.data());
         std::vector<float> result;
         for (int j = 0; j < ann->num_output; ++j) {
             result.push_back(calc_out[j]);
@@ -29,11 +33,12 @@ public:
         return result;
     }
 
-    virtual ~NeuralNetwork() {
-        fann_safe_free(ann);
-    }
-
 private:
-    struct fann *ann;
+    struct fann *ann{};
+    bool loaded = false;
+
+    void Unload() {
+        if (loaded) fann_safe_free(ann);
+    }
 };
 

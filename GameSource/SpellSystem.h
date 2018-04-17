@@ -1,81 +1,66 @@
 #pragma once
 
 #include "UrhoIncludeAll.h"
-#include "../ImageAnalyzer/GrayScaleImage.h"
-#include "../ImageAnalyzer/Params.h"
 #include "../ImageAnalyzer/ImageAnalyzer.h"
+#include "../ImageAnalyzer/ExampleShapeDescriptors.h"
 #include "FireComponent.h"
 #include "TimeOutComponent.h"
 #include "DrawableTexture.h"
 #include "Spell.h"
 #include <iostream>
+#include <memory>
 
 using namespace Urho3D;
 using namespace ImageAnalyzer;
 
 class SpellSystem : public LogicComponent {
+    const ShapeIndex square{0};
+    const ShapeIndex circle{1};
+    const ShapeIndex triangle{2};
+    const ShapeIndex cross{3};
+
 public:
-    explicit SpellSystem(Context *context) : LogicComponent(context) {}
+    explicit SpellSystem(Context *context) : LogicComponent(context) {
+        using namespace std;
+        ImageAnalyzer::RegisterShapeDescriptor(square, std::unique_ptr<SquareDescriptor>(new SquareDescriptor()));
+        ImageAnalyzer::RegisterShapeDescriptor(circle, std::unique_ptr<CircleDescriptor>(new CircleDescriptor()));
+        ImageAnalyzer::RegisterShapeDescriptor(triangle, std::unique_ptr<TriangleDescriptor>(new TriangleDescriptor()));
+        ImageAnalyzer::RegisterShapeDescriptor(cross, std::unique_ptr<CrossDescriptor>(new CrossDescriptor()));
+
+        ImageAnalyzer::LoadNetwork("../network.net");
+    }
 
     SpellBase *createSpell(ShapeNode shape, Node *spellNode) {
         SpellBase *result = NULL;
-        switch (shape.shape) {
-            case UNKNOWN: {
-                auto *eos = spellNode->CreateComponent<EndOfSpell>();
-                eos->SetSpellNodeToRemove(spellNode);
-                result = eos;
-            }
-                break;
-            case RECTANGLE:
-                result = spellNode->CreateComponent<Explosion>();
-                break;
-            case CIRCLE:
-                result = spellNode->CreateComponent<Projectile>();
-                break;
-            case TRIANGLE:
-                result = spellNode->CreateComponent<CasterTarget>();
-                break;
-            case WATER:
-                result = spellNode->CreateComponent<Explosion>();
-                break;
-            case LIGHTNING:
-                result = spellNode->CreateComponent<WallSpell>();
-                break;
-            case WAVY:
-                result = spellNode->CreateComponent<Projectile>();
-                break;
+        ShapeIndex index = shape.shape;
+        if (index == circle) {
+            result = spellNode->CreateComponent<Projectile>();
+        } else if (index == square) {
+            result = spellNode->CreateComponent<Explosion>();
+        } else if (index == triangle) {
+            result = spellNode->CreateComponent<WallSpell>();
+        } else if (index == cross) {
+            result = spellNode->CreateComponent<LocalSpell>();
+        } else {
+            auto *eos = spellNode->CreateComponent<EndOfSpell>();
+            eos->SetSpellNodeToRemove(spellNode);
+            result = eos;
         }
 
-        Effect *additionalEffect = NULL;
-        switch (shape.shapePattern) {
-            case UNKNOWN:
-                break;
-            case RECTANGLE:
-                additionalEffect = spellNode->CreateComponent<FireEffect>();
-                break;
-            case CIRCLE:
-                additionalEffect = spellNode->CreateComponent<HealingEffect>();
-                break;
-            case TRIANGLE:
-                additionalEffect = spellNode->CreateComponent<ShieldEffect>();
-                break;
-            case WATER:
-                additionalEffect = spellNode->CreateComponent<FireEffect>();
-                break;
-            case LIGHTNING:
-                additionalEffect = spellNode->CreateComponent<FrozenEffect>();
-                break;
-            case WAVY:
-                additionalEffect = spellNode->CreateComponent<FireEffect>();
-                break;
+        index = shape.shapePattern;
+        if (index == circle) {
+            result->SetAdditionalEffect(spellNode->CreateComponent<FireEffect>());
+        } else if (index == square) {
+            result->SetAdditionalEffect(spellNode->CreateComponent<FrozenEffect>());
+        } else if (index == triangle) {
+            result->SetAdditionalEffect(spellNode->CreateComponent<FireEffect>());
+        } else if (index == cross) {
+            result->SetAdditionalEffect(spellNode->CreateComponent<HealingEffect>());
         }
-        if (result != NULL) {
-            result->SetAdditionalEffect(additionalEffect);
 
-            for (int i = 0; i < shape.childNodes.size(); ++i) {
-                SpellBase *nextSpell = createSpell(shape.childNodes[i], spellNode);
-                result->SetNextSpell(nextSpell);
-            }
+        if (!shape.childNodes.empty()) {
+            SpellBase *nextSpell = createSpell(shape.childNodes[0], spellNode);
+            result->SetNextSpell(nextSpell);
         }
         return result;
     }

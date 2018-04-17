@@ -33,9 +33,11 @@ URHO3D_OBJECT(Mutant, Entity);
         collisionShape->SetCapsule(0.7, 1.8, Vector3(0, 0.9, 0));
 
         health->SetHealth(MUTANT_HEALTH);
-        maxSpeed = 0.3f;
+        maxSpeed = MUTANT_SPEED;
+        attackDamage = MUTANT_ATTACK_DAMAGE;
         idleAnim = "Models/Mutant/Mutant_Idle0.ani";
         walkAnim = "Models/Mutant/Mutant_Walk.ani";
+        attackAnim = "Models/Mutant/Mutant_Swipe.ani";
     }
 
 };

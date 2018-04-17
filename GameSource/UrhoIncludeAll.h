@@ -101,13 +101,20 @@ static const float WALL_TIME_LIMIT = 5;
 
 //PROJECTILE
 static const float PROJECTILE_MIN_LINEAR_VELOCITY_LENGTH = 7;
-static const float PROJECTILE_SCALE = 0.7f;
-static const float PROJECTILE_STRENGTH = 10;
+static const float PROJECTILE_SCALE = 2.f;
+static const float PROJECTILE_STRENGTH = 30;
 
 //EXPLOSION
-static const float EXPLOSION_SCALE = 6.f;
-static const float EXPLOSION_STRENGTH_MULTIPLIER = 20.f;
+static const float EXPLOSION_SCALE = 12.f;
+static const float EXPLOSION_STRENGTH_MULTIPLIER = 12.f;
 static const float EXPLOSION_TIME_LIMIT = 0.3f;
+
+//LOCAL_SPELL
+static const float LOCAL_SPELL_SCALE = 4;
+static const float LOCAL_SPELL_DURATION = 4;
 
 //MUTANT
 static const float MUTANT_HEALTH = 200;
+static const float MUTANT_SPEED = 0.3f;
+static const float MUTANT_ATTACK_DURATION = 1.4f;
+static const float MUTANT_ATTACK_DAMAGE = 0.f;

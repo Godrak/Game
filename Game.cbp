@@ -310,6 +310,9 @@
 		<Unit filename="/home/free/dev/Runecraft/Game/GameSource/InputController.h">
 			<Option target="Game"/>
 		</Unit>
+		<Unit filename="/home/free/dev/Runecraft/Game/GameSource/Misc.h">
+			<Option target="Game"/>
+		</Unit>
 		<Unit filename="/home/free/dev/Runecraft/Game/GameSource/Mutant.h">
 			<Option target="Game"/>
 		</Unit>
@@ -338,6 +341,11 @@
 			<Option target="Game"/>
 		</Unit>
 		<Unit filename="/home/free/dev/Runecraft/Game/GameSource/UrhoIncludeAll.h">
+			<Option target="Game"/>
+		</Unit>
+		<Unit filename="/home/free/dev/Runecraft/Game/ImageAnalyzer/ExampleShapeDescriptors.h">
+			<Option target="Tests"/>
+			<Option target="Training"/>
 			<Option target="Game"/>
 		</Unit>
 		<Unit filename="/home/free/dev/Runecraft/Game/ImageAnalyzer/GrayScaleImage.h">
@@ -380,22 +388,7 @@
 			<Option target="Training"/>
 			<Option target="Game"/>
 		</Unit>
-		<Unit filename="/home/free/dev/Runecraft/Game/ImageAnalyzer/Params.h">
-			<Option target="Tests"/>
-			<Option target="Training"/>
-			<Option target="Game"/>
-		</Unit>
 		<Unit filename="/home/free/dev/Runecraft/Game/ImageAnalyzer/Randomizer.h">
-			<Option target="Tests"/>
-			<Option target="Training"/>
-			<Option target="Game"/>
-		</Unit>
-		<Unit filename="/home/free/dev/Runecraft/Game/ImageAnalyzer/ShapeDescriptors.cpp">
-			<Option target="Tests"/>
-			<Option target="Training"/>
-			<Option target="Game"/>
-		</Unit>
-		<Unit filename="/home/free/dev/Runecraft/Game/ImageAnalyzer/ShapeDescriptors.h">
 			<Option target="Tests"/>
 			<Option target="Training"/>
 			<Option target="Game"/>
@@ -403,10 +396,10 @@
 		<Unit filename="/home/free/dev/Runecraft/Game/LinAlg/linalg.h">
 			<Option target="Game"/>
 		</Unit>
-		<Unit filename="/home/free/dev/Runecraft/Game/Tests/test.cpp">
-			<Option target="Tests"/>
+		<Unit filename="/home/free/dev/Runecraft/Game/Training/Networks.cpp">
+			<Option target="Training"/>
 		</Unit>
-		<Unit filename="/home/free/dev/Runecraft/Game/Training/Constants.h">
+		<Unit filename="/home/free/dev/Runecraft/Game/Training/Networks.h">
 			<Option target="Training"/>
 		</Unit>
 		<Unit filename="/home/free/dev/Runecraft/Game/Training/Training.cpp">

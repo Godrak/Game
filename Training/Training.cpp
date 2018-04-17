@@ -1,46 +1,34 @@
-#include <glob.h>
 #include "Training.h"
-#include "../ImageAnalyzer/Params.h"
-#include "../ImageAnalyzer/LineDrawer.h"
 
-
-using namespace ShapeDescriptors;
-using namespace ImageAnalyzer;
-using namespace LineDrawer;
-
-std::string DetermineCorrectShape(std::string fileName) {
-    switch (fileName[5]) {
-        //todo fix
-        case 't':
-        case 'T':
-            return ShapeToString(TRIANGLE);
-        case 'r':
-        case 'R':
-            return ShapeToString(RECTANGLE);
-        case 'c':
-        case 'C':
-            return ShapeToString(CIRCLE);
-        case 'l':
-        case 'L':
-            return ShapeToString(WATER);
-        case 'w':
-        case 'W':
-            return ShapeToString(WAVY);
-        case 'u':
-        case 'U':
-        case 'i':
-            return ShapeToString(UNKNOWN);
-        default:
-            return "#ERROR:INVALID_FILE_NAME";
-    }
-};
-
-const ShapeDescriptor *RandomShapeDescriptor() {
-    return SHAPE_DESCRIPTORS[RANDOMIZER.next(SHAPE_DESCRIPTORS.size())];
+namespace { // training private
+    bool inProgress = false;
+    const int IMAGE_SIDE_SIZE = 32;
+    const float LINE_DRAWING_STEP_SIZE = 0.5;
+    const int BATCH_COUNT = 20;
+    const int BATCH_SIZE = 30000;
+    const int EPOCH_COUNT_PER_BATCH = 6;
+    Randomizer randomizer{};
+    vector<unique_ptr<ShapeDescriptor>> shapeDescriptors{};
 }
 
-ImageLines OffsetPoints(const ShapeDescriptor *base, float offsetSize, float start, float momentum) {
+ShapeIndex Training::RegisterShapeDescriptor(unique_ptr<ShapeDescriptor> shapeDescriptor) {
+    if (inProgress) {
+        cout << "ERROR: cannot register new shape descriptor, training in progress" << endl;
+        return UNKNOWN_SHAPE;
+    }
+
+    shapeDescriptors.push_back(move(shapeDescriptor));
+    return ShapeIndex((int) shapeDescriptors.size() - 1);
+}
+
+ShapeDescriptor *RandomShapeDescriptor() {
+    return shapeDescriptors[randomizer.next(shapeDescriptors.size())].get();
+}
+
+ImageLines
+OffsetPoints(ShapeDescriptor *base, float offsetSize, float start, float momentum, float end, bool invalid) {
     float t = 0;
+    float last_t = 0;
     vector<Line> lines;
     float2 lastBasePoint = base->GetPoint(t);
     float2 lastPoint = lastBasePoint;
@@ -53,56 +41,62 @@ ImageLines OffsetPoints(const ShapeDescriptor *base, float offsetSize, float sta
     float2 nextPoint;
     while (t < 0.99) {
         t += 0.005;
-        if (target == 0 && offset == 0 && t > start) {
+        if (target == 0 && offset == 0 && t > start && t < end) {
             target = offsetSize;
-            if (RANDOMIZER.yesOrNo()) {
+            if (randomizer.yesOrNo()) {
                 target *= -1;
             }
             step = (target - offset) * momentum;
         }
         offset += step;
         if (abs(offset) > abs(target)) {
-            step = (target - offset) * momentum;
+            if (!invalid) {
+                step *= -1;
+            } else {
+                target = randomizer.ratio() * offsetSize * 2 - offsetSize;
+                step = (target - offset) * momentum;
+            }
         }
 
-        nextBasePoint = base->GetPoint(t);
-        shapeNormal = {lastBasePoint.y - nextBasePoint.y, nextBasePoint.x - lastBasePoint.x};
-        if (length(shapeNormal) > 0) {
-            shapeNormal = normalize(shapeNormal);
-            nextPoint = MovePoint(nextBasePoint, offset * shapeNormal);
+        if (base->GetPoint(last_t, t, nextBasePoint)) {
+            shapeNormal = {lastBasePoint.y - nextBasePoint.y, nextBasePoint.x - lastBasePoint.x};
+            if (length(shapeNormal) > 0) {
+                shapeNormal = normalize(shapeNormal);
+                nextPoint = MovePoint(nextBasePoint, offset * shapeNormal);
+            } else {
+                nextPoint = nextBasePoint;
+            }
+            lines.emplace_back(lastPoint, nextPoint);
         } else {
             nextPoint = nextBasePoint;
         }
-        lines.emplace_back(lastPoint, nextPoint);
         lastBasePoint = nextBasePoint;
         lastPoint = nextPoint;
+        last_t = t;
     }
 
     return ImageLines(lines);
 };
 
-Line CreateRandomLine() {
-    auto point = float2(RANDOMIZER.ratio() * 0.9f, RANDOMIZER.ratio() * 0.9f);
-    return Line{
-            point, point + 0.05f
-    };
-}
-
-ImageLines DrawShape(const ShapeDescriptor *shapeDescriptor) {
+ImageLines DrawShape(ShapeDescriptor *shapeDescriptor) {
     float t = 0;
+    float last_t = 0;
     vector<Line> lines;
     float2 lastPoint = shapeDescriptor->GetPoint(t);
+    float2 nextPoint;
     while (t < 0.99) {
         t += 0.005;
-        float2 nextPoint = shapeDescriptor->GetPoint(t);
-        lines.emplace_back(lastPoint, nextPoint);
+        if (shapeDescriptor->GetPoint(last_t, t, nextPoint)) {
+            lines.emplace_back(lastPoint, nextPoint);
+        }
+        last_t = t;
         lastPoint = nextPoint;
     }
 
     return ImageLines(lines);
 };
 
-ImageLines ComposeShapes(const ShapeDescriptor *base, const ShapeDescriptor *modifier, int multiplication) {
+ImageLines ComposeShapes(ShapeDescriptor *base, ShapeDescriptor *modifier, int multiplication) {
     float t = 0;
     ImageLines image;
     while (t < 0.99) {
@@ -127,31 +121,39 @@ void generateInvalidData(ofstream &trainingData,
         }
 
         ImageLines image;
-        if (RANDOMIZER.ratio() > 0.2) {
-            float offset = RANDOMIZER.ratio() + 1.f;
-            if (RANDOMIZER.yesOrNo()) {
+        if (randomizer.ratio() > 0.7f) {
+            float offset = randomizer.ratio() + 0.5f;
+            if (randomizer.yesOrNo()) {
                 offset *= -1.f;
             }
-            image = OffsetPoints(RandomShapeDescriptor(), offset, RANDOMIZER.ratio() * 0.8f,
-                                 RANDOMIZER.ratio() * 0.1f + 0.05f);
-        }
-
-        if (RANDOMIZER.ratio() > 0.5f) {
+            image = OffsetPoints(RandomShapeDescriptor(), offset, randomizer.ratio() * 0.3f,
+                                 randomizer.ratio() * 0.1f + 0.05f, 1, true);
+        } else if (randomizer.ratio() > 0.1f) {
             vector<Line> lines;
-            float2 start{RANDOMIZER.ratio(), RANDOMIZER.ratio()};
+            float2 start{randomizer.ratio(), randomizer.ratio()};
             float2 end;
-            for (int k = 0; k < RANDOMIZER.next(4, 16); ++k) {
-                end = float2{RANDOMIZER.ratio(), RANDOMIZER.ratio()};
-                lines.emplace_back(start, end);
-                start = end;
+            float2 previousStart;
+            for (int k = 0; k < randomizer.nextExponential(); ++k) {
+                float2 dir = start - previousStart;
+                end = float2{randomizer.ratio(), randomizer.ratio()};
+                if (randomizer.ratio() > 0.3) {
+                    lines.emplace_back(start, (end + dir) * 0.3f);
+                    previousStart = start;
+                    start = end + dir;
+                } else {
+                    lines.emplace_back(start, end);
+                    previousStart = start;
+                    start = end;
+                }
             }
+            image.Add(ImageLines(lines));
         }
 
-        auto rotation = CreateRotationMatrix(RANDOMIZER.ratio());
+        auto rotation = CreateRotationMatrix(randomizer.ratio());
         image.Transform(rotation);
         image.Normalize();
-        auto finalImage = DrawLines(image);
-        RandomizeData(finalImage);
+        auto finalImage = DrawLines(image, IMAGE_SIDE_SIZE, LINE_DRAWING_STEP_SIZE);
+        RandomizeData(finalImage, randomizer);
 
         if (generate) {
             std::string imageName = "generated/invalid" + std::to_string(i);
@@ -163,7 +165,7 @@ void generateInvalidData(ofstream &trainingData,
         }
         trainingData << std::endl;
         //output shape
-        for (int j = 0; j < NETWORK_OUTPUT_SIZE; ++j) {
+        for (int j = 0; j < shapeDescriptors.size(); ++j) {
             trainingData << 0;
             trainingData << " ";
         }
@@ -172,60 +174,71 @@ void generateInvalidData(ofstream &trainingData,
     }
 };
 
-void Training::generateData(const std::string &filename, int validDataCount,
+void Training::GenerateData(const std::string &filename, int validDataCount,
                             int invalidDataCount, bool generateImages) {
+    if (shapeDescriptors.empty()) {
+        cout << "ERROR: no shape descriptors registered" << endl;
+    }
+
     ofstream trainingData;
-    trainingData.open(filename);
+    trainingData.open("batches/" + filename);
     int active = 0;
 
-    trainingData << validDataCount + invalidDataCount << " " << NETWORK_INPUT_SIZE << " "
-                 << NETWORK_OUTPUT_SIZE << std::endl;
+    trainingData << validDataCount + invalidDataCount << " " << IMAGE_SIDE_SIZE * IMAGE_SIDE_SIZE << " "
+                 << shapeDescriptors.size() << std::endl;
 
 
     for (int i = 0; i < validDataCount; i++) {
         if (i % 500 == 0) {
             cout << "generating: " << to_string(i) << endl;
         }
-        active = active % (int) SHAPE_DESCRIPTORS.size();
-        const auto *activeDescriptor = SHAPE_DESCRIPTORS[active];
-        const auto *activeModifier = RandomShapeDescriptor();
+        active = active % (int) shapeDescriptors.size();
+        auto *activeDescriptor = shapeDescriptors[active].get();
+        auto *activeModifier = RandomShapeDescriptor();
 
         ImageLines image;
-        if (RANDOMIZER.ratio() > 0.5f)
-            image = ComposeShapes(activeDescriptor, activeModifier, RANDOMIZER.next(8, 14));
+        if (randomizer.ratio() > 0.5f)
+            image = ComposeShapes(activeDescriptor, activeModifier, randomizer.next(8, 14));
         else {
-            float offset = (RANDOMIZER.ratio() * 0.4f - 0.2f);
-            image = OffsetPoints(activeDescriptor, offset, RANDOMIZER.ratio()*0.8f, RANDOMIZER.ratio() * 0.01f);
+            float offset = (randomizer.ratio() * 0.15f - 0.075f);
+            image = OffsetPoints(activeDescriptor, offset, randomizer.ratio() * 0.7f + 0.05f,
+                                 randomizer.ratio() * 0.1f,
+                                 0.85f, false);
         }
         image.Normalize();
 
         auto poi = activeDescriptor->GetPointsOfInterest();
-        if (!poi.empty() && RANDOMIZER.ratio() > 0.5) {
-            auto poiImage = DrawShape(RandomShapeDescriptor());
-            float3 position = poi[RANDOMIZER.next(poi.size())];
-            auto translation = CreateTranslationMatrix(float2{position.x, position.y});
-            auto scaling = CreateScalingMatrix({position.z * 0.8f, position.z * 0.8f});
-            poiImage.Transform(mul<float, 3, 3>(translation, scaling));
-            image.Add(poiImage);
+        if (!poi.empty()) {
+            for (float3 p : poi) {
+                if (randomizer.ratio() > 0.5) {
+                    auto *innerShapeDescriptor = RandomShapeDescriptor();
+
+                    ImageLines poiImage;
+                    if (randomizer.ratio() > 0.7) {
+                        poiImage = DrawShape(innerShapeDescriptor);
+                    } else {
+                        poiImage = ComposeShapes(innerShapeDescriptor, RandomShapeDescriptor(), randomizer.next(8, 14));
+                    }
+                    poiImage.Normalize();
+                    float3 position = p;
+                    auto translation = CreateTranslationMatrix(float2{position.x, position.y});
+                    auto scaling = CreateScalingMatrix({position.z * 0.8f, position.z * 0.8f});
+                    poiImage.Transform(mul<float, 3, 3>(translation, scaling));
+                    image.Add(poiImage);
+                }
+            }
         }
 
         auto deformation = CreateScalingMatrix(
-                float2{0.8f + RANDOMIZER.ratio() * 0.4f, 0.8f + RANDOMIZER.ratio() * 0.4f});
+                float2{0.8f + randomizer.ratio() * 0.4f, 0.8f + randomizer.ratio() * 0.4f});
         image.Transform(deformation);
 
         image.Normalize();
 
-        vector<Line> randomLines;
-        for (int k = 0; k < RANDOMIZER.next(0, 5); ++k) {
-            randomLines.push_back(CreateRandomLine());
-        }
-        image.Add(ImageLines(randomLines));
-
-
-        auto finalImage = DrawLines(image);
-        RandomizeData(finalImage);
+        auto finalImage = DrawLines(image, IMAGE_SIDE_SIZE, LINE_DRAWING_STEP_SIZE);
+        RandomizeData(finalImage, randomizer);
         if (generateImages) {
-            std::string imageName = "generated/" + ShapeToString(Shape(active)) + std::to_string(i);
+            std::string imageName = "generated/" + activeDescriptor->GetName() + std::to_string(i);
             finalImage.SaveToFile(imageName);
         }
 
@@ -234,7 +247,7 @@ void Training::generateData(const std::string &filename, int validDataCount,
         }
         trainingData << std::endl;
         //output shape
-        for (int j = 0; j < NETWORK_OUTPUT_SIZE; ++j) {
+        for (int j = 0; j < shapeDescriptors.size(); ++j) {
             trainingData << (j == active ? 1 : 0);
             trainingData << " ";
         }
@@ -244,71 +257,142 @@ void Training::generateData(const std::string &filename, int validDataCount,
 
     generateInvalidData(trainingData, invalidDataCount, generateImages);
     trainingData.close();
-};
-
-
-Training::TrainingCase::TrainingCase(string networkName, vector<unsigned int> networkStructure)
-        : networkName(networkName), networkStructure(networkStructure) {
-
-    ann = fann_create_standard_array(networkStructure.size(), networkStructure.data());
-
-    fann_set_activation_function_hidden(ann, FANN_ELLIOT);
-    fann_set_training_algorithm(ann, FANN_TRAIN_INCREMENTAL);
-    fann_set_train_stop_function(ann, FANN_STOPFUNC_BIT);
 }
 
-void Training::TrainingCase::Train(int epochCount) {
-    fann_train_on_data(ann, data, epochCount, 1, 0.f);
-}
 
-void Training::TrainingCase::LoadData(const string &filename) {
-    if (data != nullptr) {
-        fann_destroy_train(data);
+void Training::Train(string networkFile) {
+    if (shapeDescriptors.empty()) {
+        cout << "ERROR: no shape descriptors registered for training" << endl;
+        return;
     }
-    data = fann_read_train_from_file(filename.c_str());
+
+    inProgress = true;
+    TrainingCase network(networkFile,
+                         vector<unsigned int>{IMAGE_SIDE_SIZE * IMAGE_SIDE_SIZE,
+                                              (unsigned int)(shapeDescriptors.size()*60),
+                                              (unsigned int)(shapeDescriptors.size()*8),
+                                              (int) shapeDescriptors.size()});
+
+//    for (int i = 0; i < BATCH_COUNT; ++i) {
+//        cout << "generating batch " << i + 1 << " from " << BATCH_COUNT << endl;
+//        GenerateData("batch" + to_string(i) + ".data", BATCH_SIZE * 2 / 3.0f, BATCH_SIZE / 3.0f, false);
+//    }
+
+    network.SetLearningParams(0.1, 0);
+
+    network.TrainOnAllBatches(EPOCH_COUNT_PER_BATCH);
+    network.TrainOnAllBatches(EPOCH_COUNT_PER_BATCH);
+    network.TrainOnAllBatches(EPOCH_COUNT_PER_BATCH);
+
+    network.Save(networkFile);
+    inProgress = false;
 }
 
-void Training::TrainingCase::Test(ostream &output) {
-    vector<string> testFiles;
-    glob_t globResult;
-    glob("test/*", GLOB_TILDE, NULL, &globResult);
-    for (int i = 0; i < globResult.gl_pathc; ++i) {
-        testFiles.emplace_back(globResult.gl_pathv[i]);
-    }
-    vector<GrayScaleImage> testData;
+void Training::ManualTraining(string networkFile) {
+    using namespace Training;
+    TrainingCase network(networkFile,
+                         vector<unsigned int>{IMAGE_SIDE_SIZE * IMAGE_SIDE_SIZE, 512, 64,
+                                              (int) shapeDescriptors.size()});
+    string dataName = "data.data";
+    string prefix;
+    string networkName = "network.net";
 
-    for (auto &testFile : testFiles) {
-        GrayScaleImage test(testFile);
+    int validDataCount;
+    int invalidDataCount;
+    int epochCount;
+    int repetitions;
+    float learningRate;
+    float learningMomentum;
 
-        auto *data = fann_run(ann, test.Serialize().data());
-        vector<float> result(fann_run(ann, test.Serialize().data()), data + NETWORK_OUTPUT_SIZE);
-        output << testFile << "\t" << DetermineCorrectShape(testFile) << "\t";
-        for (int j = 0; j < result.size(); ++j) {
-            output << (int) (result[j] * 100) << "\t";
+    while (true) {
+        char command;
+        cout << "awaiting command" << endl;
+        cin >> command;
+        switch (command) {
+            case 'g':
+                cout << "valid:" << endl;
+                cin >> validDataCount;
+                cout << " invalid:" << endl;
+                cin >> invalidDataCount;
+                cout << "dataName:" << endl;
+                cin >> dataName;
+
+                GenerateData(dataName, validDataCount, invalidDataCount, false);
+                cout << "data generated" << endl;
+                continue;
+            case 'l':
+                cout << "load  data, dataName:" << endl;
+                cin >> dataName;
+                network.LoadData(dataName);
+                cout << "data loaded" << endl;
+                continue;
+            case 'e':
+                cout << "epochCount:" << endl;
+                cin >> epochCount;
+                network.Train(epochCount);
+                continue;
+            case 's':
+                network.Save(networkName);
+                cout << "saved" << endl;
+                continue;
+            case 't': {
+                cout << "test, testFileName: " << endl;
+                string testFileName;
+                cin >> testFileName;
+                cout << "RESULT: " << network.Test(testFileName) << endl;
+            }
+                continue;
+            case 'm':
+                cout << "learning rate (default 0.7): " << endl;
+                cin >> learningRate;
+                cout << "learning momentum (default 0): " << endl;
+                cin >> learningMomentum;
+                network.SetLearningParams(learningRate, learningMomentum);
+                continue;
+            case 'q':
+                network.Save(networkName);
+                return;
+            case 'c':
+                cout << "testFilesPrefix: " << endl;
+                cin >> prefix;
+                cout << "valid:" << endl;
+                cin >> validDataCount;
+                cout << " invalid:" << endl;
+                cin >> invalidDataCount;
+                cout << "epochCount:" << endl;
+                cin >> epochCount;
+                cout << "repetitions:" << endl;
+                cin >> repetitions;
+                for (int i = 0; i < repetitions; ++i) {
+                    auto t = std::time(nullptr);
+                    cout << "time: " << std::asctime(std::localtime(&t)) << endl;
+                    cout << "repetition: " << i << " from " << repetitions << endl;
+                    dataName = prefix + to_string(i) + ".data";
+                    GenerateData(dataName, validDataCount, invalidDataCount, false);
+                    network.LoadData(dataName);
+                    cout << "data generated" << endl;
+                    network.Train(epochCount);
+                }
+                continue;
+            case 'b':
+                cout << "epochCount: " << endl;
+                cin >> epochCount;
+                network.TrainOnAllBatches(epochCount);
+                continue;
+            case 'Q':
+                return;
+            default:
+                cout << "invalid command" << endl;
+                cout << "g generate" << endl;
+                cout << "c complex" << endl;
+                cout << "m learning params" << endl;
+                cout << "e train" << endl;
+                cout << "t test" << endl;
+                cout << "s save" << endl;
+                cout << "q quit" << endl;
+                cout << "Q quit without save" << endl;
+                continue;
+
         }
-        output << endl;
     }
-}
-
-void Training::TrainingCase::Save(const string &filename) {
-    fann_save(ann, filename.c_str());
-}
-
-void
-Training::TrainingCase::BatchTrain(uint validDataCount, uint invalidDataCount, uint epochsPerBatch, uint batchCount) {
-    for (int i = 0; i < batchCount; ++i) {
-        cout << "batch: " << i + 1 << " from " << batchCount << endl;
-        generateData("batch.data", validDataCount, invalidDataCount);
-        LoadData("batch.data");
-        cout << "data generated" << endl;
-        Train(epochsPerBatch);
-    }
-}
-
-void Training::TrainingCase::SetLearningParams(float learningRate, float learningMomentum) {
-    fann_set_learning_rate(ann, learningRate);
-    fann_set_learning_momentum(ann, learningMomentum);
-
-}
-
-
+};

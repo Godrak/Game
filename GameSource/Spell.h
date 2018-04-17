@@ -2,7 +2,6 @@
 
 #include "UrhoIncludeAll.h"
 #include "../ImageAnalyzer/GrayScaleImage.h"
-#include "../ImageAnalyzer/Params.h"
 #include "../ImageAnalyzer/ImageAnalyzer.h"
 #include "FireComponent.h"
 #include "TimeOutComponent.h"
@@ -28,7 +27,10 @@ public:
     ShieldEffect(Context *context) : Effect(context) {}
 
     void ApplyEffect(Node *node) override {
-        auto *shield = node->CreateComponent<ShieldComponent>();
+        auto *shield = node->GetComponent<ShieldComponent>();
+        if (shield == NULL) {
+            shield = node->CreateComponent<ShieldComponent>();
+        }
         shield->ChangeShieldPower(SHIELD_POWER);
     }
 };
@@ -108,10 +110,15 @@ public:
         spellNode = node;
     }
 
-    void ActivateSpell(Vector3 position, Node *caster) override {
-        if (spellNode != NULL) {
+    void Update(float timeStep) override {
+        LogicComponent::Update(timeStep);
+        if (removed) {
             spellNode->Remove();
         }
+    }
+
+    void ActivateSpell(Vector3 position, Node *caster) override {
+        removed = true;
     }
 
 private:
@@ -130,8 +137,8 @@ public:
 
             Node *spellNode = GetScene()->CreateTemporaryChild();
             spellNode->SetWorldPosition(
-                    position + Vector3{(RANDOMIZER.ratio() * WALL_AREA_SCALE) - WALL_AREA_SCALE / 2, 0,
-                                       (RANDOMIZER.ratio() * WALL_AREA_SCALE) - WALL_AREA_SCALE / 2});
+                    position + Vector3{(node / (float) WALL_NODE_COUNT * WALL_AREA_SCALE) - WALL_AREA_SCALE / 2, 0,
+                                       (node / (float) WALL_NODE_COUNT * WALL_AREA_SCALE) - WALL_AREA_SCALE / 2});
             spellNode->SetScale(WALL_NODE_SCALE);
 
             staticModel = spellNode->CreateComponent<StaticModel>();
@@ -146,9 +153,14 @@ public:
             collisionShape = spellNode->CreateComponent<CollisionShape>();
             collisionShape->SetShapeType(SHAPE_SPHERE);
 
+            if (additionalEffect != NULL) {
+                additionalEffect->ApplyEffect(spellNode);
+            }
+
             SubscribeToEvent(spellNode, E_NODECOLLISIONSTART, URHO3D_HANDLER(WallSpell, HandleNodeCollision));
 
             spellNodes.Push(spellNode);
+            positions.Push(spellNode->GetPosition());
         }
         active = true;
     }
@@ -166,16 +178,22 @@ public:
         if (!active) return;
         time += timeStep;
         if (!removed && time > WALL_TIME_LIMIT) {
+            for (const auto &pos : positions) {
+                ActivateNextSpell(pos);
+            }
+        }
+
+        if (!removed && time > WALL_TIME_LIMIT) {
+            removed = true;
             for (auto *node : spellNodes) {
-                ActivateNextSpell(node->GetPosition());
                 node->Remove();
             }
-            removed = true;
         }
     }
 
 private:
     Vector<Node *> spellNodes{};
+    Vector<Vector3> positions{};
     float time = 0;
 
 };
@@ -211,11 +229,11 @@ public:
             direction.Normalize();
         }
 
-        spellNode->SetWorldPosition(casterPosition + direction + Vector3::UP);
+        spellNode->SetWorldPosition(casterPosition + direction*2 + Vector3::UP * PROJECTILE_SCALE);
         spellNode->SetScale(PROJECTILE_SCALE);
 
         rigidBody = spellNode->CreateComponent<RigidBody>();
-        rigidBody->SetMass(1.f);
+        rigidBody->SetMass(3.f);
         rigidBody->SetCollisionLayer(1);
         rigidBody->ApplyImpulse(direction * PROJECTILE_STRENGTH);
 
@@ -314,5 +332,62 @@ public:
 
 private:
     float time = 0;
+
+};
+
+class LocalSpell : public SpellBase {
+URHO3D_OBJECT(LocalSpell, SpellBase);
+public:
+    LocalSpell(Context *context) : SpellBase(context) {}
+
+    void ActivateSpell(Vector3 position, Node *caster) override {
+        casterNode = caster;
+
+        spellNode = GetScene()->CreateTemporaryChild();
+        spellNode->SetWorldPosition(position);
+        spellNode->SetScale(LOCAL_SPELL_SCALE);
+
+        auto *particleEmitter = spellNode->CreateComponent<ParticleEmitter>();
+        auto effect = GetSubsystem<ResourceCache>()->GetResource<ParticleEffect>("Data/Particle/Disco.xml");
+        particleEmitter->SetEffect(effect);
+
+        rigidBody = spellNode->CreateComponent<RigidBody>();
+        rigidBody->SetCollisionLayer(1);
+        rigidBody->SetTrigger(true);
+
+        collisionShape = spellNode->CreateComponent<CollisionShape>();
+        collisionShape->SetShapeType(SHAPE_CYLINDER);
+
+        if (additionalEffect != NULL) {
+            additionalEffect->ApplyEffect(spellNode);
+        }
+
+        SubscribeToEvent(spellNode, E_NODECOLLISIONSTART, URHO3D_HANDLER(LocalSpell, HandleNodeCollision));
+        active = true;
+    }
+
+    void HandleNodeCollision(StringHash eventType, VariantMap &eventData) {
+        using namespace NodeCollision;
+        auto *otherNode = (Node *) eventData[P_OTHERNODE].GetPtr();
+        auto *entity = otherNode->GetDerivedComponent<Entity>();
+        if (entity != NULL) {
+            if (additionalEffect != NULL)
+                additionalEffect->ApplyEffect(otherNode);
+        }
+    }
+
+    void Update(float timeStep) override {
+        if (!active) return;
+        time += timeStep;
+        if (!removed && time > LOCAL_SPELL_DURATION) {
+            ActivateNextSpell(spellNode->GetPosition());
+            removed = true;
+            spellNode->Remove();
+        }
+    }
+
+private:
+    float time = 0;
+
 
 };

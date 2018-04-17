@@ -32,7 +32,12 @@ URHO3D_OBJECT(Entity, LogicComponent);
         LogicComponent::Update(timeStep);
         auto *rigidBody = GetNode()->GetComponent<RigidBody>();
         if (rigidBody != NULL && animationController != NULL /*&& idleAnim != NULL && walkAnim != NULL*/) {
-            if (rigidBody->GetLinearVelocity().Length() > 0.5 && state == WALKING) {
+            if (attackDuration > 0) {
+                state = ATTACK;
+                attackDuration -= timeStep;
+                animationController->SetSpeed(attackAnim, 2.f);
+                animationController->PlayExclusive(attackAnim, 0, true, 0.3f);
+            } else if (rigidBody->GetLinearVelocity().Length() > 0.5 && state == WALKING) {
                 animationController->SetSpeed(walkAnim, rigidBody->GetLinearVelocity().Length() / 2.5f);
                 animationController->PlayExclusive(walkAnim, 0, true, 0.5f);
             } else {
@@ -40,10 +45,29 @@ URHO3D_OBJECT(Entity, LogicComponent);
                 animationController->PlayExclusive(idleAnim, 0, true, 0.5f);
             }
         }
+
     }
 
+    virtual void Attack(Node *target) {
+        auto pos = target->GetWorldPosition();
+        auto dir = (pos - GetNode()->GetWorldPosition()).Normalized();
+        Quaternion rotation;
+        rotation.FromLookRotation(dir, Vector3::UP);
+        GetNode()->SetRotation(rotation);
+        if (attackDuration <= 0) {
+            attackDuration = MUTANT_ATTACK_DURATION;
+            state = ATTACK;
+            attackTrigger = true;
+        }
 
-    virtual void Attack() {};
+        if (attackDuration <= MUTANT_ATTACK_DURATION / 2 && attackTrigger) {
+            attackTrigger = false;
+            auto *enemy = target->GetDerivedComponent<Entity>();
+            if (enemy != NULL) {
+                enemy->Damage(attackDamage);
+            }
+        }
+    };
 
     virtual void Move(Vector3 direction, float speed) {
         direction.y_ = 0;
@@ -77,15 +101,19 @@ URHO3D_OBJECT(Entity, LogicComponent);
 
 protected:
     enum EntityState {
-        IDLE, WALKING,
+        IDLE, WALKING, ATTACK
     };
 
     String walkAnim{};
     String idleAnim{};
+    String attackAnim{};
     HitPointsComponent *health{};
     ShieldComponent *shield{};
     float maxSpeed{};
     EntityState state;
     AnimationController *animationController{};
+    float attackDuration{};
+    float attackDamage{};
+    bool attackTrigger;
 
 };
