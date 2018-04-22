@@ -88,9 +88,18 @@ static const float HEALING_DURATION = 5;
 static const float FROZEN_DURATION = 5;
 static const float FROZEN_SLOW_FACTOR = 0.5f;
 
+//POWER_STATE
+static const float POWER_STATE_DURATION = 5;
+static const float POWER_FACTOR = 5;
 
-//SHIELD_EFFECT
-static const int SHIELD_POWER = 50;
+//SHIELD
+static const float SHIELD_POWER = 2;
+
+//TOTEMS
+static const float TOTEM_SCALE = 2;
+static const float TOTEM_EFFECT_TRIGGER_TIME = 2;
+static const float TOTEM_EFFECT_TRIGGER_WINDOW = 0.2;
+static const float TOTEM_EFFECT_SIZE = 5;
 
 //WALL_SPELL
 static const int WALL_NODE_COUNT = 5;

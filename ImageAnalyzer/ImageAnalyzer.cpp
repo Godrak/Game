@@ -8,6 +8,7 @@ using namespace LinAlgExtended;
 
 namespace { //private
     const bool DEBUG_IMAGE_SAVE = true;
+    const bool ANALYZE_PATTERN = true;
     const int DEBUG_OUTPUT = 1;
     const int IMAGE_SIDE_SIZE = 32;
     const float LINE_DRAWING_STEP_SIZE = 0.5f;
@@ -42,7 +43,6 @@ ShapeIndex CountShapes(const vector<ShapeIndex> &shapes, int &count) {
 
 ShapeIndex AnalyzeImageLines(ImageLines imageLines, float &matchingRotation) {
     imageLines.Normalize();
-    auto translation = CreateTranslationMatrix({-0.5f, -0.5f});
     vector<vector<float>> outputs;
     vector<float> rotations;
     float t = 0.f;
@@ -50,11 +50,10 @@ ShapeIndex AnalyzeImageLines(ImageLines imageLines, float &matchingRotation) {
 
     while (t < 1) {
         ImageLines copy = imageLines;
-        auto rotation = CreateRotationMatrix(t);
-        copy.Transform(mul<float, 3, 3>(rotation, translation));
+        copy.Transform(CreateRotationMatrix(t, float2(0.5f, 0.5f)));
         copy.Normalize();
         GrayScaleImage image = DrawLines(copy, IMAGE_SIDE_SIZE, LINE_DRAWING_STEP_SIZE);
-//        RandomizeData(image, randomizer);
+        RandomizeData(image, randomizer);
         auto input = image.Serialize();
         outputs.push_back(neuralNetwork.Calculate(input));
         rotations.push_back(t);
@@ -112,7 +111,8 @@ ShapeNode ImageAnalyzer::Analyze(ImageLines imageLines) {
     node.shape = AnalyzeImageLines(imageLines, matchingRotation);
 
     if (DEBUG_IMAGE_SAVE) {
-        DrawLines(imageLines, IMAGE_SIDE_SIZE, LINE_DRAWING_STEP_SIZE).SaveToFile("debug/im" + to_string(randomizer.ratio()));
+        DrawLines(imageLines, IMAGE_SIDE_SIZE, LINE_DRAWING_STEP_SIZE).SaveToFile(
+                "debug/im" + to_string(randomizer.ratio()));
     }
 
     if (DEBUG_OUTPUT > 0)
@@ -123,22 +123,22 @@ ShapeNode ImageAnalyzer::Analyze(ImageLines imageLines) {
         auto *shapeDescriptor = shapeDesc->second.get();
         float t = 0;
         vector<ShapeIndex> pattern;
-        while (t < 1) {
-            ImageLines copy = imageLines;
+        if (ANALYZE_PATTERN) {
+            while (t < 1) {
+                ImageLines copy = imageLines;
+                float2 point = shapeDescriptor->GetPoint(t);
+                point = RotatePoint(point, matchingRotation, float2{0.5f, 0.5f});
+                copy.Clip(point - float2{0.1f, 0.1f}, point + float2{0.1f, 0.1f});
+                pattern.push_back(AnalyzeImageLines(copy));
 
-            float2 point = shapeDescriptor->GetPoint(t);
-            point = MovePoint(point, float2{-0.5f, -0.5f});
-            point = RotatePoint(point, matchingRotation);
-            point = MovePoint(point, float2{0.5f, 0.5f});
+                t += 1 / 100.f;
 
-            copy.Clip(point - float2{0.1f, 0.1f}, point + float2{0.1f, 0.1f});
-
-            pattern.push_back(AnalyzeImageLines(copy));
-            if (!copy.Empty() && DEBUG_IMAGE_SAVE) {
-                copy.Normalize();
-                DrawLines(copy, IMAGE_SIDE_SIZE, LINE_DRAWING_STEP_SIZE).SaveToFile("debug/pat" + to_string(randomizer.ratio()));
+                if (!copy.Empty() && DEBUG_IMAGE_SAVE) {
+                    copy.Normalize();
+                    DrawLines(copy, IMAGE_SIDE_SIZE, LINE_DRAWING_STEP_SIZE).SaveToFile(
+                            "debug/pat" + to_string(randomizer.ratio()));
+                }
             }
-            t += 1 / 36.f;
         }
 
         int count = 0;
@@ -152,13 +152,18 @@ ShapeNode ImageAnalyzer::Analyze(ImageLines imageLines) {
         }
 
         for (float3 poi : shapeDescriptor->GetPointsOfInterest()) {
-            float2 middle{poi.x + poi.z / 2, poi.y + poi.z / 2};
-            middle = MovePoint(middle, float2{-0.5f, -0.5f});
-            middle = RotatePoint(middle, matchingRotation);
-            middle = MovePoint(middle, float2{0.5f, 0.5f});
-
             ImageLines copy = imageLines;
-            copy.Clip(middle - float2{poi.z / 2, poi.z / 2}, middle + float2{poi.z / 2, poi.z / 2});
+            copy.Transform(CreateRotationMatrix(matchingRotation, float2(0.5f, 0.5f)));
+            copy.Normalize();
+            auto origSize = shapeDescriptor->GetSize();
+            auto size = copy.Size();
+            copy.Transform(CreateScalingMatrix(origSize / size));
+            copy.Normalize();
+            if (DEBUG_IMAGE_SAVE) {
+                DrawLines(copy, IMAGE_SIDE_SIZE, LINE_DRAWING_STEP_SIZE).SaveToFile(
+                        "debug/r" + to_string(randomizer.ratio()));
+            }
+            copy.Clip(float2(poi.x, poi.y), float2(poi.x, poi.y) + float2(poi.z, poi.z));
             node.childNodes.push_back(Analyze(copy));
         }
     }

@@ -301,9 +301,6 @@
 		<Unit filename="/home/free/dev/Runecraft/Game/GameSource/Entity.h">
 			<Option target="Game"/>
 		</Unit>
-		<Unit filename="/home/free/dev/Runecraft/Game/GameSource/FireComponent.h">
-			<Option target="Game"/>
-		</Unit>
 		<Unit filename="/home/free/dev/Runecraft/Game/GameSource/HitPointsComponent.h">
 			<Option target="Game"/>
 		</Unit>
@@ -337,7 +334,13 @@
 		<Unit filename="/home/free/dev/Runecraft/Game/GameSource/SpellSystem.h">
 			<Option target="Game"/>
 		</Unit>
+		<Unit filename="/home/free/dev/Runecraft/Game/GameSource/States.h">
+			<Option target="Game"/>
+		</Unit>
 		<Unit filename="/home/free/dev/Runecraft/Game/GameSource/TimeOutComponent.h">
+			<Option target="Game"/>
+		</Unit>
+		<Unit filename="/home/free/dev/Runecraft/Game/GameSource/Totems.h">
 			<Option target="Game"/>
 		</Unit>
 		<Unit filename="/home/free/dev/Runecraft/Game/GameSource/UrhoIncludeAll.h">

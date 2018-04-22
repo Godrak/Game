@@ -4,9 +4,9 @@ namespace { // training private
     bool inProgress = false;
     const int IMAGE_SIDE_SIZE = 32;
     const float LINE_DRAWING_STEP_SIZE = 0.5;
-    const int BATCH_COUNT = 20;
-    const int BATCH_SIZE = 30000;
-    const int EPOCH_COUNT_PER_BATCH = 6;
+    const int BATCH_COUNT = 6;
+    const int BATCH_SIZE = 100000;
+    const int EPOCH_COUNT_PER_BATCH = 5;
     Randomizer randomizer{};
     vector<unique_ptr<ShapeDescriptor>> shapeDescriptors{};
 }
@@ -26,7 +26,7 @@ ShapeDescriptor *RandomShapeDescriptor() {
 }
 
 ImageLines
-OffsetPoints(ShapeDescriptor *base, float offsetSize, float start, float momentum, float end, bool invalid) {
+OffsetPoints(ShapeDescriptor *base, float offsetSize, float start, float momentum, float skipRatio, bool invalid) {
     float t = 0;
     float last_t = 0;
     vector<Line> lines;
@@ -41,7 +41,8 @@ OffsetPoints(ShapeDescriptor *base, float offsetSize, float start, float momentu
     float2 nextPoint;
     while (t < 0.99) {
         t += 0.005;
-        if (target == 0 && offset == 0 && t > start && t < end) {
+
+        if (target == 0 && offset == 0 && t > start) {
             target = offsetSize;
             if (randomizer.yesOrNo()) {
                 target *= -1;
@@ -66,7 +67,9 @@ OffsetPoints(ShapeDescriptor *base, float offsetSize, float start, float momentu
             } else {
                 nextPoint = nextBasePoint;
             }
-            lines.emplace_back(lastPoint, nextPoint);
+            if (randomizer.ratio() >= skipRatio) {
+                lines.emplace_back(lastPoint, nextPoint);
+            }
         } else {
             nextPoint = nextBasePoint;
         }
@@ -121,13 +124,13 @@ void generateInvalidData(ofstream &trainingData,
         }
 
         ImageLines image;
-        if (randomizer.ratio() > 0.7f) {
-            float offset = randomizer.ratio() + 0.5f;
+        if (randomizer.ratio() > 0.5f) {
+            float offset = randomizer.ratio() + 0.3f;
             if (randomizer.yesOrNo()) {
                 offset *= -1.f;
             }
             image = OffsetPoints(RandomShapeDescriptor(), offset, randomizer.ratio() * 0.3f,
-                                 randomizer.ratio() * 0.1f + 0.05f, 1, true);
+                                 randomizer.ratio() * 0.015f + 0.03f, randomizer.ratio(), true);
         } else if (randomizer.ratio() > 0.1f) {
             vector<Line> lines;
             float2 start{randomizer.ratio(), randomizer.ratio()};
@@ -200,10 +203,10 @@ void Training::GenerateData(const std::string &filename, int validDataCount,
         if (randomizer.ratio() > 0.5f)
             image = ComposeShapes(activeDescriptor, activeModifier, randomizer.next(8, 14));
         else {
-            float offset = (randomizer.ratio() * 0.15f - 0.075f);
-            image = OffsetPoints(activeDescriptor, offset, randomizer.ratio() * 0.7f + 0.05f,
-                                 randomizer.ratio() * 0.1f,
-                                 0.85f, false);
+            float offset = (randomizer.ratio() * 0.3f - 0.15f);
+            image = OffsetPoints(activeDescriptor, offset, randomizer.ratio(),
+                                 randomizer.ratio() * 0.07f,
+                                 0.3f * randomizer.ratio(), false);
         }
         image.Normalize();
 
@@ -214,7 +217,7 @@ void Training::GenerateData(const std::string &filename, int validDataCount,
                     auto *innerShapeDescriptor = RandomShapeDescriptor();
 
                     ImageLines poiImage;
-                    if (randomizer.ratio() > 0.7) {
+                    if (randomizer.ratio() > 0.8) {
                         poiImage = DrawShape(innerShapeDescriptor);
                     } else {
                         poiImage = ComposeShapes(innerShapeDescriptor, RandomShapeDescriptor(), randomizer.next(8, 14));
@@ -222,9 +225,34 @@ void Training::GenerateData(const std::string &filename, int validDataCount,
                     poiImage.Normalize();
                     float3 position = p;
                     auto translation = CreateTranslationMatrix(float2{position.x, position.y});
-                    auto scaling = CreateScalingMatrix({position.z * 0.8f, position.z * 0.8f});
-                    poiImage.Transform(mul<float, 3, 3>(translation, scaling));
+                    auto scaling = CreateScalingMatrix({position.z, position.z});
+                    auto transformation = mul<float, 3, 3>(translation, scaling);
+                    poiImage.Transform(transformation);
                     image.Add(poiImage);
+
+                    poi = innerShapeDescriptor->GetPointsOfInterest();
+                    if (!poi.empty()) {
+                        for (float3 p2 : poi) {
+                            if (randomizer.ratio() > 0.5) {
+                                innerShapeDescriptor = RandomShapeDescriptor();
+
+                                ImageLines innnerPoiImage;
+                                if (randomizer.ratio() > 0.7) {
+                                    innnerPoiImage = DrawShape(innerShapeDescriptor);
+                                } else {
+                                    innnerPoiImage = ComposeShapes(innerShapeDescriptor, RandomShapeDescriptor(),
+                                                                   randomizer.next(8, 14));
+                                }
+                                innnerPoiImage.Normalize();
+                                position = p2;
+                                translation = CreateTranslationMatrix(float2{position.x, position.y});
+                                scaling = CreateScalingMatrix({position.z * 0.8f, position.z * 0.8f});
+                                innnerPoiImage.Transform(
+                                        mul<float, 3, 3>(transformation, mul<float, 3, 3>(translation, scaling)));
+                                image.Add(innnerPoiImage);
+                            }
+                        }
+                    }
                 }
             }
         }
@@ -267,22 +295,24 @@ void Training::Train(string networkFile) {
     }
 
     inProgress = true;
-    TrainingCase network(networkFile,
-                         vector<unsigned int>{IMAGE_SIDE_SIZE * IMAGE_SIDE_SIZE,
-                                              (unsigned int)(shapeDescriptors.size()*60),
-                                              (unsigned int)(shapeDescriptors.size()*8),
-                                              (int) shapeDescriptors.size()});
+    CascadeTrainingCase network(networkFile,
+                                vector<unsigned int>{IMAGE_SIDE_SIZE * IMAGE_SIDE_SIZE,
+                                                     (int) shapeDescriptors.size()});
 
-//    for (int i = 0; i < BATCH_COUNT; ++i) {
-//        cout << "generating batch " << i + 1 << " from " << BATCH_COUNT << endl;
-//        GenerateData("batch" + to_string(i) + ".data", BATCH_SIZE * 2 / 3.0f, BATCH_SIZE / 3.0f, false);
-//    }
+    for (int i = 0; i < BATCH_COUNT; ++i) {
+        cout << "generating batch " << i + 1 << " from " << BATCH_COUNT << endl;
+        GenerateData("batch" + to_string(i) + ".data", BATCH_SIZE * 7 / 10.0f, BATCH_SIZE * 3 / 10.0f, false);
+    }
 
-    network.SetLearningParams(0.1, 0);
-
-    network.TrainOnAllBatches(EPOCH_COUNT_PER_BATCH);
-    network.TrainOnAllBatches(EPOCH_COUNT_PER_BATCH);
-    network.TrainOnAllBatches(EPOCH_COUNT_PER_BATCH);
+//    network.SetLearningParams(0.1, 0);
+    auto *testData = fann_read_train_from_file("test.data");
+    float mse = network.Test(testData);
+    float newMse = mse - 0.001f;
+    while (newMse < mse) {
+        mse = newMse;
+        network.TrainOnAllBatches(EPOCH_COUNT_PER_BATCH);
+        newMse = network.Test(testData);
+    }
 
     network.Save(networkFile);
     inProgress = false;

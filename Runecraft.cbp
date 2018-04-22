@@ -343,7 +343,7 @@
 		<Unit filename="/home/free/dev/Runecraft/Game/GameSource/Entity.h">
 			<Option target="Runecraft"/>
 		</Unit>
-		<Unit filename="/home/free/dev/Runecraft/Game/GameSource/FireComponent.h">
+		<Unit filename="/home/free/dev/Runecraft/Game/GameSource/FireState.h">
 			<Option target="Runecraft"/>
 		</Unit>
 		<Unit filename="/home/free/dev/Runecraft/Game/GameSource/HitPointsComponent.h">

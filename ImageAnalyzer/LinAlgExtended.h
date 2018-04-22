@@ -13,8 +13,16 @@ namespace LinAlgExtended {
 
     float3x3 CreateRotationMatrix(float parameter);
 
-    float2 MovePoint(float2 point,float2 vector);
+    float3x3 CreateRotationMatrix(float parameter);
 
-    float2 RotatePoint(float2 point, float rotation);
+    float3x3 CreateRotationMatrix(float parameter, float2 middle);
+
+    float3x3 MatrixMul(float3x3 left, float3x3 right);
+
+    float3 MatrixMul(float3x3 left, float3 vector);
+
+    float2 MovePoint(float2 point, float2 vector);
+
+    float2 RotatePoint(float2 point, float rotation, float2 middle);
 
 }

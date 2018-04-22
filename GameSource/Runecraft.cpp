@@ -6,32 +6,33 @@
 Runecraft::Runecraft(Context *context) : Application(context) {
     context->RegisterFactory<InputController>();
     context->RegisterFactory<CameraController>();
-    context->RegisterFactory<TimeOutComponent>();
-    context->RegisterFactory<FireComponent>();
-    context->RegisterFactory<BlueFireComponent>();
-    context->RegisterFactory<PurpleFireComponent>();
-    context->RegisterFactory<GreenFireComponent>();
     context->RegisterFactory<DrawableTexture>();
+    context->RegisterFactory<Caster>();
     context->RegisterFactory<SpellSystem>();
     context->RegisterFactory<Curve>();
-    context->RegisterFactory<HitPointsComponent>();
-    context->RegisterFactory<ShieldComponent>();
+
     context->RegisterFactory<Ninja>();
     context->RegisterFactory<Mutant>();
-    context->RegisterFactory<Caster>();
+    context->RegisterFactory<HitPointsComponent>();
+    context->RegisterFactory<ShieldComponent>();
     context->RegisterFactory<SimpleAI>();
-    context->RegisterFactory<Projectile>();
-    context->RegisterFactory<Explosion>();
+    context->RegisterFactory<TimeOutComponent>();
+
+    context->RegisterFactory<ShieldTotem>();
+    context->RegisterFactory<WindTotem>();
+    context->RegisterFactory<StrengthTotem>();
+    context->RegisterFactory<NatureTotem>();
+
     context->RegisterFactory<FireEffect>();
-    context->RegisterFactory<HealingComponent>();
-    context->RegisterFactory<CasterTarget>();
     context->RegisterFactory<HealingEffect>();
-    context->RegisterFactory<EndOfSpell>();
-    context->RegisterFactory<WallSpell>();
     context->RegisterFactory<ShieldEffect>();
-    context->RegisterFactory<FrozenComponent>();
     context->RegisterFactory<FrozenEffect>();
-    context->RegisterFactory<LocalSpell>();
+    context->RegisterFactory<StrengthEffect>();
+
+    context->RegisterFactory<FireState>();
+    context->RegisterFactory<FrozenState>();
+    context->RegisterFactory<StrengthState>();
+    context->RegisterFactory<HealingState>();
 
     SubscribeToEvent(E_KEYDOWN, URHO3D_HANDLER(Runecraft, HandleKeyDown));
 }
@@ -143,8 +144,8 @@ void Runecraft::CreateMutant(Vector3 position) {
     auto *mutantNode = scene_->CreateChild("Mutant");
     mutantNode->SetPosition(position);
 
-    auto* mutant = mutantNode->CreateComponent<Mutant>();
-    mutant->SetSpeed(MUTANT_SPEED*0.7f);
+    auto *mutant = mutantNode->CreateComponent<Mutant>();
+    mutant->SetSpeed(MUTANT_SPEED * 0.7f);
 
-    mutantNode->CreateComponent<SimpleAI>();
+//    mutantNode->CreateComponent<SimpleAI>();
 }

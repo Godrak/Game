@@ -1,0 +1,43 @@
+\chapter{Introduction}
+\label{chap:gf}
+
+Magic has been an popular part of computer games since their beginning. In many games, like in any fantasy work, magic has its own lore and laws that make it systematical. Great examples of a complexity of magical spells are games Magicka and Magicka2 //TODO, where player casts spells by combining eight elements. For example, using only earth element results in a rock thrown at the enemy, but adding fire will create a classic fireball.
+
+However, its also usually very easy to do magic in games, since players can cause magical storms by pushing few buttons. This spoils the feeling of magic as something extraordinary and secret. In books and movies we can see wizards performing complicated hand gestures, or drawing on the floor some complex shapes, and magic is restricted to a few chosen, and we would like to offer players something similar.
+
+While majority of games binds spells to buttons and restricts players through artificial systems, like special energy required to cast spells, or cool-down of spell, there already exist several ways of how to make player more connected with the magic. In the game Fable: Adventure //TODO, developers used Kinect technology to track players hands. When player performed a correct gesture, game recognized it and casted corresponding spell. 
+
+Another technique used in several games is to let player draw into a predefined area, or through predefined points. Both ***Castlevania: Dawn of Sorrow ***(some pictures here) and Deep Labyrinth take advantage of Nintendo DS drawing interface that allows players draw magic signs. In Castlevania, players draw signs by connecting glowing points in circle in out of combat situations. Deep Labyrinth introduces special casting interface as well, consisting of 3x3 sized grid, where player connects dots. These approaches take away part of the freedom, but they make recognition algorithms much easier, e.g. by tracing only the order of points passed and selecting the right spell.
+
+Different approach to recognition of player drawn spells and their recognition was used in Arx Fatalis. Players were drawing symbols using their mouse, and the sequence of symbols represented some spell. While casting, game encoded mouse moves in 8-directions precision, each direction representing some letter. After player finished their spell, a Levenshtein distance was calculated from each spell to the user created sequence, and best candidate (lowest Levenshtein cost) was returned. 
+
+\chapter{Goals}
+\label{chap:gf}
+
+We would like to allow players draw complex spells. Instead of time sequence of symbols, players could draw symbols arranged in a shape of other symbol, or embed one symbol in another. We also want our approach to be applicable in multi-player environments, where new situations can occur, such as multiple players drawing one spell. We don't want to introduce aiding structures such as trigger points, since they require order in which they were passed and force player to draw in a certain way or direction. They are also not very usable in multi-player environment, since they can't handle multiple people drawing at the same time.
+
+For the purpose of this work, we specify following requirements that we have on our recognition system. 
+
+Durability against shape deformations: Since we want to recognize hand-drawn shapes, our system has to be prepared against human imprecise drawing, especially when drawing with mouse.
+
+Extendability: We would like to offer easy-to-use library, that other developers can incorporate. For this purposes we would like to let them define their own shapes that should be recognized.
+
+Speed: Our system should be applicable in demanding video games environment, prepared for the possibility of many players drawing their spells. To achieve this, we require fast recognition technique as well as usability in parallel environment.
+
+Recognition of embedded shapes and shape conglomerations: To allow players cast complex spells, we need to give them ability to somehow encode multiple symbols in one spell. We have decided that it will be in a form of shape embeddings, which means that shape can contain another shape in defined spot. We also allow them to create shape conglomerations, where several shapes are organized in a shape of symbol. TODO examples
+
+For these purposes, we need to find pattern recognition algorithm that most closely fits our needs and modify it to eliminate any of its shortcomings.
+
+\chapter{Pattern Recognition}
+\label{chap:gf}
+
+There are thousands of algorithms for pattern recognition as it is central problem for . We can divide them into learning-based approaches and template-based approaches [TODO skeletons.pdf p.193].in the learning-based approaches, pattern classifiers are obtained trough training using classified samples. In the template based approaches, patterns are described by templates and the recognition problem becomes searching for the best matching template for a given input image.
+
+[TODO distanceTransform.pdf p.1]
+We can also divide them based on the level of image feature extraction into three classes: algorithms that use pixel values directly, e.g. correlation methods; algorithms that use low level features such as edges and corners, e.g. distance transform method; and algorithms that use high level features such as identified objects or relation between the features, e.g. graph-theoretic-methods. 
+
+To make this work possible, we have selected only several algorithms from different categories that we briefly explain and compare with our requirements.
+
+\subchapter{Template matching}
+
+

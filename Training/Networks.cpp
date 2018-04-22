@@ -35,13 +35,13 @@ int Training::TrainingCase::Test(string dataName) {
     return BF;
 }
 
-int Training::TrainingCase::Test(fann_train_data *data) {
+float Training::TrainingCase::Test(fann_train_data *data) {
     fann_reset_MSE(ann);
     fann_test_data(ann, data);
     float MSE = fann_get_MSE(ann);
     int BF = fann_get_bit_fail(ann);
     cout << ":  MSE: " << to_string(MSE) << "  bitFail: " << to_string(BF) << endl;
-    return BF;
+    return MSE;
 }
 
 

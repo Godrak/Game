@@ -99,6 +99,14 @@ URHO3D_OBJECT(Entity, LogicComponent);
         return maxSpeed;
     }
 
+    float GetPower() {
+        return attackDamage;
+    }
+
+    void SetPower(float newPower) {
+        attackDamage = newPower;
+    }
+
 protected:
     enum EntityState {
         IDLE, WALKING, ATTACK

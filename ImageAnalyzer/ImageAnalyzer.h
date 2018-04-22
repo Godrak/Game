@@ -133,6 +133,11 @@ namespace ImageAnalyzer {
             return lines.empty();
         }
 
+        float2 Size() {
+            auto maxmin = MaxXYminXY();
+            return {maxmin.x, maxmin.y};
+        }
+
         void Normalize() {
             auto maxmin = MaxXYminXY();
 
@@ -195,6 +200,9 @@ namespace ImageAnalyzer {
         /// \param t tells which point from start to end of picture should be returned. Is in range from 0 to 1, bt it is recommended to normalize it first using NormalizeParam function.
         /// \return point represented by t.
         virtual float2 GetPoint(float t) = 0;
+
+        /// \return Size of shape
+        virtual float2 GetSize() = 0;
 
         /// Method to find areas where "inside" shapes might be located. Currently only square shaped locations are supported.
         /// \return vector of locations in form (leftCornerX, leftCornerY, Size).

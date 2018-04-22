@@ -30,9 +30,9 @@ void LineDrawer::RandomizeData(GrayScaleImage &image, Randomizer &randomizer) {
     for (int x = 0; x < image.GetSize(); ++x) {
         for (int y = 0; y < image.GetSize(); ++y) {
             if (image.PixelValueAt(x, y) < 0.5f)
-                image.PixelValueAt(x, y) = image.PixelValueAt(x, y) + randomizer.ratio() * 0.05f;
+                image.PixelValueAt(x, y) = image.PixelValueAt(x, y) + randomizer.ratio() * 0.15f;
             else
-                image.PixelValueAt(x, y) = image.PixelValueAt(x, y) - randomizer.ratio() * 0.05f;
+                image.PixelValueAt(x, y) = image.PixelValueAt(x, y) - randomizer.ratio() * 0.15f;
         }
     }
 }

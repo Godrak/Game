@@ -6,13 +6,17 @@ using namespace ImageAnalyzer;
 
 class SquareDescriptor : public ShapeDescriptor {
 private:
-    float2 topLeft = {0.05f, 0.05f};
-    float2 topRight = {0.95f, 0.05f};
-    float2 bottomLeft = {0.05f, 0.95f};
-    float2 bottomRight = {0.95f, 0.95f};
+    float2 topLeft = {0.0f, 0.0f};
+    float2 topRight = {1, 0};
+    float2 bottomLeft = {0, 1};
+    float2 bottomRight = {1, 1};
 public:
     string GetName() const override {
         return "square";
+    }
+
+    float2 GetSize() override {
+        return {1, 1};
     }
 
     float2 GetPoint(float t) override {
@@ -36,18 +40,22 @@ public:
     }
 
     std::vector<float3> GetPointsOfInterest() const override {
-        return std::vector<float3>{float3(topLeft.x * 4, topLeft.y * 4, 0.6f)};
+        return std::vector<float3>{float3(topLeft.x + 0.2f, topLeft.y + 0.2f, 0.6f)};
     }
 };
 
 class CircleDescriptor : public ShapeDescriptor {
 private:
     float2 center = {0.5f, 0.5f};
-    float radius = 0.4f;
+    float radius = 0.5f;
 
 public:
     string GetName() const override {
         return "circle";
+    }
+
+    float2 GetSize() override {
+        return {1, 1};
     }
 
     float2 GetPoint(float t) override {
@@ -63,19 +71,23 @@ public:
     }
 
     std::vector<float3> GetPointsOfInterest() const override {
-        return std::vector<float3>{float3{center.x - 0.3f, center.y - 0.3f, 0.6}};
+        return std::vector<float3>{float3{center.x - 0.2f, center.y - 0.2f, 0.4}};
     }
 };
 
 class TriangleDescriptor : public ShapeDescriptor {
 private:
-    float2 top = {0.5, 0.05};
-    float2 left = {0.05, 0.95};
-    float2 right = {0.95, 0.95};
+    float2 top = {0.5, 0.0};
+    float2 left = {0.0, 1};
+    float2 right = {1, 1};
 
 public:
     string GetName() const override {
         return "triangle";
+    }
+
+    float2 GetSize() override {
+        return {1, 1};
     }
 
     float2 GetPoint(float t) override {
@@ -97,18 +109,22 @@ public:
     }
 
     std::vector<float3> GetPointsOfInterest() const override {
-        return std::vector<float3>{float3{0.2, 0.3, 0.6}};
+        return std::vector<float3>{float3{0.35, 0.55, 0.3}};
     }
 };
 
 class CrossDescriptor : public ShapeDescriptor {
-    float2 top = {0.5, 0.1};
-    float2 bottom = {0.5, 0.9};
-    float2 left = {0.1, 0.5};
-    float2 right = {0.9, 0.5};
+    float2 top = {0.5, 0.0};
+    float2 bottom = {0.5, 0.0};
+    float2 left = {0.0, 0.5};
+    float2 right = {1, 0.5};
 public:
     string GetName() const override {
         return "cross";
+    }
+
+    float2 GetSize() override {
+        return {1, 1};
     }
 
     float2 GetPoint(float t) override {
@@ -144,13 +160,17 @@ public:
 
 class FlashDescriptor : public ShapeDescriptor {
 private:
-    float2 top{0.7, 0.05};
-    float2 right{0.2, 0.55};
+    float2 top{0.7, 0.0};
+    float2 right{0.0, 0.55};
     float2 left{0.8, 0.45};
-    float2 bottom{0.3, 0.95};
+    float2 bottom{0.3, 1};
 public:
     string GetName() const override {
         return "flash";
+    }
+
+    float2 GetSize() override {
+        return {0.8, 1};
     }
 
     float2 GetPoint(float t) override {
@@ -178,10 +198,14 @@ public:
         return "water";
     }
 
+    float2 GetSize() override {
+        return {1, 1};
+    }
+
     float2 GetPoint(float t) override {
         NormalizeParam(t);
         return float2{
-                0.5f + (1 - std::cos(2 * (float) M_PI * t)) * std::sin(2 * (float) M_PI * t) / 3.f,
+                0.5f + (1 - std::cos(2 * (float) M_PI * t)) * std::sin(2 * (float) M_PI * t) / 2.8f,
                 0.5f - std::cos(2 * (float) M_PI * t) / 2.f
         };
     }
@@ -194,7 +218,7 @@ public:
 
     std::vector<float3> GetPointsOfInterest() const override {
         return std::vector<float3>{
-                float3{0.2, 0.3, 0.6}
+                float3{0.3, 0.5, 0.3}
         };
     }
 };

@@ -49,10 +49,9 @@ int main() {
     RegisterShapeDescriptor(move(unique_ptr<SquareDescriptor>(new SquareDescriptor())));
     RegisterShapeDescriptor(move(unique_ptr<CircleDescriptor>(new CircleDescriptor())));
     RegisterShapeDescriptor(move(unique_ptr<TriangleDescriptor>(new TriangleDescriptor())));
-    RegisterShapeDescriptor(move(unique_ptr<CrossDescriptor>(new CrossDescriptor())));
+    RegisterShapeDescriptor(move(unique_ptr<WaterDropDescriptor>(new WaterDropDescriptor())));
 
-//    GenerateData("hello.data",200,50,true);
-
-    Train("network.net");
+    GenerateData("test.data",200,50,true);
+//    Train("network.net");
     return 0;
 }

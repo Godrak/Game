@@ -3,10 +3,10 @@
 #include "UrhoIncludeAll.h"
 #include "../ImageAnalyzer/GrayScaleImage.h"
 #include "../ImageAnalyzer/ImageAnalyzer.h"
-#include "FireComponent.h"
 #include "TimeOutComponent.h"
 #include "DrawableTexture.h"
 #include "Entity.h"
+#include "States.h"
 #include <iostream>
 
 using namespace Urho3D;
@@ -18,7 +18,6 @@ public:
     Effect(Context *context) : LogicComponent(context) {}
 
     virtual void ApplyEffect(Node *node)= 0;
-
 };
 
 class ShieldEffect : public Effect {
@@ -27,13 +26,21 @@ public:
     ShieldEffect(Context *context) : Effect(context) {}
 
     void ApplyEffect(Node *node) override {
-        auto *shield = node->GetComponent<ShieldComponent>();
-        if (shield == NULL) {
-            shield = node->CreateComponent<ShieldComponent>();
-        }
+        auto *shield = node->GetOrCreateComponent<ShieldComponent>();
         shield->ChangeShieldPower(SHIELD_POWER);
     }
 };
+
+class StrengthEffect : public Effect {
+URHO3D_OBJECT(StrengthEffect, Effect);
+public:
+    StrengthEffect(Context *context) : Effect(context) {}
+
+    void ApplyEffect(Node *node) override {
+        node->GetOrCreateComponent<StrengthState>();
+    }
+};
+
 
 class FireEffect : public Effect {
 URHO3D_OBJECT(FireEffect, Effect);
@@ -41,7 +48,7 @@ public:
     FireEffect(Context *context) : Effect(context) {}
 
     void ApplyEffect(Node *node) override {
-        node->CreateComponent<FireComponent>();
+        node->GetOrCreateComponent<FireState>();
     }
 };
 
@@ -51,7 +58,7 @@ public:
     HealingEffect(Context *context) : Effect(context) {}
 
     void ApplyEffect(Node *node) override {
-        node->CreateComponent<HealingComponent>();
+        node->GetOrCreateComponent<HealingState>();
     }
 };
 
@@ -61,7 +68,7 @@ public:
     FrozenEffect(Context *context) : Effect(context) {}
 
     void ApplyEffect(Node *node) override {
-        node->CreateComponent<FrozenComponent>();
+            node->GetOrCreateComponent<FrozenState>();
     }
 };
 
@@ -198,20 +205,6 @@ private:
 
 };
 
-class CasterTarget : public SpellBase {
-URHO3D_OBJECT(CasterTarget, SpellBase);
-public:
-    CasterTarget(Context *context) : SpellBase(context) {}
-
-    void ActivateSpell(Vector3 position, Node *caster) override {
-        casterNode = caster;
-        if (caster != NULL && additionalEffect != NULL) {
-            additionalEffect->ApplyEffect(caster);
-        }
-        ActivateNextSpell(position);
-    }
-};
-
 class Projectile : public SpellBase {
 URHO3D_OBJECT(Projectile, SpellBase);
 public:
@@ -229,7 +222,7 @@ public:
             direction.Normalize();
         }
 
-        spellNode->SetWorldPosition(casterPosition + direction*2 + Vector3::UP * PROJECTILE_SCALE);
+        spellNode->SetWorldPosition(casterPosition + direction * 2 + Vector3::UP * PROJECTILE_SCALE);
         spellNode->SetScale(PROJECTILE_SCALE);
 
         rigidBody = spellNode->CreateComponent<RigidBody>();

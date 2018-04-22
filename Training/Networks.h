@@ -8,9 +8,11 @@
 namespace Training {
 
     class TrainingCase {
+    protected:
         string networkName;
         fann *ann;
         fann_train_data *data = nullptr;
+        TrainingCase(){};
     public:
         explicit TrainingCase(string networkName, vector<unsigned int> networkStructure);
 
@@ -22,13 +24,13 @@ namespace Training {
             return networkName;
         }
 
-        void Train(int epochCount);
+        virtual void Train(int epochCount);
 
         void LoadData(const string &filename);
 
         int Test(string dataName);
 
-        int Test(fann_train_data *data);
+        float Test(fann_train_data *data);
 
         void Save(const string &filename);
 
@@ -40,35 +42,16 @@ namespace Training {
     };
 
 
-    class CascadeTrainingCase {
-        string networkName;
-        vector<unsigned int> networkStructure;
-        fann *ann;
-        fann_train_data *data = nullptr;
+    class CascadeTrainingCase:public TrainingCase {
     public:
         explicit CascadeTrainingCase(string networkName, vector<unsigned int> networkStructure) {
             ann = fann_create_shortcut_array(networkStructure.size(), networkStructure.data());
-            fann_set_train_stop_function(ann, FANN_STOPFUNC_BIT);
+            fann_set_train_stop_function(ann, FANN_STOPFUNC_MSE);
         }
 
-        string GetName() {
-            return networkName;
+        void Train(int neurons) override {
+            fann_cascadetrain_on_data(ann, data, neurons, 1, 0.05f);
         }
 
-        void Train(int neurons) {
-            fann_cascadetrain_on_data(ann, data, neurons, 1, 0.f);
-        }
-
-        void LoadData(const string &filename) {
-            if (data != nullptr) {
-                fann_destroy_train(data);
-            }
-            data = fann_read_train_from_file(filename.c_str());
-        }
-
-
-        void Save(const string &filename) {
-            fann_save(ann, filename.c_str());
-        }
     };
 }
