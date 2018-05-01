@@ -1,10 +1,8 @@
 #include "Runecraft.h"
-#include "Ninja.h"
-#include "Mutant.h"
-#include "SimpleAI.h"
 
 Runecraft::Runecraft(Context *context) : Application(context) {
     context->RegisterFactory<InputController>();
+    context->RegisterFactory<AutoAttackComponent>();
     context->RegisterFactory<CameraController>();
     context->RegisterFactory<DrawableTexture>();
     context->RegisterFactory<Caster>();
@@ -18,16 +16,16 @@ Runecraft::Runecraft(Context *context) : Application(context) {
     context->RegisterFactory<SimpleAI>();
     context->RegisterFactory<TimeOutComponent>();
 
-    context->RegisterFactory<ShieldTotem>();
-    context->RegisterFactory<WindTotem>();
-    context->RegisterFactory<StrengthTotem>();
-    context->RegisterFactory<NatureTotem>();
+    context->RegisterFactory<Totem>();
 
     context->RegisterFactory<FireEffect>();
     context->RegisterFactory<HealingEffect>();
     context->RegisterFactory<ShieldEffect>();
     context->RegisterFactory<FrozenEffect>();
     context->RegisterFactory<StrengthEffect>();
+    context->RegisterFactory<DurabilityEffect>();
+    context->RegisterFactory<PowerEffect>();
+    context->RegisterFactory<DistractionEffect>();
 
     context->RegisterFactory<FireState>();
     context->RegisterFactory<FrozenState>();
@@ -58,8 +56,14 @@ void Runecraft::Start() {
 
     InitScene();
     CreateCamera();
-    CreatePlayer(Vector3(0.0f, 3.0f, 0.0f));
-    CreateMutant(Vector3(10, 3, 0));
+    CreatePlayer(Vector3(20.0f, 0.0f, 5.0f));
+//    CreateMutant(Vector3(5, 2, 0));
+//    CreateMutant(Vector3(4, 2, 0));
+//    CreateMutant(Vector3(6, 4, 0));
+//    CreateMutant(Vector3(1, 2, 0));
+//    CreateMutant(Vector3(4, 6, 0));
+//    CreateMutant(Vector3(5, 5, 0));
+//    CreateMutant(Vector3(3, 4, 0));
 
 }
 
@@ -119,13 +123,14 @@ void Runecraft::CreateCamera() {
 }
 
 void Runecraft::CreatePlayer(Vector3 position) {
-    Node *playerNode = scene_->CreateChild("Player");
+    Node *playerNode = scene_->CreateChild(PLAYER_NODE_NAME);
     playerNode->SetPosition(position);
 
     playerNode->CreateComponent<InputController>();
     playerNode->CreateComponent<CameraController>();
     playerNode->CreateComponent<Mutant>();
     playerNode->CreateComponent<Caster>();
+    playerNode->CreateComponent<AutoAttackComponent>();
 }
 
 
@@ -141,11 +146,11 @@ void Runecraft::HandleKeyDown(StringHash eventType, VariantMap &eventData) {
 void Runecraft::CreateMutant(Vector3 position) {
     auto *cache = GetSubsystem<ResourceCache>();
 
-    auto *mutantNode = scene_->CreateChild("Mutant");
+    auto *mutantNode = scene_->CreateChild(MUTANT_NODE_NAME);
     mutantNode->SetPosition(position);
 
     auto *mutant = mutantNode->CreateComponent<Mutant>();
-    mutant->SetSpeed(MUTANT_SPEED * 0.7f);
+    mutant->SetSpeed(MUTANT_SPEED*1.0f);
 
-//    mutantNode->CreateComponent<SimpleAI>();
+    mutantNode->CreateComponent<SimpleAI>();
 }

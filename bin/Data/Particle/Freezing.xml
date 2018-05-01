@@ -14,14 +14,14 @@
 	<dampingforce value="10" />
 	<activetime value="0" />
 	<inactivetime value="0" />
-	<emissionrate min="40" max="50" />
+	<emissionrate min="10" max="30" />
 	<particlesize min="0.1 0.1" max="0.4 0.4" />
-	<timetolive min="2" max="10" />
-	<velocity min="0" max="0" />
+	<timetolive min="1" max="2" />
+	<velocity min="1" max="1" />
 	<rotation min="0" max="0" />
 	<rotationspeed min="0" max="0" />
 	<sizedelta add="0" mul="0.5" />
 	<colorfade color="0.1 0.5 1 1" time="0" />
-	<colorfade color="0 0.6 1 1" time="7" />
-	<colorfade color="0 0 0 0" time="10" />
+	<colorfade color="0.5 0.6 1 1" time="1" />
+	<colorfade color="0 0 0 0" time="2" />
 </particleeffect>

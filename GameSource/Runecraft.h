@@ -5,6 +5,7 @@
 #include "CameraController.h"
 #include "TimeOutComponent.h"
 #include "DrawableTexture.h"
+#include "AutoAttackComponent.h"
 
 using namespace Urho3D;
 

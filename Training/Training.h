@@ -14,6 +14,8 @@ namespace Training {
     ShapeIndex RegisterShapeDescriptor(unique_ptr<ShapeDescriptor> shapeDescriptor);
 
     void Train(string networkFile);
+
+    float Train(TrainingCase &trainingCase, bool generateData = true, int dataSize = 300000);
     
     void DrawDebugShapes();
     

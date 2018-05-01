@@ -10,7 +10,7 @@ using namespace Urho3D;
 class Caster : public LogicComponent {
 URHO3D_OBJECT(Caster, LogicComponent);
 private:
-    float rectangleSize = 2;
+    float rectangleSize = 20;
     Node *spellRectangle = NULL;
     Curve *currentCurve = NULL;
     float timeToNextSample = DRAWING_SAMPLE_TIME;
@@ -18,10 +18,10 @@ public:
     explicit Caster(Context *context) : LogicComponent(context) {};
 
     void draw(float timeStep) {
-        if (timeToNextSample < 0) {
+        if (timeToNextSample <= 0) {
             timeToNextSample = DRAWING_SAMPLE_TIME;
             Vector3 hitPos;
-            DrawableTexture *drawableTexture = RaycastDrawableHit(100, hitPos);
+            DrawableTexture *drawableTexture = RaycastDrawableHit(hitPos);
             if (drawableTexture != NULL) {
                 if (currentCurve != NULL) {
                     currentCurve->AddPoint(hitPos);
@@ -36,16 +36,13 @@ public:
 
     void endCurve() {
         currentCurve = NULL;
+        timeToNextSample = 0;
     }
 
-    void moveRectangle(Vector3 position, float sizeOffset) {
+    void moveRectangle(Vector3 position) {
         if (spellRectangle == NULL) {
             createRectangle();
         }
-
-        rectangleSize += sizeOffset;
-        rectangleSize = max(rectangleSize, 0.5f);
-        rectangleSize = min(rectangleSize, 20.f);
         spellRectangle->SetScale(rectangleSize);
 
         spellRectangle->SetWorldPosition(position + Vector3::UP * 0.1);
@@ -61,19 +58,25 @@ public:
         Vector<Curve *> curves = drawableTexture->GetCurves();
         vector<Line> lines;
         for (int i = 0; i < curves.Size(); ++i) {
+            bool used = false;
             for (int j = 0; j < curves[i]->GetPoints().Size() - 1; ++j) {
                 auto start = curves[i]->GetPoints()[j];
                 auto end = curves[i]->GetPoints()[j + 1];
                 if (checkLineBounds(start, end, top, bottom, left, right)) {
+                    used = true;
                     lines.push_back(Line{float2{start.x_, -start.z_}, float2{end.x_, -end.z_}});
                 }
             }
+            if (used && REMOVE_USED_CURVES){
+                drawableTexture->RemoveCurve(curves[i]);
+            }
         }
 
-        GetScene()->GetComponent<SpellSystem>()->castSpell(GetNode(), lines, position);
+        GetScene()->GetComponent<SpellSystem>()->CastSpell(GetNode(), lines, position);
     }
 
-    DrawableTexture *RaycastDrawableHit(float maxDistance, Vector3 &hitPos) {
+    DrawableTexture *RaycastDrawableHit(Vector3 &hitPos) {
+        float maxDistance = 100;
         UI *ui = GetSubsystem<UI>();
         IntVector2 pos = ui->GetCursorPosition();
         // Check the cursor is visible and there is no UI element in front of the cursor
@@ -101,6 +104,11 @@ public:
         }
 
         return drawableTexture;
+    }
+
+    void Update(float timeStep) override {
+        LogicComponent::Update(timeStep);
+        moveRectangle(GetNode()->GetPosition());
     }
 
 private:

@@ -7,7 +7,7 @@ using namespace LineDrawer;
 using namespace LinAlgExtended;
 
 namespace { //private
-    const bool DEBUG_IMAGE_SAVE = true;
+    const bool DEBUG_IMAGE_SAVE = false;
     const bool ANALYZE_PATTERN = true;
     const int DEBUG_OUTPUT = 1;
     const int IMAGE_SIDE_SIZE = 32;
@@ -83,7 +83,7 @@ ShapeIndex AnalyzeImageLines(ImageLines imageLines, float &matchingRotation) {
     }
 
     int shape = -1;
-    if (maxShapeValue > 0.8f) {
+    if (maxShapeValue > 0.6f) {
         shape = maxIndex;
     }
 
@@ -147,7 +147,7 @@ ShapeNode ImageAnalyzer::Analyze(ImageLines imageLines) {
         if (DEBUG_OUTPUT > 0)
             cout << GetNameByIndex(patternShape) << " " << count << endl;
 
-        if (count > 3) {
+        if (count > 15) {
             node.shapePattern = patternShape;
         }
 
@@ -195,7 +195,7 @@ void ImageAnalyzer::RegisterShapeDescriptor(ShapeIndex index, std::unique_ptr<Sh
     }
 
     if (index == UNKNOWN_SHAPE) {
-        cout << "ERROR: attempt to register uninitialized index or index of UNKNOWN_SHAPE" << endl;
+        cout << "ERROR: attempt to register uninitialized index or UNKNOWN_SHAPE index" << endl;
     }
     shapeDescriptors.emplace(index, move(shapeDescriptor));
 }

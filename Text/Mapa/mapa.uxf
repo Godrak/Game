@@ -824,8 +824,8 @@ pixely vs cary vs idk co jeste</panel_attributes>
   <element>
     <id>UMLUseCase</id>
     <coordinates>
-      <x>3184</x>
-      <y>1088</y>
+      <x>3216</x>
+      <y>1064</y>
       <w>216</w>
       <h>72</h>
     </coordinates>
@@ -880,12 +880,12 @@ pixely vs cary vs idk co jeste</panel_attributes>
     <id>Relation</id>
     <coordinates>
       <x>3032</x>
-      <y>1120</y>
-      <w>168</w>
-      <h>184</h>
+      <y>1096</y>
+      <w>200</w>
+      <h>208</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;-</panel_attributes>
-    <additional_attributes>190.0;10.0;10.0;210.0</additional_attributes>
+    <additional_attributes>230.0;10.0;10.0;240.0</additional_attributes>
   </element>
   <element>
     <id>Relation</id>
@@ -923,7 +923,7 @@ pixely vs cary vs idk co jeste</panel_attributes>
   <element>
     <id>UMLUseCase</id>
     <coordinates>
-      <x>3416</x>
+      <x>3408</x>
       <y>1176</y>
       <w>216</w>
       <h>72</h>
@@ -936,11 +936,11 @@ pixely vs cary vs idk co jeste</panel_attributes>
     <coordinates>
       <x>3032</x>
       <y>1208</y>
-      <w>400</w>
+      <w>392</w>
       <h>96</h>
     </coordinates>
     <panel_attributes>lt=&lt;&lt;-</panel_attributes>
-    <additional_attributes>480.0;10.0;10.0;100.0</additional_attributes>
+    <additional_attributes>470.0;10.0;10.0;100.0</additional_attributes>
   </element>
   <element>
     <id>UMLUseCase</id>

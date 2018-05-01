@@ -47,7 +47,7 @@ public:
     void Start() override {
         LogicComponent::Start();
         particleEmitter = GetNode()->CreateComponent<ParticleEmitter>();
-        auto effect = GetSubsystem<ResourceCache>()->GetResource<ParticleEffect>("Data/Particle/GreenSmoke.xml");
+        auto effect = GetSubsystem<ResourceCache>()->GetResource<ParticleEffect>("Data/Particle/Freezing.xml");
         particleEmitter->SetEffect(effect);
         auto *entity = GetNode()->GetDerivedComponent<Entity>();
         if (entity != NULL) {
@@ -86,7 +86,7 @@ public:
     void Start() override {
         LogicComponent::Start();
         particleEmitter = GetNode()->CreateComponent<ParticleEmitter>();
-        auto effect = GetSubsystem<ResourceCache>()->GetResource<ParticleEffect>("Data/Particle/GreenSmoke.xml");
+        auto effect = GetSubsystem<ResourceCache>()->GetResource<ParticleEffect>("Data/Particle/Healing.xml");
         particleEmitter->SetEffect(effect);
     }
 

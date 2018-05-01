@@ -25,6 +25,12 @@ URHO3D_OBJECT(Curve, LogicComponent);
     }
 
 
+    void RemoveLines() {
+        for (auto *node : lineNodes) {
+            node->Remove();
+        }
+    }
+
 private:
     Vector<Vector3> points{};
     Vector<Node *> lineNodes{};
@@ -42,7 +48,7 @@ private:
     }
 
     Node *CreateFire(Vector3 position, Vector3 scale = Vector3::ONE) {
-        auto *fireNode = GetScene()->CreateChild("Fire");
+        auto *fireNode = GetScene()->CreateTemporaryChild("Fire");
         fireNode->SetPosition(position + Vector3::UP * 0.1f);
         fireNode->SetScale(scale);
 
@@ -58,6 +64,21 @@ private:
 
 class DrawableTexture : public LogicComponent {
 URHO3D_OBJECT(DrawableTexture, LogicComponent);
+
+    void RemoveCurve(Curve *curve) {
+        toRemove.Push(curve);
+    }
+
+    void Update(float timeStep) override {
+        LogicComponent::Update(timeStep);
+        for (auto *c : toRemove) {
+            curves.Remove(c);
+            c->RemoveLines();
+            c->Remove();
+        }
+        toRemove.Clear();
+    }
+
 public:
     explicit DrawableTexture(Context *context) : LogicComponent(context) {}
 
@@ -65,6 +86,7 @@ public:
         Node *curveNode = GetNode()->CreateChild();
         Curve *curve = curveNode->CreateComponent<Curve>();
         curve->AddPoint(start);
+        curve->AddPoint(start);// also end, to be visible immediately
         curves.Push(curve);
         return curve;
     };
@@ -76,5 +98,6 @@ public:
 
 private:
     Vector<Curve *> curves;
+    Vector<Curve *> toRemove;
 
 };

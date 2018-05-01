@@ -289,6 +289,9 @@
 			<Option target="Training"/>
 			<Option target="Game"/>
 		</Unit>
+		<Unit filename="/home/free/dev/Runecraft/Game/GameSource/AutoAttackComponent.h">
+			<Option target="Game"/>
+		</Unit>
 		<Unit filename="/home/free/dev/Runecraft/Game/GameSource/CameraController.h">
 			<Option target="Game"/>
 		</Unit>

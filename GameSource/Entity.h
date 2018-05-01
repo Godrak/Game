@@ -21,8 +21,15 @@ URHO3D_OBJECT(Entity, LogicComponent);
     }
 
     virtual void Damage(float value) {
+        if (shield == NULL) {
+            shield = GetNode()->GetComponent<ShieldComponent>();
+        }
+
         if (shield != NULL) {
-            shield->ChangeShieldPower(-value);
+            bool destroyed = shield->ChangeShieldPower(-value);
+            if (destroyed) {
+                shield = NULL;
+            }
         } else if (!health->ChangeHealth(-value)) {
             Die();
         }
@@ -44,6 +51,10 @@ URHO3D_OBJECT(Entity, LogicComponent);
                 state = IDLE;
                 animationController->PlayExclusive(idleAnim, 0, true, 0.5f);
             }
+        }
+
+        if (dead && !removed) {
+            GetNode()->Remove();
         }
 
     }
@@ -88,7 +99,7 @@ URHO3D_OBJECT(Entity, LogicComponent);
     };
 
     virtual void Die() {
-        GetNode()->Remove();
+        dead = true;
     }
 
     void SetSpeed(float speed) {
@@ -123,5 +134,7 @@ protected:
     float attackDuration{};
     float attackDamage{};
     bool attackTrigger;
+    bool dead = false;
+    bool removed = false;
 
 };

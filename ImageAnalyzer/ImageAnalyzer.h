@@ -144,8 +144,12 @@ namespace ImageAnalyzer {
             auto size = abs(maxmin.x - maxmin.z);
             size = max(size, abs(maxmin.y - maxmin.w));
 
+
             auto translation = CreateTranslationMatrix(float2{-maxmin.z, -maxmin.w});
-            auto scaling = CreateScalingMatrix(float2{1 / size, 1 / size});
+
+            auto scaling = CreateScalingMatrix(float2{1, 1});
+            if (size > 0)
+                scaling = CreateScalingMatrix(float2{1 / size, 1 / size});
             auto matrix = mul<float, 3, 3>(scaling, translation);
 
             Transform(matrix);

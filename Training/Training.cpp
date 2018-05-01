@@ -107,7 +107,8 @@ ImageLines ComposeShapes(ShapeDescriptor *base, ShapeDescriptor *modifier, int m
         auto part = DrawShape(modifier);
         auto translation = CreateTranslationMatrix(point - float2{0.5, 0.5});
         auto scale = CreateScalingMatrix(float2(1.5f / multiplication, 1.5f / multiplication));
-        part.Transform(mul<float, 3, 3>(translation, scale));
+        auto rotation = CreateRotationMatrix(randomizer.ratio(), float2{0.5, 0.5});
+        part.Transform(MatrixMul(MatrixMul(translation, scale), rotation));
 
         image.Add(part);
         t += 1.f / multiplication / 1.5f;
@@ -125,12 +126,12 @@ void generateInvalidData(ofstream &trainingData,
 
         ImageLines image;
         if (randomizer.ratio() > 0.5f) {
-            float offset = randomizer.ratio() + 0.3f;
+            float offset = randomizer.ratio() + 0.5f;
             if (randomizer.yesOrNo()) {
                 offset *= -1.f;
             }
             image = OffsetPoints(RandomShapeDescriptor(), offset, randomizer.ratio() * 0.3f,
-                                 randomizer.ratio() * 0.015f + 0.03f, randomizer.ratio(), true);
+                                 randomizer.ratio() * 0.015f + 0.03f, randomizer.ratio() * 0.3f, true);
         } else if (randomizer.ratio() > 0.1f) {
             vector<Line> lines;
             float2 start{randomizer.ratio(), randomizer.ratio()};
@@ -184,7 +185,7 @@ void Training::GenerateData(const std::string &filename, int validDataCount,
     }
 
     ofstream trainingData;
-    trainingData.open("batches/" + filename);
+    trainingData.open(filename);
     int active = 0;
 
     trainingData << validDataCount + invalidDataCount << " " << IMAGE_SIDE_SIZE * IMAGE_SIDE_SIZE << " "
@@ -203,10 +204,10 @@ void Training::GenerateData(const std::string &filename, int validDataCount,
         if (randomizer.ratio() > 0.5f)
             image = ComposeShapes(activeDescriptor, activeModifier, randomizer.next(8, 14));
         else {
-            float offset = (randomizer.ratio() * 0.3f - 0.15f);
+            float offset = (randomizer.ratio() * 0.2f - 0.1f);
             image = OffsetPoints(activeDescriptor, offset, randomizer.ratio(),
-                                 randomizer.ratio() * 0.07f,
-                                 0.3f * randomizer.ratio(), false);
+                                 randomizer.ratio() * 0.1f,
+                                 0.5f * randomizer.ratio(), false);
         }
         image.Normalize();
 
@@ -287,7 +288,6 @@ void Training::GenerateData(const std::string &filename, int validDataCount,
     trainingData.close();
 }
 
-
 void Training::Train(string networkFile) {
     if (shapeDescriptors.empty()) {
         cout << "ERROR: no shape descriptors registered for training" << endl;
@@ -295,22 +295,29 @@ void Training::Train(string networkFile) {
     }
 
     inProgress = true;
-    CascadeTrainingCase network(networkFile,
-                                vector<unsigned int>{IMAGE_SIDE_SIZE * IMAGE_SIDE_SIZE,
-                                                     (int) shapeDescriptors.size()});
+    TrainingCase network(vector<unsigned int>{IMAGE_SIDE_SIZE * IMAGE_SIDE_SIZE,
+                                              256,
+                                              32,
+                                              (int) shapeDescriptors.size()});
 
-    for (int i = 0; i < BATCH_COUNT; ++i) {
-        cout << "generating batch " << i + 1 << " from " << BATCH_COUNT << endl;
-        GenerateData("batch" + to_string(i) + ".data", BATCH_SIZE * 7 / 10.0f, BATCH_SIZE * 3 / 10.0f, false);
-    }
+//    for (int i = 0; i < BATCH_COUNT; ++i) {
+//        cout << "generating batch " << i + 1 << " from " << BATCH_COUNT << endl;
+//        GenerateData("batch" + to_string(i) + ".data", BATCH_SIZE * 7 / 10.0f, BATCH_SIZE * 3 / 10.0f, false);
+//    }
 
-//    network.SetLearningParams(0.1, 0);
+    Training::GenerateData("test.data", 10000, 10000, false);
+//    Training::GenerateData("training.data", 120000, 60000, false);
     auto *testData = fann_read_train_from_file("test.data");
     float mse = network.Test(testData);
-    float newMse = mse - 0.001f;
-    while (newMse < mse) {
+    float newMse = mse - 0.0001f;
+
+//    while (newMse < mse) {
+    for (int i = 0; i < 30; ++i) {
         mse = newMse;
-        network.TrainOnAllBatches(EPOCH_COUNT_PER_BATCH);
+        string name = "data" + to_string(i) + ".data";
+//        GenerateData(name, 10000, 10000, false);
+        network.LoadData(name);
+        network.Train(10000);
         newMse = network.Test(testData);
     }
 
@@ -320,8 +327,7 @@ void Training::Train(string networkFile) {
 
 void Training::ManualTraining(string networkFile) {
     using namespace Training;
-    TrainingCase network(networkFile,
-                         vector<unsigned int>{IMAGE_SIDE_SIZE * IMAGE_SIDE_SIZE, 512, 64,
+    TrainingCase network(vector<unsigned int>{IMAGE_SIDE_SIZE * IMAGE_SIDE_SIZE, 512, 64,
                                               (int) shapeDescriptors.size()});
     string dataName = "data.data";
     string prefix;
@@ -404,11 +410,6 @@ void Training::ManualTraining(string networkFile) {
                     network.Train(epochCount);
                 }
                 continue;
-            case 'b':
-                cout << "epochCount: " << endl;
-                cin >> epochCount;
-                network.TrainOnAllBatches(epochCount);
-                continue;
             case 'Q':
                 return;
             default:
@@ -425,4 +426,38 @@ void Training::ManualTraining(string networkFile) {
 
         }
     }
+}
+
+float Training::Train(Training::TrainingCase &trainingCase, bool generateData, int dataSize) {
+    if (shapeDescriptors.empty()) {
+        cout << "ERROR: no shape descriptors registered for training" << endl;
+        return 0;
+    }
+
+    inProgress = true;
+
+    if (generateData) {
+        int testDataSize = dataSize / 3;
+        Training::GenerateData("test.data", testDataSize / 2, testDataSize / 2, false);
+        Training::GenerateData("training.data", dataSize / 2, dataSize / 2, false);
+    }
+
+    auto *testData = fann_read_train_from_file("test.data");
+    trainingCase.LoadData("training.data");
+    float mse = trainingCase.Test(testData);
+    float newMse = mse - 0.0001f;
+    float error = 0.2f;
+    trainingCase.SetError(error);
+
+    while (newMse < mse && newMse > 0.005) {
+        mse = newMse;
+        trainingCase.Train(100);
+        newMse = trainingCase.Test(testData);
+        error /=2.f;
+        trainingCase.SetError(error);
+    }
+
+    inProgress = false;
+
+    return newMse;
 };

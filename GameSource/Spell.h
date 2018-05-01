@@ -7,72 +7,12 @@
 #include "DrawableTexture.h"
 #include "Entity.h"
 #include "States.h"
-#include <iostream>
+#include "Totems.h"
 
 using namespace Urho3D;
 using namespace ImageAnalyzer;
 
-class Effect : public LogicComponent {
-URHO3D_OBJECT(Effect, LogicComponent);
-public:
-    Effect(Context *context) : LogicComponent(context) {}
-
-    virtual void ApplyEffect(Node *node)= 0;
-};
-
-class ShieldEffect : public Effect {
-URHO3D_OBJECT(ShieldEffect, Effect);
-public:
-    ShieldEffect(Context *context) : Effect(context) {}
-
-    void ApplyEffect(Node *node) override {
-        auto *shield = node->GetOrCreateComponent<ShieldComponent>();
-        shield->ChangeShieldPower(SHIELD_POWER);
-    }
-};
-
-class StrengthEffect : public Effect {
-URHO3D_OBJECT(StrengthEffect, Effect);
-public:
-    StrengthEffect(Context *context) : Effect(context) {}
-
-    void ApplyEffect(Node *node) override {
-        node->GetOrCreateComponent<StrengthState>();
-    }
-};
-
-
-class FireEffect : public Effect {
-URHO3D_OBJECT(FireEffect, Effect);
-public:
-    FireEffect(Context *context) : Effect(context) {}
-
-    void ApplyEffect(Node *node) override {
-        node->GetOrCreateComponent<FireState>();
-    }
-};
-
-class HealingEffect : public Effect {
-URHO3D_OBJECT(HealingEffect, Effect);
-public:
-    HealingEffect(Context *context) : Effect(context) {}
-
-    void ApplyEffect(Node *node) override {
-        node->GetOrCreateComponent<HealingState>();
-    }
-};
-
-class FrozenEffect : public Effect {
-URHO3D_OBJECT(FrozenEffect, Effect);
-public:
-    FrozenEffect(Context *context) : Effect(context) {}
-
-    void ApplyEffect(Node *node) override {
-            node->GetOrCreateComponent<FrozenState>();
-    }
-};
-
-
+/*
 class SpellBase : public LogicComponent {
 URHO3D_OBJECT(SpellBase, LogicComponent);
 public:
@@ -84,7 +24,7 @@ public:
         }
     };
 
-    void SetAdditionalEffect(Effect *effect) {
+    void SetAdditionalEffect(TotemEffect *effect) {
         additionalEffect = effect;
     }
 
@@ -104,7 +44,7 @@ protected:
     CollisionShape *collisionShape{};
     Node *casterNode = NULL;
 
-    Effect *additionalEffect{};
+    TotemEffect *additionalEffect{};
     SpellBase *nextSpell{};
 };
 
@@ -381,6 +321,5 @@ public:
 
 private:
     float time = 0;
-
-
 };
+*/

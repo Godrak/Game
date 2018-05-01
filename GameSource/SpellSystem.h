@@ -30,49 +30,50 @@ public:
         ImageAnalyzer::LoadNetwork("../network.net");
     }
 
-    SpellBase *createSpell(ShapeNode shape, Node *spellNode) {
-        SpellBase *result = NULL;
+    Totem *CreateTotem(ShapeNode shape, Node *spellNode) {
+        Totem *totem = spellNode->CreateComponent<Totem>();
         ShapeIndex index = shape.shape;
         if (index == circle) {
-            result = spellNode->CreateComponent<Projectile>();
+            totem->AddEffect(spellNode->CreateComponent<ShieldEffect>());
         } else if (index == square) {
-            result = spellNode->CreateComponent<Explosion>();
+            totem->AddEffect(spellNode->CreateComponent<FireEffect>());
         } else if (index == triangle) {
-            result = spellNode->CreateComponent<WallSpell>();
+            totem->AddEffect(spellNode->CreateComponent<FrozenEffect>());
         } else if (index == drop) {
-            result = spellNode->CreateComponent<LocalSpell>();
+            totem->AddEffect(spellNode->CreateComponent<HealingEffect>());
         } else {
-            auto *eos = spellNode->CreateComponent<EndOfSpell>();
-            eos->SetSpellNodeToRemove(spellNode);
-            result = eos;
-        }
-
-        index = shape.shapePattern;
-        if (index == circle) {
-            result->SetAdditionalEffect(spellNode->CreateComponent<FireEffect>());
-        } else if (index == square) {
-            result->SetAdditionalEffect(spellNode->CreateComponent<FrozenEffect>());
-        } else if (index == triangle) {
-            result->SetAdditionalEffect(spellNode->CreateComponent<FireEffect>());
-        } else if (index == drop) {
-            result->SetAdditionalEffect(spellNode->CreateComponent<HealingEffect>());
+            //TODO random effect
         }
 
         if (!shape.childNodes.empty()) {
-            SpellBase *nextSpell = createSpell(shape.childNodes[0], spellNode);
-            result->SetNextSpell(nextSpell);
+            CreateAdditionalEffects(shape.childNodes[0], spellNode, totem);
         }
-        return result;
+        return totem;
     }
 
-    void castSpell(Node *caster, vector<Line> lines, Vector3 position) {
+    void CreateAdditionalEffects(ShapeNode shape, Node *spellNode, Totem *totem) {
+        ShapeIndex index = shape.shape;
+        if (index == circle) {
+            totem->AddEffect(spellNode->CreateComponent<PowerEffect>());
+        } else if (index == square) {
+            totem->AddEffect(spellNode->CreateComponent<StrengthEffect>());
+        } else if (index == triangle) {
+            totem->AddEffect(spellNode->CreateComponent<DurabilityEffect>());
+        } else if (index == drop) {
+            totem->AddEffect(spellNode->CreateComponent<DistractionEffect>());
+        }
+    }
+
+    void CastSpell(Node *caster, vector<Line> lines, Vector3 position) {
+        if (lines.empty()) return;
+
         auto result = ImageAnalyzer::Analyze(ImageLines{lines});
         auto *spellNode = GetScene()->CreateTemporaryChild();
-//        SpellBase *spell = createSpell(result, spellNode);
-//        spell->ActivateSpell(position, caster);
-
-        auto *totem = spellNode->CreateComponent<StrengthTotem>();
+        Totem *totem = CreateTotem(result, spellNode);
         totem->Activate(position);
+
+//        auto *totem = spellNode->CreateComponent<StrengthTotem>();
+//        totem->Activate(position);
 
     }
 };

@@ -66,10 +66,14 @@
 #include <Urho3D/Urho3D.h>
 
 //CONSTANTS
+static const Urho3D::String PLAYER_NODE_NAME = "Player";
+static const Urho3D::String MUTANT_NODE_NAME = "Mutant";
+
+static const bool REMOVE_USED_CURVES = true;
 
 //CAMERA
 static const float CAMERA_Y_AXIS_OFFSET = 0.3f;
-static const int MAX_VERTICAL_DISTANCE = 25;
+static const int MAX_VERTICAL_DISTANCE = 80;
 static const int MIN_VERTICAL_DISTANCE = 8;
 
 //DRAWING
@@ -77,26 +81,34 @@ static const float DRAWING_SAMPLE_STEP_SIZE = 0.2f;
 static const float DRAWING_SAMPLE_TIME = 0.05f;
 
 //FIRE
-static const float FIRE_DAMAGE_PER_SECOND = 2;
+static const float FIRE_DAMAGE_PER_SECOND = 10;
 static const float FIRE_DURATION = 6;
 
 //HEALING
-static const float HEALING_PER_SECOND = 3;
-static const float HEALING_DURATION = 5;
+static const float HEALING_PER_SECOND = 10;
+static const float HEALING_DURATION = 6;
 
 //FROZEN
 static const float FROZEN_DURATION = 5;
-static const float FROZEN_SLOW_FACTOR = 0.5f;
+static const float FROZEN_SLOW_FACTOR = 0.4f;
 
 //POWER_STATE
 static const float POWER_STATE_DURATION = 5;
 static const float POWER_FACTOR = 5;
 
 //SHIELD
-static const float SHIELD_POWER = 2;
+static const float SHIELD_POWER_CHARGE = 0.2;
+static const float MAX_SHIELD_POWER = 100;
+
+//DURABILITY
+static const float DURABILITY_EXTENSION = 20;
+
+//REACH
+static const float REACH_EXTENSION = 6;
 
 //TOTEMS
 static const float TOTEM_SCALE = 2;
+static const float TOTEM_DURATION = 30;
 static const float TOTEM_EFFECT_TRIGGER_TIME = 2;
 static const float TOTEM_EFFECT_TRIGGER_WINDOW = 0.2;
 static const float TOTEM_EFFECT_SIZE = 5;
@@ -126,4 +138,4 @@ static const float LOCAL_SPELL_DURATION = 4;
 static const float MUTANT_HEALTH = 200;
 static const float MUTANT_SPEED = 0.3f;
 static const float MUTANT_ATTACK_DURATION = 1.4f;
-static const float MUTANT_ATTACK_DAMAGE = 0.f;
+static const float MUTANT_ATTACK_DAMAGE = 15.f;

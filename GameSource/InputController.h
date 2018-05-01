@@ -5,6 +5,7 @@
 #include "CameraController.h"
 #include "SpellSystem.h"
 #include "Caster.h"
+#include "AutoAttackComponent.h"
 
 #pragma once
 
@@ -21,6 +22,7 @@ public:
         using namespace Update;
         auto *input = GetSubsystem<Input>();
         auto *entity = GetNode()->GetDerivedComponent<Entity>();
+        auto *attack = GetNode()->GetComponent<AutoAttackComponent>();
         auto *caster = GetNode()->GetComponent<Caster>();
         auto timeStep = eventData[P_TIMESTEP].GetFloat();
 
@@ -43,16 +45,19 @@ public:
 
         if (input->GetMouseButtonDown(MOUSEB_RIGHT)) {
             rightMouseButtonDownFlag = true;
-            caster->moveRectangle(GetNode()->GetPosition(), input->GetMouseMoveWheel());
         } else if (rightMouseButtonDownFlag) {
             rightMouseButtonDownFlag = false;
             Vector3 position;
-            auto *drawableTexture = caster->RaycastDrawableHit(100, position);
+            auto *drawableTexture = caster->RaycastDrawableHit(position);
             caster->cast(drawableTexture, position);
         }
 
-        if (!input->GetMouseButtonDown(MOUSEB_RIGHT)) {
-            GetNode()->GetComponent<CameraController>()->Zoom(input->GetMouseMoveWheel());
+        GetNode()->GetComponent<CameraController>()->Zoom(input->GetMouseMoveWheel());
+
+        if (input->GetKeyDown(KEY_Q)) {
+            attack->Attack();
+        } else {
+            attack->StopAttack();
         }
 
         if (input->GetMouseButtonDown(MOUSEB_LEFT)) {

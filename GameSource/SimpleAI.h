@@ -14,6 +14,10 @@ URHO3D_OBJECT(SimpleAI, LogicComponent);
         currentTarget = GetScene()->GetChild("Player");
     }
 
+    void SetTarget(Node *target) {
+        currentTarget = target;
+    }
+
     void Update(float timeStep) override {
         LogicComponent::Update(timeStep);
         auto *entity = GetNode()->GetDerivedComponent<Entity>();
