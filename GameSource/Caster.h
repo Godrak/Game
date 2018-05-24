@@ -67,12 +67,20 @@ public:
                     lines.push_back(Line{float2{start.x_, -start.z_}, float2{end.x_, -end.z_}});
                 }
             }
-            if (used && REMOVE_USED_CURVES){
+            if (used && REMOVE_USED_CURVES) {
                 drawableTexture->RemoveCurve(curves[i]);
             }
         }
 
-        GetScene()->GetComponent<SpellSystem>()->CastSpell(GetNode(), lines, position);
+        CastSpell(lines, position);
+    }
+
+    void CastSpell(vector<Line> lines, Vector3 position) {
+        if (lines.empty()) return;
+
+        auto *spellNode = GetScene()->CreateTemporaryChild();
+        auto *spell = spellNode->CreateComponent<Spell>();
+        spell->Start(lines, position);
     }
 
     DrawableTexture *RaycastDrawableHit(Vector3 &hitPos) {

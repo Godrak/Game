@@ -24,6 +24,11 @@ URHO3D_OBJECT(Mutant, Entity);
         animatedModel->SetCastShadows(true);
         animationController = adjustNode->CreateComponent<AnimationController>();
 
+        auto *staticModel = GetNode()->CreateComponent<StaticModel>();
+        staticModel->SetModel(cache->GetResource<Model>("Models/Box.mdl"));
+        staticModel->SetMaterial(cache->GetResource<Material>("Materials/Transparent.xml"));
+        staticModel->SetCastShadows(false);
+
         auto *rigidBody = GetNode()->CreateComponent<RigidBody>();
         rigidBody->SetMass(1);
         rigidBody->SetCollisionLayer(1);

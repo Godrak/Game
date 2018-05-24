@@ -71,6 +71,8 @@ static const Urho3D::String MUTANT_NODE_NAME = "Mutant";
 
 static const bool REMOVE_USED_CURVES = true;
 
+static const int MUTANT_COUNT = 30;
+
 //CAMERA
 static const float CAMERA_Y_AXIS_OFFSET = 0.3f;
 static const int MAX_VERTICAL_DISTANCE = 80;
@@ -81,11 +83,11 @@ static const float DRAWING_SAMPLE_STEP_SIZE = 0.2f;
 static const float DRAWING_SAMPLE_TIME = 0.05f;
 
 //FIRE
-static const float FIRE_DAMAGE_PER_SECOND = 10;
+static const float FIRE_DAMAGE_PER_SECOND = 15;
 static const float FIRE_DURATION = 6;
 
 //HEALING
-static const float HEALING_PER_SECOND = 10;
+static const float HEALING_PER_SECOND = 15;
 static const float HEALING_DURATION = 6;
 
 //FROZEN
@@ -97,7 +99,7 @@ static const float POWER_STATE_DURATION = 5;
 static const float POWER_FACTOR = 5;
 
 //SHIELD
-static const float SHIELD_POWER_CHARGE = 0.2;
+static const float SHIELD_POWER_CHARGE = 1;
 static const float MAX_SHIELD_POWER = 100;
 
 //DURABILITY
@@ -106,36 +108,30 @@ static const float DURABILITY_EXTENSION = 20;
 //REACH
 static const float REACH_EXTENSION = 6;
 
+//WALL_EFFECT
+static const float WALL_RADIUS = 9;
+
 //TOTEMS
 static const float TOTEM_SCALE = 2;
-static const float TOTEM_DURATION = 30;
-static const float TOTEM_EFFECT_TRIGGER_TIME = 2;
-static const float TOTEM_EFFECT_TRIGGER_WINDOW = 0.2;
-static const float TOTEM_EFFECT_SIZE = 5;
-
-//WALL_SPELL
-static const int WALL_NODE_COUNT = 5;
-static const float WALL_AREA_SCALE = 6.f;
-static const float WALL_NODE_SCALE = 2.f;
-static const float WALL_TIME_LIMIT = 5;
-
+static const float TOTEM_DURATION = 20;
+static const float TOTEM_EFFECT_TRIGGER_TIME = 1;
+static const float TOTEM_EFFECT_TRIGGER_WINDOW = 0.1;
+static const float TOTEM_EFFECT_SIZE = 7;
 
 //PROJECTILE
-static const float PROJECTILE_MIN_LINEAR_VELOCITY_LENGTH = 7;
-static const float PROJECTILE_SCALE = 2.f;
-static const float PROJECTILE_STRENGTH = 30;
+static const float PROJECTILE_MIN_LINEAR_VELOCITY_LENGTH = 2;
+static const float PROJECTILE_SCALE = 0.1f;
+static const float PROJECTILE_STRENGTH = 20;
+static const float PROJECTILE_MASS = 2;
 
 //EXPLOSION
-static const float EXPLOSION_SCALE = 12.f;
-static const float EXPLOSION_STRENGTH_MULTIPLIER = 12.f;
+static const float EXPLOSION_SCALE = 2.f;
+static const float EXPLOSION_STRENGTH_MULTIPLIER = 1.f;
+static const float EXPLOSION_DAMAGE_MULTIPLIER = 6.f;
 static const float EXPLOSION_TIME_LIMIT = 0.3f;
-
-//LOCAL_SPELL
-static const float LOCAL_SPELL_SCALE = 4;
-static const float LOCAL_SPELL_DURATION = 4;
 
 //MUTANT
 static const float MUTANT_HEALTH = 200;
 static const float MUTANT_SPEED = 0.3f;
-static const float MUTANT_ATTACK_DURATION = 1.4f;
-static const float MUTANT_ATTACK_DAMAGE = 15.f;
+static const float MUTANT_ATTACK_DURATION = 1.3f;
+static const float MUTANT_ATTACK_DAMAGE = 25.f;

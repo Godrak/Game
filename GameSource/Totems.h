@@ -17,6 +17,13 @@ public:
     virtual void ApplyEffect(Node *node) {};
 
     virtual void Activate(Node *node) {};
+
+    void Update(float timeStep) override {
+        LogicComponent::Update(timeStep);
+    }
+
+protected:
+    ResourceCache *cache = GetSubsystem<ResourceCache>();
 };
 
 
@@ -81,11 +88,13 @@ public:
 
     void HandleNodeCollision(StringHash eventType, VariantMap &eventData) {
         using namespace NodeCollision;
-        if (effectTriggerTime > 0) return;
+        if (effectTriggerTime > TOTEM_EFFECT_TRIGGER_WINDOW) return;
 
         auto *otherNode = (Node *) eventData[P_OTHERNODE].GetPtr();
-        for (auto *effect: effects) {
-            effect->ApplyEffect(otherNode);
+        if (otherNode->GetDerivedComponent<Entity>() != NULL) {
+            for (auto *effect: effects) {
+                effect->ApplyEffect(otherNode);
+            }
         }
     }
 
@@ -93,7 +102,7 @@ public:
         LogicComponent::Update(timeStep);
         if (effectTriggerTime < -TOTEM_EFFECT_TRIGGER_WINDOW)
             effectTriggerTime = TOTEM_EFFECT_TRIGGER_TIME;
-        effectTriggerTime = -timeStep;
+        effectTriggerTime -= timeStep;
         areaOfEffectNode->SetRotation((areaOfEffectNode->GetRotation() * Quaternion(0.2, Vector3::UP)).Normalized());
         totemDuration -= timeStep;
         if (!removed && totemDuration < 0) {
@@ -122,86 +131,6 @@ protected:
     CollisionShape *aoeCollisionShape{};
     RigidBody *aoeRigidBody{};
 };
-
-//class ShieldTotem : public Totem {
-//URHO3D_OBJECT(ShieldTotem, Totem);
-//public:
-//    ShieldTotem(Context *context) : Totem(context) {}
-//
-//    void Activate(Vector3 position) override {
-//        Totem::Activate(position);
-//        effect = areaOfEffectNode->CreateComponent<ShieldEffect>();
-//    }
-//
-//    void ApplyEffects(Node *node) override {
-//        if (node->GetName() == "Player") {
-//            auto *entity = node->GetDerivedComponent<Entity>();
-//            if (entity != NULL) {
-//                effect->ApplyEffect(node);
-//            }
-//        }
-//    }
-//};
-
-//class WindTotem : public Totem {
-//URHO3D_OBJECT(WindTotem, Totem);
-//public:
-//    WindTotem(Context *context) : Totem(context) {}
-//
-//    void Activate(Vector3 position) override {
-//        Totem::Activate(position);
-//        effect = areaOfEffectNode->CreateComponent<FrozenEffect>();
-//    }
-//
-//    void ApplyEffects(Node *node) override {
-//        if (node->GetName() != "Player") {
-//            auto *entity = node->GetDerivedComponent<Entity>();
-//            if (entity != NULL) {
-//                effect->ApplyEffect(node);
-//            }
-//        }
-//    }
-//};
-//
-//class StrengthTotem : public Totem {
-//URHO3D_OBJECT(StrengthTotem, Totem);
-//public:
-//    StrengthTotem(Context *context) : Totem(context) {}
-//
-//    void Activate(Vector3 position) override {
-//        Totem::Activate(position);
-//        effect = areaOfEffectNode->CreateComponent<FireEffect>();
-//    }
-//
-//    void ApplyEffects(Node *node) override {
-//        if (node->GetName() == "Player") {
-//            auto *entity = node->GetDerivedComponent<Entity>();
-//            if (entity != NULL) {
-//                effect->ApplyEffect(node);
-//            }
-//        }
-//    }
-//};
-//
-//class NatureTotem : public Totem {
-//URHO3D_OBJECT(NatureTotem, Totem);
-//public:
-//    NatureTotem(Context *context) : Totem(context) {}
-//
-//    void Activate(Vector3 position) override {
-//        Totem::Activate(position);
-//        effect = areaOfEffectNode->CreateComponent<HealingEffect>();
-//    }
-//
-//    void ApplyEffects(Node *node) override {
-//        if (node->GetName() == "Player") {
-//            auto *entity = node->GetDerivedComponent<Entity>();
-//            if (entity != NULL) {
-//                effect->ApplyEffect(node);
-//            }
-//        }
-//    }
-//};
 
 class ShieldEffect : public TotemEffect {
 URHO3D_OBJECT(ShieldEffect, TotemEffect);
@@ -304,5 +233,85 @@ public:
     }
 };
 
+class DefenseWallEffect : public TotemEffect {
+URHO3D_OBJECT(DefenseWallEffect, TotemEffect);
 
+    DefenseWallEffect(Context *context) : TotemEffect(context) {}
 
+    void Activate(Node *node) override {
+        Vector3 center = GetNode()->GetPosition();
+        float t = 0;
+        while (t < 1) {
+            auto pos = GetWallPosition(t, center, WALL_RADIUS);
+            auto *wallNode = GetNode()->CreateTemporaryChild("Wall");
+            wallNode->SetWorldPosition(pos);
+            auto staticModel = wallNode->CreateComponent<StaticModel>();
+
+            auto *sphereModel = cache->GetResource<Model>("Models/Sphere.mdl");
+            auto *stoneMaterial = cache->GetResource<Material>("Materials/StoneBlack.xml");
+            staticModel->SetModel(sphereModel);
+            staticModel->SetMaterial(stoneMaterial);
+
+            auto *rigidBody = wallNode->CreateComponent<RigidBody>();
+            rigidBody->SetCollisionLayer(1);
+
+            auto *collisionShape = wallNode->CreateComponent<CollisionShape>();
+            collisionShape->SetShapeType(SHAPE_SPHERE);
+
+            t += 0.03;
+        }
+    }
+
+    Vector3 GetWallPosition(float t, Vector3 center, float radius) {
+        float radians = t * 2 * (float) M_PI;
+        return {center.x_ + radius * std::cos(radians), center.y_, center.z_ + radius * std::sin(radians)};
+    }
+};
+
+class TowerEffect : public TotemEffect {
+URHO3D_OBJECT(TowerEffect, TotemEffect);
+
+    TowerEffect(Context *context) : TotemEffect(context) {}
+
+    void ApplyEffect(Node *node) override {
+        if (node->GetName() == MUTANT_NODE_NAME) {
+            auto *projectileNode = GetNode()->CreateTemporaryChild("Projectile");
+            auto pos = GetNode()->GetPosition();
+            auto *projectile = projectileNode->CreateComponent<Projectile>();
+            projectile->Fire(pos, node->GetPosition() - pos);
+        }
+    }
+};
+
+class MadnessEffect : public TotemEffect {
+URHO3D_OBJECT(MadnessEffect, TotemEffect);
+public:
+    MadnessEffect(Context *context) : TotemEffect(context) {}
+
+    void ApplyEffect(Node *node) override {
+        TotemEffect::ApplyEffect(node);
+        auto *ai = node->GetComponent<SimpleAI>();
+        if (ai != NULL && ai->currentTarget != NULL && ai->currentTarget->GetName() == PLAYER_NODE_NAME) {
+            PODVector<Node *> mutants;
+            GetScene()->GetChildrenWithComponent<Mutant>(mutants);
+            if (!mutants.Empty()) {
+                ai->SetTarget(mutants.At((Rand()) % mutants.Size()));
+            }
+        }
+    }
+};
+
+class ExplosionsEffect : public TotemEffect{
+URHO3D_OBJECT(ExplosionsEffect, TotemEffect);
+
+    ExplosionsEffect(Context *context) : TotemEffect(context) {}
+
+    void ApplyEffect(Node *node) override {
+        if (node->GetName() == MUTANT_NODE_NAME) {
+            auto *explosionNode = GetNode()->CreateTemporaryChild("Explosion");
+            auto pos = node->GetPosition();
+            auto *explosion = explosionNode->CreateComponent<Explosion>();
+            explosion->Explode(pos+Vector3::DOWN*0.3f);
+        }
+    }
+};

@@ -57,7 +57,7 @@ ShapeIndex AnalyzeImageLines(ImageLines imageLines, float &matchingRotation) {
         auto input = image.Serialize();
         outputs.push_back(neuralNetwork.Calculate(input));
         rotations.push_back(t);
-        t += 1 / 36.f;
+        t += 1 / 24.f;
         iterations++;
     }
 
@@ -131,7 +131,7 @@ ShapeNode ImageAnalyzer::Analyze(ImageLines imageLines) {
                 copy.Clip(point - float2{0.1f, 0.1f}, point + float2{0.1f, 0.1f});
                 pattern.push_back(AnalyzeImageLines(copy));
 
-                t += 1 / 100.f;
+                t += 1 / 36.f;
 
                 if (!copy.Empty() && DEBUG_IMAGE_SAVE) {
                     copy.Normalize();

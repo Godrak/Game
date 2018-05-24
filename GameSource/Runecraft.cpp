@@ -17,6 +17,9 @@ Runecraft::Runecraft(Context *context) : Application(context) {
     context->RegisterFactory<TimeOutComponent>();
 
     context->RegisterFactory<Totem>();
+    context->RegisterFactory<Projectile>();
+    context->RegisterFactory<Explosion>();
+    context->RegisterFactory<Spell>();
 
     context->RegisterFactory<FireEffect>();
     context->RegisterFactory<HealingEffect>();
@@ -26,6 +29,10 @@ Runecraft::Runecraft(Context *context) : Application(context) {
     context->RegisterFactory<DurabilityEffect>();
     context->RegisterFactory<PowerEffect>();
     context->RegisterFactory<DistractionEffect>();
+    context->RegisterFactory<DefenseWallEffect>();
+    context->RegisterFactory<TowerEffect>();
+    context->RegisterFactory<MadnessEffect>();
+    context->RegisterFactory<ExplosionsEffect>();
 
     context->RegisterFactory<FireState>();
     context->RegisterFactory<FrozenState>();
@@ -40,7 +47,7 @@ void Runecraft::Setup() {
     engineParameters_[EP_WINDOW_TITLE] = GetTypeName();
     engineParameters_[EP_LOG_NAME] =
             GetSubsystem<FileSystem>()->GetAppPreferencesDir("urho3d", "logs") + GetTypeName() + ".log";
-    engineParameters_[EP_FULL_SCREEN] = false;
+    engineParameters_[EP_FULL_SCREEN] = true;
     engineParameters_[EP_HEADLESS] = false;
 
     // Construct a search path to find the resource prefix with two entries:
@@ -57,14 +64,10 @@ void Runecraft::Start() {
     InitScene();
     CreateCamera();
     CreatePlayer(Vector3(20.0f, 0.0f, 5.0f));
-//    CreateMutant(Vector3(5, 2, 0));
-//    CreateMutant(Vector3(4, 2, 0));
-//    CreateMutant(Vector3(6, 4, 0));
-//    CreateMutant(Vector3(1, 2, 0));
-//    CreateMutant(Vector3(4, 6, 0));
-//    CreateMutant(Vector3(5, 5, 0));
-//    CreateMutant(Vector3(3, 4, 0));
+    for (int i = 0; i < MUTANT_COUNT; ++i) {
 
+        CreateMutant(Vector3(Rand()%100 -50, 0, Rand()%100 -50));
+    }
 }
 
 void Runecraft::InitScene() {
@@ -150,7 +153,7 @@ void Runecraft::CreateMutant(Vector3 position) {
     mutantNode->SetPosition(position);
 
     auto *mutant = mutantNode->CreateComponent<Mutant>();
-    mutant->SetSpeed(MUTANT_SPEED*1.0f);
+    mutant->SetSpeed(MUTANT_SPEED*0.6f);
 
     mutantNode->CreateComponent<SimpleAI>();
 }
