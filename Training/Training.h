@@ -13,14 +13,12 @@ namespace Training {
 
     ShapeIndex RegisterShapeDescriptor(unique_ptr<ShapeDescriptor> shapeDescriptor);
 
-    void Train(string networkFile);
-
-    float Train(TrainingCase &trainingCase, bool generateData = true, int dataSize = 300000);
-    
-    void DrawDebugShapes();
-    
-    void ManualTraining(string networkFile);
-
     void GenerateData(const std::string &filename, int validDataCount,
                       int invalidDataCount, bool generateImages);
+
+    float Train(TrainingCase &trainingCase, bool generateData = true, float targetMSE =0.05, int dataSize = 300000);
+
+//    void Train(string networkFile);
+
+//    void ManualTraining(string networkFile);
 }

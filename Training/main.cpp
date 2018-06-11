@@ -26,6 +26,8 @@ int main() {
     RegisterShapeDescriptor(move(unique_ptr<TriangleDescriptor>(new TriangleDescriptor())));
     RegisterShapeDescriptor(move(unique_ptr<WaterDropDescriptor>(new WaterDropDescriptor())));
 
+
+
 //    GenerateData("hello.data",400,200,true);
 //    Train("network.net");
     StructureTraining();

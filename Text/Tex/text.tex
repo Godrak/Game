@@ -15,7 +15,7 @@ While a majority of games binds spells to buttons, there are several games that 
 
 \section{Pattern recognition in current games}
 
-Since symbols and gestures are an integral part of the magic, there were many attempts to bring them into video game environment. We can divide gestural system approaches into three categories, which are overlapping, as sometimes combination of these approaches can be used.
+Since symbols and gestures are an integral part of the magic, there were many attempts to bring them into video game environment. We can divide gestural system approaches into three categories, which are overlapping, as sometimes combination of these approaches can be used. The following categories and facts are taken from \cite{gameMagic}.
 
 One such category are systems that utilize alternative controllers to mouse and keyboard, such as Kinect. Recent game representing this category is \emph{Fable: The Journey}, player casts spells by moving his hands, for example push spell is cast by pushing into the air. Kinect is used to track and recognize patterns made by the player. While moves are simple in nature, such as waving sideways or back and forth, both hands at the same time can be used, resulting in quite complex gestures.
 
@@ -30,7 +30,6 @@ Another technique used in several games is to let player draw into a predefined 
 	\caption{\emph{Castlevania: Dawn of Sorrow} spell interface}
 \end{figure}
 
-[TODO GameMagicDevelopersGuide.pdf pg.78]
 Last category is for examples that are most similar to our goal. One of the first games to integrate some form of pattern recognition is \emph{Black \& White}, where player takes a role of the god. Using a mouse, players are able to cast miracles by drawing a specific pattern onto the ground \ref{fig:blackwhite}. Player can draw anything anywhere on the ground, and the game has to recognize if it matches some of the miracle patterns. Alternatively, they could also cast miracle by clicking on a button, possibly because a lot of players had trouble drawing the miracles. A similar approach to recognition of player drawn spells and their recognition was used in \emph{Arx Fatalis}. Players were drawing symbols into the air with a mouse, and the sequence of symbols represented some spell. While casting, game encoded mouse moves into characters in 8-directions precision, each direction representing some letter. After player finished their spell, a Levenshtein distance was calculated from each spell to the users created sequence and candidate with the lowest Levenshtein cost was returned as matching spell.
 
 \begin{figure}[!htb]
@@ -66,15 +65,14 @@ To achieve our goals, we divide the work into several steps. First, we will choo
 
 There are hundreds of algorithms for pattern recognition as it is a central problem for computer vision. We divide pattern recognition algorithms by different properties.
 
-We can divide them based on the creation process of the classifier into learning-based approaches and template-based approaches [TODO skeletons.pdf p.193]. In the learning-based approaches, pattern classifiers are obtained through training on classified samples. In the template based approaches, patterns are described by templates and the recognition problem transforms into searching for the best matching template for a given input image.
+We can divide them based on the creation process of the classifier into learning-based approaches and template-based approaches \cite{skeletonMatching}. In the learning-based approaches, pattern classifiers are obtained through training on classified samples. In the template based approaches, patterns are described by templates and the recognition problem transforms into searching for the best matching template for a given input image.
 
-[TODO distanceTransform.pdf p.1]
-We can also divide the algorithms based on the level of preprocessing into three classes: algorithms that use pixel values directly, e.g. correlation methods; algorithms that use low-level features such as edges and corners, e.g. distance transform method; and algorithms that use high-level features such as identified objects or relation between the features, e.g. graph-theoretic-methods. 
+We can also divide the algorithms as stated in \cite{distanceTransform} based on the level of preprocessing into three classes: algorithms that use pixel values directly, e.g. correlation methods; algorithms that use low-level features such as edges and corners, e.g. distance transform method; and algorithms that use high-level features such as identified objects or relation between the features, e.g. graph-theoretic-methods.
 
 To make this work possible, we have selected only several algorithms from different categories that we briefly explain and compare with our requirements.
 
 \section{Normalized cross-correlation}
-[corssCorrelation.pdf]
+Following description is taken from the work of \cite{crossCorrLewis}.
 Cross-correlation is a method to measure the similarity between a template and a given area of an image. The term cross correlation itself means a difference between two signals. Its one of the oldest approaches to pattern and feature recognition and extraction, and still serves as a base for more complex algorithms.
 We compute an Euclidean distance of a image f and a template t, where pattern is on a position $(u\,v)$, by comparing corresponding pixels of the image at $(x\,y)$ and the template shifted to $(x-u\,y-v)$. 
 \begin{equation*}
@@ -92,7 +90,6 @@ Other two terms express energy (brightness) of template and image, respectively.
 
 The slowness of method can be partially solved by computing the cross correlation in a frequency domain using some form of a signal transform. Fourier transform is the common one, but other transformations were discovered, such as wavelet transforms [into.pdf p.90]. Convolution theorem states that when all conditions are met, Fourier transform of convolution is element-wise product of Fourier transforms of input signals. From Convolution theorem follows that time domain or space domain convolution is equivalent to element-wise multiplication in frequency domain. To compute convolution, we simply need to take element-wise multiplications of Fourier transforms of signals to be convoluted. Cross correlation differs in that we take the complex conjugate of the Fourier transform of the second signal.
 
-[TODO equation crossCorrelation.pdf p.3]
 Problems with range of cross correlation value and dependency on brightness can be fixed by using normalized cross correlation, where image and template vectors are normalized to unit length. Other desired aspects, such as scale invariance, has been addressed in many algorithms using cross correlation method. However, they usually introduce some trade-offs and they may not achieve all the required properties together. 
 
 Normalized cross-correllation
@@ -214,21 +211,36 @@ and for hidden layers
 
 In summary, the input is evaluated and difference between correct and actual output is computed using error function. The difference is propagated back through the network and weights are updated using the gradient descent method. The whole process is repeated until a desired error value is achieved.
 
-\subsection{Quick-prop algorithm?}
+\subsection{Quickprop algorithm}
+Algorithm is an improved version of backpropagation. It is based on independent optimalization steps for each weight, rather than updating all weights at once. For the update computation, it requieres data from the last iteration, which increases space complexity. 
 
-\subsection{Rprop algorithm?}
+\begin{equation*}
+\Delta ^{(k)} w_{ij} = \Delta^{(k-1)} w_{ij}*(\frac {\bigtriangledown_{ij} E^{(k)})} {\bigtriangledown_{ij} E^{(k-1)} - \bigtriangledown_{ij} E^(k-1) - \bigtriangledown_{ij} E^{(k)} }
+\end{equation*}
+where $\Delta ^{(k)} w_{ij}$ is weight delta from kth iteration and $\bigtriangledown_{ij} E^(k)$ denotes parcial $w_ij$-derivation of error function E in kth iteration.
 
-\section{Convolution neural networks?}
+\section{Convolution neural networks}
+Convolution neural networks are modern solution to image recognition. They are similar to classic neural networks, but the main difference is that they expect the input to be image, and they allow us to encode some of the properties of images naturally into their architecture.
+
+Neurons of convolutional networks have a layered arhitecture, like classic networks, but their layers consist of neurons arranged in grid, just like pixels of an image, and each neuron is connected only to a small corresponding area in next layer.  
 
 \chapter{Implementation}
+Implementation of the recognition system consists of two parts, one responsible for the actual recognition, and one for training of neural network based on user-defined shapes. The usage of the framework consists of three steps: TODO enumeration
+1. defining the shapes and setting up desired recognition parameters.
+2. training the neural network based using the defined shapes
+3. using the framework and trained network to recognize patterns
 
 \section{Formal shape description}
+User can define their own shapes by inheriting from abstract class \emph{ShapeDescriptor}. The shapes are expressed through the methods of this class as parametric curves, meaning that the functions, which should be defined by user, take parameter \emph{t} as an argument, and return point in 2D space. 
 
-\section{Single shape}
+\section{Recognition process}
+When list of lines composing an image is passed into \emph{Analyze} method, it is first drawn onto a pixel map of a predefined size. This image is then presented to the neural network at different rotations, and best match together with the angle is used for further computation. The matching shape is returned as the root shape of the image.  
 
 \section{Embedded shape}
+To recognize embedded shapes, we use the shape descriptor of shape recognized previously, and focus on the embedded shapes locations. We extract lines from each location, and use the method \emph{Analyze} again. The results from these calls are new leafs of the image shapes tree.
 
 \section{Compound shapes}
+Recognition of compound shapes is done through checking, whether a contours of a shape are made from number of another shapes. We use the shape descriptor of the previous shape again, passing in \emph{t} of different values from 0 to 1, and extracting the lines in a square centered at the spot returned by the descriptor.
 
 \section{Training}
 
@@ -240,9 +252,9 @@ In summary, the input is evaluated and difference between correct and actual out
 
 \chapter{Results}
 
-\section{precision}
+\section{Precision}
 
-\section{performance}
+\section{Performance}
 
 \section{Conclusion}
 

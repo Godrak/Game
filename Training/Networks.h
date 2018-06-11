@@ -41,7 +41,7 @@ namespace Training {
         virtual ~TrainingCase();
     };
 
-
+/*
     class CascadeTrainingCase:public TrainingCase {
     public:
         explicit CascadeTrainingCase(vector<unsigned int> networkStructure) {
@@ -54,4 +54,5 @@ namespace Training {
         }
 
     };
+    */
 }

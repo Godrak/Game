@@ -4,9 +4,6 @@ namespace { // training private
     bool inProgress = false;
     const int IMAGE_SIDE_SIZE = 32;
     const float LINE_DRAWING_STEP_SIZE = 0.5;
-    const int BATCH_COUNT = 6;
-    const int BATCH_SIZE = 100000;
-    const int EPOCH_COUNT_PER_BATCH = 5;
     Randomizer randomizer{};
     vector<unique_ptr<ShapeDescriptor>> shapeDescriptors{};
 }
@@ -288,6 +285,7 @@ void Training::GenerateData(const std::string &filename, int validDataCount,
     trainingData.close();
 }
 
+/*
 void Training::Train(string networkFile) {
     if (shapeDescriptors.empty()) {
         cout << "ERROR: no shape descriptors registered for training" << endl;
@@ -324,7 +322,8 @@ void Training::Train(string networkFile) {
     network.Save(networkFile);
     inProgress = false;
 }
-
+ */
+/*
 void Training::ManualTraining(string networkFile) {
     using namespace Training;
     TrainingCase network(vector<unsigned int>{IMAGE_SIDE_SIZE * IMAGE_SIDE_SIZE, 512, 64,
@@ -427,8 +426,9 @@ void Training::ManualTraining(string networkFile) {
         }
     }
 }
+*/
 
-float Training::Train(Training::TrainingCase &trainingCase, bool generateData, int dataSize) {
+float Training::Train(Training::TrainingCase &trainingCase, bool generateData, float targetMSE, int dataSize) {
     if (shapeDescriptors.empty()) {
         cout << "ERROR: no shape descriptors registered for training" << endl;
         return 0;
@@ -449,7 +449,7 @@ float Training::Train(Training::TrainingCase &trainingCase, bool generateData, i
     float error = 0.2f;
     trainingCase.SetError(error);
 
-    while (newMse < mse && newMse > 0.005) {
+    while (newMse < mse && newMse > targetMSE) {
         mse = newMse;
         trainingCase.Train(100);
         newMse = trainingCase.Test(testData);
