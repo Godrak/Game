@@ -14,7 +14,7 @@ namespace Training {
     ShapeIndex RegisterShapeDescriptor(unique_ptr<ShapeDescriptor> shapeDescriptor);
 
     void GenerateData(const std::string &filename, int validDataCount,
-                      int invalidDataCount, bool generateImages);
+                      int invalidDataCount, bool generateImages = false, bool saveImageLines = false);
 
     float Train(TrainingCase &trainingCase, bool generateData = true, float targetMSE =0.05, int dataSize = 300000);
 

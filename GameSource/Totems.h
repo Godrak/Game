@@ -245,6 +245,7 @@ URHO3D_OBJECT(DefenseWallEffect, TotemEffect);
             auto pos = GetWallPosition(t, center, WALL_RADIUS);
             auto *wallNode = GetNode()->CreateTemporaryChild("Wall");
             wallNode->SetWorldPosition(pos);
+            wallNode->SetScale(2.f);
             auto staticModel = wallNode->CreateComponent<StaticModel>();
 
             auto *sphereModel = cache->GetResource<Model>("Models/Sphere.mdl");

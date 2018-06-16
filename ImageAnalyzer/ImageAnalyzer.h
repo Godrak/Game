@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <memory>
+#include <fstream>
 #include "LinAlgExtended.h"
 #include "NeuralNetwork.h"
 #include "Randomizer.h"
@@ -9,6 +10,16 @@
 namespace ImageAnalyzer {
     using namespace std;
     using namespace LinAlgExtended;
+
+
+    extern bool DEBUG_IMAGE_SAVE;
+    extern bool COMPOSED_SHAPES_ENABLED;
+    extern bool EMBEDDED_SHAPES_ENABLED;
+    extern bool ROTATIONS_ENABLED;
+    extern int DEBUG_OUTPUT;
+    extern int IMAGE_SIDE_SIZE;
+    extern float LINE_DRAWING_STEP_SIZE;
+
 
     struct ShapeIndex {
         int value;
@@ -168,6 +179,32 @@ namespace ImageAnalyzer {
         void Add(ImageLines imageLines) {
             for (const auto &line: imageLines.GetImageLines()) {
                 lines.push_back(line);
+            }
+        }
+
+        void SaveToFile(std::string fileName) {
+            ofstream file(fileName);
+            file << lines.size() << endl;
+            for (int i = 0; i < lines.size(); ++i) {
+                file << lines[i].GetStart().x;
+                file << lines[i].GetStart().y;
+                file << lines[i].GetEnd().x;
+                file << lines[i].GetEnd().y;
+            }
+            file.close();
+        }
+
+        void LoadFromFile(std::string fileName) {
+            ifstream file(fileName);
+            uint size;
+            file >> size;
+            for (int i = 0; i < size; ++i) {
+                float sx, sy, ex, ey;
+                file >> sx;
+                file >> sy;
+                file >> ex;
+                file >> ey;
+                lines.emplace_back(float2(sx, sy), float2(ex, ey));
             }
         }
 

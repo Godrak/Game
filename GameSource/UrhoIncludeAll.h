@@ -113,21 +113,21 @@ static const float WALL_RADIUS = 9;
 
 //TOTEMS
 static const float TOTEM_SCALE = 2;
-static const float TOTEM_DURATION = 20;
+static const float TOTEM_DURATION = 12;
 static const float TOTEM_EFFECT_TRIGGER_TIME = 1;
-static const float TOTEM_EFFECT_TRIGGER_WINDOW = 0.1;
+static const float TOTEM_EFFECT_TRIGGER_WINDOW = 0.05;
 static const float TOTEM_EFFECT_SIZE = 7;
 
 //PROJECTILE
-static const float PROJECTILE_MIN_LINEAR_VELOCITY_LENGTH = 2;
+static const float PROJECTILE_MIN_LINEAR_VELOCITY_LENGTH = 3;
 static const float PROJECTILE_SCALE = 0.1f;
 static const float PROJECTILE_STRENGTH = 20;
 static const float PROJECTILE_MASS = 2;
 
 //EXPLOSION
-static const float EXPLOSION_SCALE = 2.f;
-static const float EXPLOSION_STRENGTH_MULTIPLIER = 1.f;
-static const float EXPLOSION_DAMAGE_MULTIPLIER = 6.f;
+static const float EXPLOSION_SCALE = 1.f;
+static const float EXPLOSION_STRENGTH_MULTIPLIER = 0.5f;
+static const float EXPLOSION_DAMAGE_MULTIPLIER = 3.f;
 static const float EXPLOSION_TIME_LIMIT = 0.3f;
 
 //MUTANT

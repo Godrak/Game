@@ -7,16 +7,21 @@ using namespace LineDrawer;
 using namespace LinAlgExtended;
 
 namespace { //private
-    const bool DEBUG_IMAGE_SAVE = false;
-    const bool ANALYZE_PATTERN = true;
-    const int DEBUG_OUTPUT = 1;
-    const int IMAGE_SIDE_SIZE = 32;
-    const float LINE_DRAWING_STEP_SIZE = 0.5f;
-
     Randomizer randomizer{};
     std::map<ShapeIndex, std::unique_ptr<ShapeDescriptor>> shapeDescriptors{};
     NeuralNetwork neuralNetwork{};
 }
+
+namespace ImageAnalyzer {
+    bool DEBUG_IMAGE_SAVE = false;
+    bool COMPOSED_SHAPES_ENABLED = true;
+    bool EMBEDDED_SHAPES_ENABLED = true;
+    bool ROTATIONS_ENABLED = true;
+    int DEBUG_OUTPUT = 1;
+    int IMAGE_SIDE_SIZE = 32;
+    float LINE_DRAWING_STEP_SIZE = 0.5f;
+}
+
 
 ShapeIndex CountShapes(const vector<ShapeIndex> &shapes, int &count) {
     std::map<ShapeIndex, int> results{};
@@ -40,12 +45,12 @@ ShapeIndex CountShapes(const vector<ShapeIndex> &shapes, int &count) {
     return maxIndex;
 }
 
-
 ShapeIndex AnalyzeImageLines(ImageLines imageLines, float &matchingRotation) {
     imageLines.Normalize();
     vector<vector<float>> outputs;
     vector<float> rotations;
     float t = 0.f;
+    float tStep = ROTATIONS_ENABLED ? 1/24.f : 1.f;
     int iterations = 0;
 
     while (t < 1) {
@@ -57,7 +62,7 @@ ShapeIndex AnalyzeImageLines(ImageLines imageLines, float &matchingRotation) {
         auto input = image.Serialize();
         outputs.push_back(neuralNetwork.Calculate(input));
         rotations.push_back(t);
-        t += 1 / 24.f;
+        t += tStep;
         iterations++;
     }
 
@@ -89,7 +94,6 @@ ShapeIndex AnalyzeImageLines(ImageLines imageLines, float &matchingRotation) {
 
     return ShapeIndex(shape);
 }
-
 
 ShapeIndex AnalyzeImageLines(ImageLines imageLines) {
     float rotation;
@@ -123,7 +127,7 @@ ShapeNode ImageAnalyzer::Analyze(ImageLines imageLines) {
         auto *shapeDescriptor = shapeDesc->second.get();
         float t = 0;
         vector<ShapeIndex> pattern;
-        if (ANALYZE_PATTERN) {
+        if (COMPOSED_SHAPES_ENABLED) {
             while (t < 1) {
                 ImageLines copy = imageLines;
                 float2 point = shapeDescriptor->GetPoint(t);
@@ -151,21 +155,24 @@ ShapeNode ImageAnalyzer::Analyze(ImageLines imageLines) {
             node.shapePattern = patternShape;
         }
 
-        for (float3 poi : shapeDescriptor->GetPointsOfInterest()) {
-            ImageLines copy = imageLines;
-            copy.Transform(CreateRotationMatrix(matchingRotation, float2(0.5f, 0.5f)));
-            copy.Normalize();
-            auto origSize = shapeDescriptor->GetSize();
-            auto size = copy.Size();
-            copy.Transform(CreateScalingMatrix(origSize / size));
-            copy.Normalize();
-            if (DEBUG_IMAGE_SAVE) {
-                DrawLines(copy, IMAGE_SIDE_SIZE, LINE_DRAWING_STEP_SIZE).SaveToFile(
-                        "debug/r" + to_string(randomizer.ratio()));
+        if (EMBEDDED_SHAPES_ENABLED) {
+            for (float3 poi : shapeDescriptor->GetPointsOfInterest()) {
+                ImageLines copy = imageLines;
+                copy.Transform(CreateRotationMatrix(matchingRotation, float2(0.5f, 0.5f)));
+                copy.Normalize();
+                auto origSize = shapeDescriptor->GetSize();
+                auto size = copy.Size();
+                copy.Transform(CreateScalingMatrix(origSize / size));
+                copy.Normalize();
+                if (DEBUG_IMAGE_SAVE) {
+                    DrawLines(copy, IMAGE_SIDE_SIZE, LINE_DRAWING_STEP_SIZE).SaveToFile(
+                            "debug/r" + to_string(randomizer.ratio()));
+                }
+                copy.Clip(float2(poi.x, poi.y), float2(poi.x, poi.y) + float2(poi.z, poi.z));
+                node.childNodes.push_back(Analyze(copy));
             }
-            copy.Clip(float2(poi.x, poi.y), float2(poi.x, poi.y) + float2(poi.z, poi.z));
-            node.childNodes.push_back(Analyze(copy));
         }
+
     }
 
     return node;
