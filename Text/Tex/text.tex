@@ -48,7 +48,8 @@ Last category is for examples that are most similar to our goal. One of the firs
 
 We would like to allow players draw complex spells. Instead of a sequence of symbols recorded over time, players could draw symbols arranged in a shape of another symbol, or embed one symbol in another. We also want our approach to be applicable in multi-player environments, where new situations can occur, such as multiple players drawing one spell. We don't want to introduce aiding structures such as trigger points, since they require order in which they were passed and force player to draw in a certain way or direction. They are also not very usable in a multi-player environment, since they can't handle multiple people drawing at the same time.
 
-For the purpose of this work, we specify following requirements that we have on our recognition system. 
+For the purpose of this work, we specify following requirements that we have on our recognition system.
+TODO enumeration 
 
 \subsection{Durability against shape deformations}
 Since we want to recognize hand-drawn shapes, our system has to be prepared for human imprecise drawing, especially when drawing with a mouse. However, defining what is deformed within some boundaries and should be recognized, and what is too deformed, is not an easy task.
@@ -62,8 +63,8 @@ Our system should be applicable in demanding video games environment, prepared f
 \subsection{Recognition of embedded shapes}
 To allow players cast complex spells, we need to give them an ability to somehow encode multiple symbols in one spell. Theu might do is using shape embeddings. Each defined shape can contain several areas, where other shapes might occur. These areas and their content is then process in our recognition system as well.
 
-\subsection{Recognition of shape congomerations}
-For the purpose of this work, shape conglomeration is a group of shapes representing the same shape class e.g. circle, arranged such that the whole conglomeration forms another shape. We can also look at it as taking the shapes lines, sampling them at many spots, and then replacing all the spots with the same shape.
+\subsection{Recognition of shape conglomerations}
+For the purpose of this work, shape conglomeration is a group of shapes representing the same shape class e.g. circle, arranged such that the whole conglomeration forms another shape. We can also look at it as taking the shapes lines, sampling many spots from them, and then replacing all the spots with the same shape.
 
 \section{Approaches}
 
@@ -71,13 +72,18 @@ To achieve our goals, we divide the work into several steps. First, we will choo
 
 \chapter{Pattern Recognition}
 
+\section{Pattern Recognition problem}
+First, we need to define what we actually mean by pattern recognition. \begin{quotation}
+The Pattern Recognition problem consists in determining a procedure that, on the basis of the attributes, excluding those that define the classification criterion assigns each entity to its proper class.
+\end{quotation} \cite{formalMethods}
+ Pattern recognition problem is a broad term for classification problems based on similarity of the features of classified objects, see \cite{formatMethods} for precise mathematical definition. We will focus more on the shape recognition problems category, which can be viewed as subcategory of pattern recognition. Shape can be typically defined as an equivalence class under the group of transformations, and the problem is then to algorithmically approximate the human-like visual pattern recognition. 
+
+\section{Algorithms division}
 There are hundreds of algorithms for pattern recognition as it is a central problem for computer vision. We divide pattern recognition algorithms by different properties.
 
 We can divide them based on the creation process of the classifier into learning-based approaches and template-based approaches \cite{skeletonMatching}. In the learning-based approaches, pattern classifiers are obtained through training on classified samples. In the template based approaches, patterns are described by templates and the recognition problem transforms into searching for the best matching template for a given input image.
 
 We can also divide the algorithms as stated in \cite{distanceTransform} based on the level of preprocessing into three classes: algorithms that use pixel values directly, e.g. correlation methods; algorithms that use low-level features such as edges and corners, e.g. distance transform method; and algorithms that use high-level features such as identified objects or relation between the features, e.g. graph-theoretic-methods.
-
-To make this work possible, we have selected only several algorithms from different categories that we briefly explain and compare with our requirements.
 
 \section{Normalized cross-correlation}
 Following description is taken from the work of \cite{crossCorrLewis}.
@@ -100,7 +106,7 @@ The slowness of method can be partially solved by computing the cross correlatio
 
 Problems with range of cross correlation value and dependency on brightness can be fixed by using normalized cross correlation, where image and template vectors are normalized to unit length. Other desired aspects, such as scale invariance, has been addressed in many algorithms using cross correlation method. However, they usually introduce some trade-offs and they may not achieve all the required properties together. 
 
-Normalized cross-correllation
+Normalized cross-correlation
 \begin{equation*}
 \gamma(u\,v) = \frac{\sum_{x\,y}f(x\,y) [f(x\,y)-\bar{f}_{u\,v}][t(x-u\,y-v)-\bar{t}]} {\{ \sum_{x\,y}f(x\,y) [f(x\,y)-\bar{f}_{u\,v}]^2 \sum_{x\,y}[t(x-u\,y-v)-\bar{t}]^2  \}^{0.5}}
 \end{equation*}
@@ -219,44 +225,68 @@ and for hidden layers
 
 In summary, the input is evaluated and difference between correct and actual output is computed using error function. The difference is propagated back through the network and weights are updated using the gradient descent method. The whole process is repeated until a desired error value is achieved.
 
-\subsection{Quickprop algorithm}
-Algorithm is an improved version of backpropagation. It is based on independent optimalization steps for each weight, rather than updating all weights at once. For the update computation, it requieres data from the last iteration, which increases space complexity. 
+\subsection{Quick-prop algorithm}
+Algorithm is an improved version of back propagation. It is based on independent optimalization steps for each weight, rather than updating all weights at once. For the update computation, it requires data from the last iteration, which increases space complexity. 
 
 \begin{equation*}
 \Delta ^{(k)} w_{ij} = \Delta^{(k-1)} w_{ij}*(\frac {\bigtriangledown_{ij} E^{(k)})} {\bigtriangledown_{ij} E^{(k-1)} - \bigtriangledown_{ij} E^(k-1) - \bigtriangledown_{ij} E^{(k)} }
 \end{equation*}
-where $\Delta ^{(k)} w_{ij}$ is weight delta from kth iteration and $\bigtriangledown_{ij} E^(k)$ denotes parcial $w_ij$-derivation of error function E in kth iteration.
+where $\Delta ^{(k)} w_{ij}$ is weight delta from \emph{kth} iteration and $\bigtriangledown_{ij} E^(k)$ denotes partial $w_ij$-derivation of error function E in kth iteration.
 
 \section{Convolution neural networks}
 Convolution neural networks are modern solution to image recognition. They are similar to classic neural networks, but the main difference is that they expect the input to be image, and they allow us to encode some of the properties of images naturally into their architecture.
 
-Neurons of convolutional networks have a layered arhitecture, like classic networks, but their layers consist of neurons arranged in grid, just like pixels of an image, and each neuron is connected only to a small corresponding area in next layer.  
-
+Neurons of convolutional networks have a layered architecture, like classic networks, but their layers consist of neurons arranged in grid, just like pixels of an image, and each neuron is connected only to a small corresponding area in next layer.  
+TODO image
 \chapter{Implementation}
 Implementation of the recognition system consists of two parts, one responsible for the actual recognition, and one for training of neural network based on user-defined shapes. The usage of the framework consists of three steps: TODO enumeration
 1. defining the shapes and setting up desired recognition parameters.
 2. training the neural network based using the defined shapes
 3. using the framework and trained network to recognize patterns
 
-\section{Formal shape description}
-User can define their own shapes by inheriting from abstract class \emph{ShapeDescriptor}. The shapes are expressed through the methods of this class as parametric curves, meaning that the functions, which should be defined by user, take parameter \emph{t} as an argument, and return point in 2D space. 
+\section{Data representations}
+
+\subsection{Input image data format}
+First, we have to define the form of input. There are two general approaches to representation of graphic data: vector graphics and raster graphics. Vector graphics data are usually more flexible, allowing us to perform deformations and scaling without loss of precision. They also take less space and can be converted into pixel map when needed. On the other hand, they are harder to produce, since because they are built on the knowledge of mathematical relations in the image. Since we expect the input to the program to represent rather simple black and white shapes or their combinations, without any additional information like color or different shades, we have decided to create the interface for vector graphics like input.
+
+\subsubsection{Image lines class}
+Input to the shape recognition program is in the format of instance of \emph{ImageLines} class, defined in \emph{ImageAnalyzer.h} header file. This class wraps a vector of lines defining the shape, accessible through \emph{GetImageLines} method. The user is expected to fill the vector with lines representing the two dimensional image before passing it into the \emph{Analyze} method. The class offers several other methods, used primarily by the recognition algorithm. 
+Line is represented by the instance of class \emph{Line} in the same file, and the constructor accepts two \emph{float2} type vectors, first containing the start coordinates of the line, and second containing the end coordinates. Internally, the coordinates are transformed into three dimensional vectors into homogeneous coordinate system. 
+
+\subsection{Shape descriptors}
+Shape descriptors are key part of the system, as they are used during training of the neural network to produce shape examples and during analysis of image they provide the algorithm with information about the expected line positions and possible embedded shape locations. User can define their own shapes by inheriting from abstract class \emph{ShapeDescriptor} defined in \emph{ImageAnalyzer.h} file. The core of shape description using this class are parametric curves. Abstract class functions, which should be defined by user, take parameter \emph{t} in range $[0-1]$ as an argument, and return a point on the curve in a 2D space in a range $[0-1]^2$. The curve does not have to be continuous, but it has to return value for every parameter value in the range, and also thread safety of some methods is required. It is recommended to keep the shape complexity low, as some very small details may be lost in the data preparation for the training. 
+
+\subsection{Output data format}
+Output is in the form of instance of \emph{ShapeNode} class defined in \emph{ImageAnalyzer.h} file. It represents a tree structure, where each node contains the recognized shape index, conglomeration shape index and embedded shapes as children.
 
 \section{Recognition process}
-When list of lines composing an image is passed into \emph{Analyze} method, it is first drawn onto a pixel map of a predefined size. This image is then presented to the neural network at different rotations, and best match together with the angle is used for further computation. The matching shape is returned as the root shape of the image.  
+The recognition process starts in the \emph{Analyze} method, declared in \emph{ImageAnalyzer.h} file. It accepts an instance of \emph{ImageLines} class as an argument, and returns \emph{ShapeNode} instance describing the recognized elements in the image. The image lines are first normalized, which means transformed into $[0-1]^2$ coordinate space. This transformation is essentially a rescaling, preserving the length ratio and angles. Then, the top level shape is analyzed by drawing the lines into pixel map passing the pixels into the trained neural network. If rotation recognition is enabled, the image lines are rotated several times by a fixed angle value, and then drawn and analyzed by the network again. The network return a vector of values, each value representing the similarity to the shape it represents, and the highest value shows the matched shape. If there are more network outputs for different rotations, the first highest value among all outputs is considered. If the highest value is not greater than certain fixed value, shape is not recognized. Recognized shape is returned along with its matching rotation, in which it scored the highest similarity.
 
-\section{Embedded shape}
-To recognize embedded shapes, we use the shape descriptor of shape recognized previously, and focus on the embedded shapes locations. We extract lines from each location, and use the method \emph{Analyze} again. The results from these calls are new leafs of the image shapes tree.
+\subsection{Compound shape}
+When the top level shape is recognized, its shape descriptor is used to sample the theoretical curve points uniformly on the range of \emph{t} on interval $[0-1]$. Then, for each sampled point, this point is expanded into small square, the original image is clipped to this square, discarding the lines outside, and the result is analyzed for for any recognizable shape. Recognized shapes are counted over all samples, and if the count of any shape is high enough, the top level shape is recognized as a compound shape created from a number of smaller shapes of the type with the highest count. Shapes, that form the composition are not tested for compound shape again to optimize the speed and because creating such recursion of compound shapes is unexpected.
 
-\section{Compound shapes}
-Recognition of compound shapes is done through checking, whether a contours of a shape are made from number of another shapes. We use the shape descriptor of the previous shape again, passing in \emph{t} of different values from 0 to 1, and extracting the lines in a square centered at the spot returned by the descriptor.
+\subsection{Embedded shape}
+To recognize embedded shapes, we use the shape descriptor of the shape recognized previously, and focus on the embedded shapes locations. For each embedded shape location defined in the shape descriptor, we clip the image lines to that area, and recursively run the \emph{Analyze} method on the result.
 
-\section{Training}
+\section{Neural network preparation}
+We use the \emph{FANN} neural network library to train and use neural networks. This open source software is easy to use and install, while having a lot of options in terms of network architecture and training. Thanks to its simplicity, we were able to develop an automatized training system for the networks.
 
-\section{Recognition interface}
+\subsection{Data generation}
+Training a neural network that is able to recognize user defined shapes requires training data. We generate the training data based on the shape descriptors registered by user. To generate a data sample for neural network, we take the shape descriptor, and create an \emph{ImageLines} instance from it. It will be either deformed simple shape instance, or instance of compound shape. In the case of creating deformed simple shape instance, shape curve is sampled many times using the shape descriptor, and each sample can be moved in the direction perpendicular to the line between the original position of the last point, and the original position of this point. TODO picture. This offset is linearly magnified and then reduced, resulting in a heuristics that tries to approximate some of the human like deformations of drawn shapes. Then, line between previous and new point is added to the image instance. In the case of the shape conglomeration, the shape curve is sampled much less frequently and each point is replaced by rescaled image lines of a randomly chosen shape, but this shape is the same for the whole composition.
 
-\section{Spell system}
+\subsection{Training}
+Training is done using the generated data from the previous methods and the \emph{FANN} library. First, the training data and test data are generated, where the size of training data can be changed by the user, and the size of test data is one third of the size of training data. Then the network is repeatedly trained on the training data until it reaches the user set up MSE, or until it stops improving. Internally, it starts with high MSE target value, which is then gradually lowered, and in between the improvement ratio is checked. The algorithm used for training the network is called \emph{RPROP}, an improved version of quickprop algorithm, because we achieved best results with this algorithm in terms of the improvements stability. In the neural network, we use an \emph{Elliot} activation function.
 
-\section{Game implementation}
+\section{Game prototype}
+The game, which demonstrates the usage of this pattern recognition work, has been developed using URHO3D game engine in version 1.7. \begin{quotation} Urho3D is a free lightweight, cross-platform 2D and 3D game engine implemented in C++ and released under the MIT license. Greatly inspired by OGRE and Horde3D. \end{quotation} It is easy to learn and use, and comes with many examples together with source codes of how to use it. It is built on a component based scene model. 
+
+\subsection{Game description}
+TODO
+
+\subsection{Spell system}
+The game spell system consists of several parts. First is the \emph{DrawableTexture} component, which is attached to the ground entity. This component is able to track players drawings and store them as an lists of points, each list representing one continuous line. When the player presses the button to cast spell, the \emph{Caster} component attached to their character extracts the lines in rectangular area around the character and transforms them into the vector of lines. Then the instance of \emph{Spell} class defined in \emph{SpellSystem.h} file is created. There, the \emph{ImageAnalyzer::Analyze} method is finally called in a different thread and when the analysis is done, the result is parsed and the spell is casted.
+
+\chapter{User guide}
 
 \chapter{Results}
 
