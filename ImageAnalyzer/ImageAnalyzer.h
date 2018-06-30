@@ -242,9 +242,6 @@ namespace ImageAnalyzer {
         /// \return point represented by t.
         virtual float2 GetPoint(float t) = 0;
 
-        /// \return Size of shape
-        virtual float2 GetSize() = 0;
-
         /// Method to find areas where "inside" shapes might be located. Currently only square shaped locations are supported.
         /// \return vector of locations in form (leftCornerX, leftCornerY, Size).
         virtual vector<float3> GetPointsOfInterest() const {

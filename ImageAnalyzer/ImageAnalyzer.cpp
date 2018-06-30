@@ -160,10 +160,6 @@ ShapeNode ImageAnalyzer::Analyze(ImageLines imageLines) {
                 ImageLines copy = imageLines;
                 copy.Transform(CreateRotationMatrix(matchingRotation, float2(0.5f, 0.5f)));
                 copy.Normalize();
-                auto origSize = shapeDescriptor->GetSize();
-                auto size = copy.Size();
-                copy.Transform(CreateScalingMatrix(origSize / size));
-                copy.Normalize();
                 if (DEBUG_IMAGE_SAVE) {
                     DrawLines(copy, IMAGE_SIDE_SIZE, LINE_DRAWING_STEP_SIZE).SaveToFile(
                             "debug/r" + to_string(randomizer.ratio()));

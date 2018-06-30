@@ -15,10 +15,6 @@ public:
         return "square";
     }
 
-    float2 GetSize() override {
-        return {1, 1};
-    }
-
     float2 GetPoint(float t) override {
         NormalizeParam(t);
 
@@ -54,10 +50,6 @@ public:
         return "circle";
     }
 
-    float2 GetSize() override {
-        return {1, 1};
-    }
-
     float2 GetPoint(float t) override {
         NormalizeParam(t);
         float radians = t * 2 * (float) M_PI;
@@ -84,10 +76,6 @@ private:
 public:
     string GetName() const override {
         return "triangle";
-    }
-
-    float2 GetSize() override {
-        return {1, 1};
     }
 
     float2 GetPoint(float t) override {
@@ -121,10 +109,6 @@ class CrossDescriptor : public ShapeDescriptor {
 public:
     string GetName() const override {
         return "cross";
-    }
-
-    float2 GetSize() override {
-        return {1, 1};
     }
 
     float2 GetPoint(float t) override {
@@ -169,10 +153,6 @@ public:
         return "flash";
     }
 
-    float2 GetSize() override {
-        return {0.8, 1};
-    }
-
     float2 GetPoint(float t) override {
         NormalizeParam(t);
 
@@ -196,10 +176,6 @@ class WaterDropDescriptor : public ShapeDescriptor {
 public:
     string GetName() const override {
         return "water";
-    }
-
-    float2 GetSize() override {
-        return {1, 1};
     }
 
     float2 GetPoint(float t) override {

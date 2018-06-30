@@ -402,19 +402,27 @@
 		<Unit filename="/home/free/dev/Runecraft/Game/LinAlg/linalg.h">
 			<Option target="Game"/>
 		</Unit>
+		<Unit filename="/home/free/dev/Runecraft/Game/Tests/main.cpp">
+			<Option target="Tests"/>
+		</Unit>
 		<Unit filename="/home/free/dev/Runecraft/Game/Training/Networks.cpp">
+			<Option target="Tests"/>
 			<Option target="Training"/>
 		</Unit>
 		<Unit filename="/home/free/dev/Runecraft/Game/Training/Networks.h">
+			<Option target="Tests"/>
 			<Option target="Training"/>
 		</Unit>
 		<Unit filename="/home/free/dev/Runecraft/Game/Training/Training.cpp">
+			<Option target="Tests"/>
 			<Option target="Training"/>
 		</Unit>
 		<Unit filename="/home/free/dev/Runecraft/Game/Training/Training.h">
+			<Option target="Tests"/>
 			<Option target="Training"/>
 		</Unit>
 		<Unit filename="/home/free/dev/Runecraft/Game/Training/main.cpp">
+			<Option target="Tests"/>
 			<Option target="Training"/>
 		</Unit>
 		<Unit filename="/home/free/dev/Runecraft/Game/bin/CoreData">

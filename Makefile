@@ -354,12 +354,40 @@ ImageAnalyzer/LineDrawer.cpp.s:
 	$(MAKE) -f CMakeFiles/Game.dir/build.make CMakeFiles/Game.dir/ImageAnalyzer/LineDrawer.cpp.s
 .PHONY : ImageAnalyzer/LineDrawer.cpp.s
 
+Tests/main.o: Tests/main.cpp.o
+
+.PHONY : Tests/main.o
+
+# target to build an object file
+Tests/main.cpp.o:
+	$(MAKE) -f CMakeFiles/Tests.dir/build.make CMakeFiles/Tests.dir/Tests/main.cpp.o
+.PHONY : Tests/main.cpp.o
+
+Tests/main.i: Tests/main.cpp.i
+
+.PHONY : Tests/main.i
+
+# target to preprocess a source file
+Tests/main.cpp.i:
+	$(MAKE) -f CMakeFiles/Tests.dir/build.make CMakeFiles/Tests.dir/Tests/main.cpp.i
+.PHONY : Tests/main.cpp.i
+
+Tests/main.s: Tests/main.cpp.s
+
+.PHONY : Tests/main.s
+
+# target to generate assembly for a file
+Tests/main.cpp.s:
+	$(MAKE) -f CMakeFiles/Tests.dir/build.make CMakeFiles/Tests.dir/Tests/main.cpp.s
+.PHONY : Tests/main.cpp.s
+
 Training/Networks.o: Training/Networks.cpp.o
 
 .PHONY : Training/Networks.o
 
 # target to build an object file
 Training/Networks.cpp.o:
+	$(MAKE) -f CMakeFiles/Tests.dir/build.make CMakeFiles/Tests.dir/Training/Networks.cpp.o
 	$(MAKE) -f CMakeFiles/Training.dir/build.make CMakeFiles/Training.dir/Training/Networks.cpp.o
 .PHONY : Training/Networks.cpp.o
 
@@ -369,6 +397,7 @@ Training/Networks.i: Training/Networks.cpp.i
 
 # target to preprocess a source file
 Training/Networks.cpp.i:
+	$(MAKE) -f CMakeFiles/Tests.dir/build.make CMakeFiles/Tests.dir/Training/Networks.cpp.i
 	$(MAKE) -f CMakeFiles/Training.dir/build.make CMakeFiles/Training.dir/Training/Networks.cpp.i
 .PHONY : Training/Networks.cpp.i
 
@@ -378,6 +407,7 @@ Training/Networks.s: Training/Networks.cpp.s
 
 # target to generate assembly for a file
 Training/Networks.cpp.s:
+	$(MAKE) -f CMakeFiles/Tests.dir/build.make CMakeFiles/Tests.dir/Training/Networks.cpp.s
 	$(MAKE) -f CMakeFiles/Training.dir/build.make CMakeFiles/Training.dir/Training/Networks.cpp.s
 .PHONY : Training/Networks.cpp.s
 
@@ -387,6 +417,7 @@ Training/Training.o: Training/Training.cpp.o
 
 # target to build an object file
 Training/Training.cpp.o:
+	$(MAKE) -f CMakeFiles/Tests.dir/build.make CMakeFiles/Tests.dir/Training/Training.cpp.o
 	$(MAKE) -f CMakeFiles/Training.dir/build.make CMakeFiles/Training.dir/Training/Training.cpp.o
 .PHONY : Training/Training.cpp.o
 
@@ -396,6 +427,7 @@ Training/Training.i: Training/Training.cpp.i
 
 # target to preprocess a source file
 Training/Training.cpp.i:
+	$(MAKE) -f CMakeFiles/Tests.dir/build.make CMakeFiles/Tests.dir/Training/Training.cpp.i
 	$(MAKE) -f CMakeFiles/Training.dir/build.make CMakeFiles/Training.dir/Training/Training.cpp.i
 .PHONY : Training/Training.cpp.i
 
@@ -405,6 +437,7 @@ Training/Training.s: Training/Training.cpp.s
 
 # target to generate assembly for a file
 Training/Training.cpp.s:
+	$(MAKE) -f CMakeFiles/Tests.dir/build.make CMakeFiles/Tests.dir/Training/Training.cpp.s
 	$(MAKE) -f CMakeFiles/Training.dir/build.make CMakeFiles/Training.dir/Training/Training.cpp.s
 .PHONY : Training/Training.cpp.s
 
@@ -414,6 +447,7 @@ Training/main.o: Training/main.cpp.o
 
 # target to build an object file
 Training/main.cpp.o:
+	$(MAKE) -f CMakeFiles/Tests.dir/build.make CMakeFiles/Tests.dir/Training/main.cpp.o
 	$(MAKE) -f CMakeFiles/Training.dir/build.make CMakeFiles/Training.dir/Training/main.cpp.o
 .PHONY : Training/main.cpp.o
 
@@ -423,6 +457,7 @@ Training/main.i: Training/main.cpp.i
 
 # target to preprocess a source file
 Training/main.cpp.i:
+	$(MAKE) -f CMakeFiles/Tests.dir/build.make CMakeFiles/Tests.dir/Training/main.cpp.i
 	$(MAKE) -f CMakeFiles/Training.dir/build.make CMakeFiles/Training.dir/Training/main.cpp.i
 .PHONY : Training/main.cpp.i
 
@@ -432,6 +467,7 @@ Training/main.s: Training/main.cpp.s
 
 # target to generate assembly for a file
 Training/main.cpp.s:
+	$(MAKE) -f CMakeFiles/Tests.dir/build.make CMakeFiles/Tests.dir/Training/main.cpp.s
 	$(MAKE) -f CMakeFiles/Training.dir/build.make CMakeFiles/Training.dir/Training/main.cpp.s
 .PHONY : Training/main.cpp.s
 
@@ -465,6 +501,9 @@ help:
 	@echo "... ImageAnalyzer/LineDrawer.o"
 	@echo "... ImageAnalyzer/LineDrawer.i"
 	@echo "... ImageAnalyzer/LineDrawer.s"
+	@echo "... Tests/main.o"
+	@echo "... Tests/main.i"
+	@echo "... Tests/main.s"
 	@echo "... Training/Networks.o"
 	@echo "... Training/Networks.i"
 	@echo "... Training/Networks.s"

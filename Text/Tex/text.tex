@@ -287,6 +287,45 @@ TODO
 The game spell system consists of several parts. First is the \emph{DrawableTexture} component, which is attached to the ground entity. This component is able to track players drawings and store them as an lists of points, each list representing one continuous line. When the player presses the button to cast spell, the \emph{Caster} component attached to their character extracts the lines in rectangular area around the character and transforms them into the vector of lines. Then the instance of \emph{Spell} class defined in \emph{SpellSystem.h} file is created. There, the \emph{ImageAnalyzer::Analyze} method is finally called in a different thread and when the analysis is done, the result is parsed and the spell is casted.
 
 \chapter{User guide}
+\section{Recognition system}
+\subsection{Creation of shape descriptor}
+For the training as well as for the recognition, shape descriptors are required. The shape descriptors have several behavioral limitations, that need to be followed by the user. The intended purpose of the descriptor is to describe a single 2D shape in a $[0\,1]^2$ rectangular area. The descriptor is expected to return the same shape every time, without any modifications, and all of its methods should return the same values when called with the same parameters. It is also required, that all of the shape descriptor methods are thread safe. It is then recommended to design the shape descriptor as a class with constant inner state. Not following these rules may result in unexpected and dysfunctional behavior of the system. User can create a shape descriptor by including the \emph{ImageAnalyzer.h} header file, and inheriting from the class \emph{ShapeDescriptor}. This class contains several abstract methods, that should be implemented:
+\begin{enumerate}
+\item [GetName] Method, that returns the name of the shape a string. This is only for debugging purposes and it does not have to be unique or even constant. However, it is recommended to return a constant unique name among the descriptors.
+
+\item [GetPoint] Function overload with one parameter \emph{t} returns a point of the curve, based on the \emph{t} parameter. It is recommended to normalize the parameter into $[0\,1]$ range by \emph{NormalizeParam} function.
+
+\item [GetPoint] Function overload with three parameters, that allows the descriptor to describe noncontinuous curves. The \emph{point} parameter passed by reference should be filled with the value of \emph{GetPoint(t)} as it describes the point of the curve. Then the function should return true, if the curve is continuous on the interval $[last_t\, t]$, otherwise false.
+
+\item [GetPointsOfInterest] Function, that describes a places, where an embedded shape may appear. It returns a vector of \emph{float3} type, where the first two numbers denote the top left corner of the square area, and the third number is the size of the square.
+\end{enumerate}
+
+Examples of shapes descriptors can be found in the \emph{ExampleShapeDescriptors.h} file.
+
+\subsection{Algorithm properties}
+There are several variables then can be set up and influence the functionality of the software. They can be found in the \emph{ImageAnalyzer} namespace. Some of them are used both in the training and in the recognition. It is necessary then for the user to be consistent and use the same settings for the recognition as they used for the training.
+
+\begin{enumerate}
+\item [DEBUG\_IMAGE\_SAVE] Boolean variable with default value false. If true, the images created during the recognition are saved as BMP files onto the hard disk, but only in the initial rotation of the image.
+
+\item [COMPOSED\_SHAPES\_ENABLED] Boolean variable with default value true. If false, recognition algorithm recognizes the whole shape, but does not search for the smaller shape that might compose it. During training, the examples generating algorithm does not produce compositions of shape, so the network is not trained to recognize the shape of the composition.
+
+\item [EMBEDDED\_SHAPES\_ENABLED] Boolean variable with default value true. If false, recognition algorithm ignores the positions, where embedded shapes might be, and recognizes only the top level shape and its composing shape. During training, the generating algorithm will not generate embedded shapes, and the network will not be trained to filter out these locations, where they might appear.
+
+\item [ROTATIONS\_ENABLED] Boolean variable with default value true. If false, recognition algorithm will not test different shape rotations for the best match, but will rather use the initial rotation. This variable does not have impact on training, since rotation recognition is not a task of the neural network.
+
+\item [DEBUG\_OUPUT] Integer variable with default value 1. Controls the amount of debug info of the recognition system. If set to 0 or lower, no debug output is produced. If set to value 1, prints recognized shape with its matching rotation and its composing shape, for the top level shape and each embedded shape. If set to 2 or higher, produces the same output as with value 1, but also all network outputs from the analysis are printed for all the rotations.
+
+\item [IMAGE\_SIDE\_SIZE] Integer variable, controls the size of the images that are created during analysis. Every time there is an instance of \emph{ImageLines} class that should be analyzed by the network, the lines are drawn into the square pixel map of size set by this variable. It is also directly connected with the network input layer size, which has to be a second power of this value. The default value is 32, which means that the neural network has an input layer of size 1024 neurons, and the images produced in the algorithm are pixel maps of $32*32$ pixels.
+
+\end{enumerate}
+
+\subsection{Training phase}
+Training the neural network consists of several steps. First step is to set up the variables controlling the behavior of the recognition and training algorithms. By including the \emph{Training.h} file, user can access the \emph{ImageAnalyzer} namespace for setting up the variables, and the \emph{Training} namespace for the training functions. After setting the variables, it is necessary to register the desired shape descriptors through function \emph{Training::RegisterShapeDescriptor}. This function takes a unique pointer to shape descriptor as its parameter, and returns an instance of \emph{ShapeIndex} class. This class is only a wrapper over integers but it works as an identifier of the shape for the network. Then it is necessary to create an instance of \emph{TrainingCase} class, representing the trained neural network. The class takes a vector of integers as its parameter, where each number in the vector represents the number of neurons in one layer. 
+//TODO simplify the interface, finish section
+
+\subsection{Recognition phase}
+
 
 \chapter{Results}
 
