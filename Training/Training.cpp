@@ -201,7 +201,7 @@ void Training::GenerateData(const std::string &filename, int validDataCount,
 
         ImageLines image;
         if (randomizer.ratio() > 0.5f && COMPOSED_SHAPES_ENABLED)
-            image = ComposeShapes(activeDescriptor, activeModifier, randomizer.next(8, 14));
+            image = ComposeShapes(activeDescriptor, activeModifier, randomizer.next(6, 10));
         else {
             float offset = (randomizer.ratio() * 0.2f - 0.1f);
             image = OffsetPoints(activeDescriptor, offset, randomizer.ratio(),
@@ -222,7 +222,7 @@ void Training::GenerateData(const std::string &filename, int validDataCount,
                             poiImage = DrawShape(innerShapeDescriptor);
                         } else {
                             poiImage = ComposeShapes(innerShapeDescriptor, RandomShapeDescriptor(),
-                                                     randomizer.next(8, 14));
+                                                     randomizer.next(6, 10));
                         }
                         poiImage.Normalize();
                         float3 position = p;
