@@ -15,8 +15,12 @@ namespace { //private
 namespace ImageAnalyzer {
     bool DEBUG_IMAGE_SAVE = false;
     bool COMPOSED_SHAPES_ENABLED = true;
+    int COMPOSITION_SAMPLES_COUNT = 16;
+    int COMPOSITION_SAMPLES_LIMIT = 5;
+    float COMPOSITION_WINDOW_SIZE = 0.1f;
     bool EMBEDDED_SHAPES_ENABLED = true;
     bool ROTATIONS_ENABLED = true;
+    int ROTATION_SAMPLES_COUNT = 13;
     int DEBUG_OUTPUT = 1;
     int IMAGE_SIDE_SIZE = 32;
     float LINE_DRAWING_STEP_SIZE = 0.5f;
@@ -50,7 +54,7 @@ ShapeIndex AnalyzeImageLines(ImageLines imageLines, float &matchingRotation) {
     vector<vector<float>> outputs;
     vector<float> rotations;
     float t = 0.f;
-    float tStep = ROTATIONS_ENABLED ? 1/24.f : 1.f;
+    float tStep = ROTATIONS_ENABLED ? 1/(float)ROTATION_SAMPLES_COUNT : 1.f;
     int iterations = 0;
 
     while (t < 1) {
@@ -132,10 +136,11 @@ ShapeNode ImageAnalyzer::Analyze(ImageLines imageLines) {
                 ImageLines copy = imageLines;
                 float2 point = shapeDescriptor->GetPoint(t);
                 point = RotatePoint(point, matchingRotation, float2{0.5f, 0.5f});
-                copy.Clip(point - float2{0.1f, 0.1f}, point + float2{0.1f, 0.1f});
+                copy.Clip(point - float2{COMPOSITION_WINDOW_SIZE, COMPOSITION_WINDOW_SIZE},
+                          point + float2{COMPOSITION_WINDOW_SIZE, COMPOSITION_WINDOW_SIZE});
                 pattern.push_back(AnalyzeImageLines(copy));
 
-                t += 1 / 36.f;
+                t += 1 / (float)COMPOSITION_SAMPLES_COUNT;
 
                 if (!copy.Empty() && DEBUG_IMAGE_SAVE) {
                     copy.Normalize();
@@ -151,7 +156,7 @@ ShapeNode ImageAnalyzer::Analyze(ImageLines imageLines) {
         if (DEBUG_OUTPUT > 0)
             cout << GetNameByIndex(patternShape) << " " << count << endl;
 
-        if (count > 15) {
+        if (count > COMPOSITION_SAMPLES_LIMIT) {
             node.shapePattern = patternShape;
         }
 

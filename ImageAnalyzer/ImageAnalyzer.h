@@ -14,8 +14,12 @@ namespace ImageAnalyzer {
 
     extern bool DEBUG_IMAGE_SAVE;
     extern bool COMPOSED_SHAPES_ENABLED;
+    extern int COMPOSITION_SAMPLES_COUNT;
+    extern int COMPOSITION_SAMPLES_LIMIT;
+    extern float COMPOSITION_WINDOW_SIZE;
     extern bool EMBEDDED_SHAPES_ENABLED;
     extern bool ROTATIONS_ENABLED;
+    extern int ROTATION_SAMPLES_COUNT;
     extern int DEBUG_OUTPUT;
     extern int IMAGE_SIDE_SIZE;
     extern float LINE_DRAWING_STEP_SIZE;
@@ -186,10 +190,10 @@ namespace ImageAnalyzer {
             ofstream file(fileName);
             file << lines.size() << endl;
             for (int i = 0; i < lines.size(); ++i) {
-                file << lines[i].GetStart().x;
-                file << lines[i].GetStart().y;
-                file << lines[i].GetEnd().x;
-                file << lines[i].GetEnd().y;
+                file << lines[i].GetStart().x << " ";
+                file << lines[i].GetStart().y << " ";
+                file << lines[i].GetEnd().x << " ";
+                file << lines[i].GetEnd().y << " ";
             }
             file.close();
         }

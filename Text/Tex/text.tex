@@ -350,16 +350,18 @@ The parameters that we have tested are these:
 The combinations of the parameters above gave us 3*3*4*4 = 150 trained neural networks to evaulate.
 
 \subsubsection{Evaluation}
-The networks were evaluated in the following scenario. For each of the combinations of embeddings and composition being turned on or off, the dataset of 1000 images were generated, with the same amount of examples for each shape. Then, the network was assigned score computed as a sum of scores for each example. Score per example was one of: 
+The networks were evaluated in the following scenario. For each of the combinations of embeddings and composition being turned on or off, the dataset of 1000 images were generated, with the same amount of examples for each shape. Then, the network was assigned score computed as a sum of scores for each example. Score per example was one of:
+
 \begin{enumerate}
 \item [1] If the maximum of the outputs of the network is in the corresponding output neuron of the shape that is in the example.
 \item [2] If the maximum of in the correct output neuron and is higher than 0.5.
 \item [-1] If the maximum is in the wrong output neuron which corresponds to the different shape than the one in the image.
-\item [0] Otherwise.  
 \end{enumerate}
+
 These rules mimic the usage of the network in the algorithm, where value above 0.5 is match and only maximum is considered. From the rules follows, that each network could achieve from -1000 to 2000 score points. 
-\subsubsection{Results}
-The following plots show the results. The X-axis represents score, the Y-axis represents final MSE of the network while training and each object represents single network.
+
+\subsubsection{Algorithm settings}
+The following plots show the results. The X-axis represents score, the Y-axis represents final MSE of the network while training and each object represents single network, with training parameters as described in the legend.
 
 \begin{figure}[!htb]
 \begin{center}
@@ -367,13 +369,115 @@ The following plots show the results. The X-axis represents score, the Y-axis re
 \includegraphics[width=\linewidth]{ext/figure_simples_com.png}
 \end{center}
 	\centering
-	\caption{The legend describes a training settings of the network. Data with simple shapes only, no embeddings and no composition}
+	\caption{scores on data with simple shapes only, no embeddings and no composition}
+\end{figure}
+
+\begin{figure}[!htb]
+\begin{center}
+\label{fig:embed_com}
+\includegraphics[width=\linewidth]{ext/figure_embed_com.png}
+\end{center}
+	\centering
+	\caption{Scores on data with embeddings, no composition}
 \end{figure}
 
 
+\begin{figure}[!htb]
+\begin{center}
+\label{fig:comp_com}
+\includegraphics[width=\linewidth]{ext/figure_comp_com.png}
+\end{center}
+	\centering
+	\caption{Scores on data with composition, no embeddings}
+\end{figure}
 
 
-\section{Performance}
+\begin{figure}[!htb]
+\begin{center}
+\label{fig:x_com}
+\includegraphics[width=\linewidth]{ext/figure_x_com.png}
+\end{center}
+	\centering
+	\caption{Scores on data with both embeddings and composition combined}
+\end{figure}
+
+From the \ref{fig:comp_com} is clear, that it is important to train the network for combinations of both embeddings and composition. More interesting is the observation from \ref{fig:simples_com} that turning on embeddings and composition affects the recognition of the simple shapes very slightly when reaching very low MSE. From the figures it can also be observed, that the tendency of overtraining is not present and it is preferable to aim for lower MSE values in training.
+
+\subsubsection{Network architecture}
+The following graphs show influence of different layer sizes on the overall performance of the network. Again, the X-axis represents score, the Y-axis represents final MSE of the network while training and each object represents single network, with architecuture descirbed in the legend. Color represents the size of the first hidden layer, while shape represents the size of second hidden layer.
+
+\begin{figure}[!htb]
+\begin{center}
+\label{fig:simples_arch}
+\includegraphics[width=\linewidth]{ext/figure_simples_arch.png}
+\end{center}
+	\centering
+	\caption{scores on data with simple shapes only, no embeddings and no composition}
+\end{figure}
+
+\begin{figure}[!htb]
+\begin{center}
+\label{fig:embed_arch}
+\includegraphics[width=\linewidth]{ext/figure_embed_arch.png}
+\end{center}
+	\centering
+	\caption{Scores on data with embeddings, no composition}
+\end{figure}
+
+\begin{figure}[!htb]
+\begin{center}
+\label{fig:comp_arch}
+\includegraphics[width=\linewidth]{ext/figure_comp_arch.png}
+\end{center}
+	\centering
+	\caption{Scores on data with composition, no embeddings}
+\end{figure}
+
+\begin{figure}[!htb]
+\begin{center}
+\label{fig:x_arch}
+\includegraphics[width=\linewidth]{ext/figure_x_arch.png}
+\end{center}
+	\centering
+	\caption{Scores on data with both embeddings and composition combined}
+\end{figure}
+
+The figures do not show any clear pattern. All the values used in the tests were able to achieve good results, even the network with the lowest number of neurons. It may be necessary to increase the number for higher count of shape descriptors, but for the four used shape descriptors, even the 100-10 network was sufficient.
+
+\subsubsection{Composition recognition}
+To measure composition precision, we have prepared 100 \emph{ImageLines} instances of composition examples. Each instance represented a shape composed of examples of another shape. In the algorithm we have used the best performing network trained for both composition and embeddings. Then we have analyzed the instances under the following set up:
+\begin{enumerate}
+\item COMPOSED\_SHAPES\_ENABLED = true;
+\item EMBEDDED\_SHAPES\_ENABLED = false;
+\item ROTATION\_ENABLED = false;
+\end{enumerate}
+We have tested different combinations of settings of variables COMPOSITION\_SAMPLES\_COUNT, COMPOSITION\_SAMPLES\_LIMIT and COMPOSITION\_WINDOW\_SIZE. We have compared the correct pattern shape with the recognized pattern shape for each test instance. The Y-axis shows pecentage of correct pattern shape recognitions and the X-axis shows a count of samples made around the shape contour.In the figure \ref{fig:com} and \ref{fig:com_speed} The COMPOSITION\_WINDOW\_SIZE is represented by the color and the COMPOSITION\_SAMPLES\_LIMIT by the shape. The COMPOSITION\_SAMPLES\_COUNT is on the X-axis. 
+\begin{figure}[!htb]
+\begin{center}
+\label{fig:com}
+\includegraphics[width=\linewidth]{ext/figure_composition.png}
+\end{center}
+	\centering
+	\caption{Precision of composition recognition}
+\end{figure}
+In the \ref{fig:com}, we can see that success rate grows with the incresing number of samples. We can also see that the red and black colors representing the smaller sizes of the sample window perform better with the higher sample count. There is also a great drop in success rate when increasing the sample limit even by one. There are several factors that affect the recongition. The sampling window follows the ideal path from the shape descriptor, but the real shape is usually more or less deformed, which means that the window will hit only a part of the pattern shape. The pattern shapes can be of various sizes which is hard to aproximate by single size of the sampling window. And even the window hits the whole pattern shape, there is very high chance of hitting also the noise from other shape patterns, or from embeddings. All these factors make the recognition for the network very difficult. From the shape locations in \ref{fig:com} we can deduce that the network is rarely able to recognize even a single pattern shape correctly, and after 40 samples, the success rate does not improve much and stays somewhere between 40\% and 60\%.
+
+\begin{figure}[!htb]
+\begin{center}
+\label{fig:com_speed}
+\includegraphics[width=\linewidth]{ext/figure_composition_speed.png}
+\end{center}
+	\centering
+	\caption{Performance of composition recognition}
+\end{figure}
+It is clear that the algorithm becomes gradually slower with the increasing number of samples as shown in \ref{fig:com_speed}. The total time will also increase substantially if the rotation is turned on.
+
+\subsubsection{Rotation}
+
+
+
+
+
 
 \section{Conclusion}
 

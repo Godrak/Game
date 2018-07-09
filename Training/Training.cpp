@@ -102,7 +102,7 @@ ImageLines ComposeShapes(ShapeDescriptor *base, ShapeDescriptor *modifier, int m
         auto part = DrawShape(modifier);
         auto translation = CreateTranslationMatrix(point - float2{0.5, 0.5});
         auto scale = CreateScalingMatrix(float2(1.5f / multiplication, 1.5f / multiplication));
-        auto rotation = CreateRotationMatrix(randomizer.ratio(), float2{0.5, 0.5});
+        auto rotation = CreateRotationMatrix(ROTATIONS_ENABLED ? randomizer.ratio() : 0, float2{0.5, 0.5});
         part.Transform(MatrixMul(MatrixMul(translation, scale), rotation));
 
         image.Add(part);
@@ -155,7 +155,7 @@ void generateInvalidData(ofstream &trainingData,
         RandomizeData(finalImage, randomizer);
 
         if (saveImageLines) {
-            std::string imageName = "generated/invalid" + std::to_string(i)+".lines";
+            std::string imageName = "generated/invalid" + std::to_string(i) + ".lines";
             image.SaveToFile(imageName);
         }
         if (generate) {
@@ -186,12 +186,14 @@ void Training::GenerateData(const std::string &filename, int validDataCount,
     ofstream trainingData;
     trainingData.open(filename);
     int active = 0;
+    string name;
 
     trainingData << validDataCount + invalidDataCount << " " << IMAGE_SIDE_SIZE * IMAGE_SIDE_SIZE << " "
                  << shapeDescriptors.size() << std::endl;
 
 
     for (int i = 0; i < validDataCount; i++) {
+        name = "";
         if (i % 500 == 0) {
             cout << "generating: " << to_string(i) << endl;
         }
@@ -199,14 +201,18 @@ void Training::GenerateData(const std::string &filename, int validDataCount,
         auto *activeDescriptor = shapeDescriptors[active].get();
         auto *activeModifier = RandomShapeDescriptor();
 
+        name += activeDescriptor->GetName();
+
         ImageLines image;
-        if (randomizer.ratio() > 0.5f && COMPOSED_SHAPES_ENABLED)
+        if (randomizer.ratio() > 0.5f && COMPOSED_SHAPES_ENABLED) {
             image = ComposeShapes(activeDescriptor, activeModifier, randomizer.next(6, 10));
-        else {
+            name += "_" + activeModifier->GetName();
+        } else {
             float offset = (randomizer.ratio() * 0.2f - 0.1f);
             image = OffsetPoints(activeDescriptor, offset, randomizer.ratio(),
                                  randomizer.ratio() * 0.1f,
                                  0.5f * randomizer.ratio(), false);
+            name += "_zero";
         }
         image.Normalize();
 
@@ -217,12 +223,17 @@ void Training::GenerateData(const std::string &filename, int validDataCount,
                     if (randomizer.ratio() > 0.5) {
                         auto *innerShapeDescriptor = RandomShapeDescriptor();
 
+                        name += "_" + innerShapeDescriptor->GetName();
+
                         ImageLines poiImage;
                         if (randomizer.ratio() > 0.8) {
                             poiImage = DrawShape(innerShapeDescriptor);
+                            name += "_zero";
                         } else {
-                            poiImage = ComposeShapes(innerShapeDescriptor, RandomShapeDescriptor(),
+                            auto des = RandomShapeDescriptor();
+                            poiImage = ComposeShapes(innerShapeDescriptor, des,
                                                      randomizer.next(6, 10));
+                            name += "_" + des->GetName();
                         }
                         poiImage.Normalize();
                         float3 position = p;
@@ -238,12 +249,17 @@ void Training::GenerateData(const std::string &filename, int validDataCount,
                                 if (randomizer.ratio() > 0.5) {
                                     innerShapeDescriptor = RandomShapeDescriptor();
 
+                                    name += "_" + innerShapeDescriptor->GetName();
+
                                     ImageLines innerPoiImage;
                                     if (randomizer.ratio() > 0.7) {
                                         innerPoiImage = DrawShape(innerShapeDescriptor);
+                                        name += "_zero";
                                     } else {
-                                        innerPoiImage = ComposeShapes(innerShapeDescriptor, RandomShapeDescriptor(),
-                                                                       randomizer.next(8, 14));
+                                        auto des = RandomShapeDescriptor();
+                                        innerPoiImage = ComposeShapes(innerShapeDescriptor, des,
+                                                                      randomizer.next(8, 14));
+                                        name += "_" + des->GetName();
                                     }
                                     innerPoiImage.Normalize();
                                     position = p2;
@@ -269,7 +285,8 @@ void Training::GenerateData(const std::string &filename, int validDataCount,
         auto finalImage = DrawLines(image, IMAGE_SIDE_SIZE, LINE_DRAWING_STEP_SIZE);
         RandomizeData(finalImage, randomizer);
         if (saveImageLines) {
-            std::string imageName = "generated/" + activeDescriptor->GetName() + std::to_string(i)+".lines";
+            std::string imageName =
+                    "generated/" + activeDescriptor->GetName() + std::to_string(i) + "_" + name + ".lines";
             image.SaveToFile(imageName);
         }
         if (generateImages) {
@@ -290,7 +307,7 @@ void Training::GenerateData(const std::string &filename, int validDataCount,
         active += 1;
     }
 
-    generateInvalidData(trainingData, invalidDataCount, generateImages,saveImageLines);
+    generateInvalidData(trainingData, invalidDataCount, generateImages, saveImageLines);
     trainingData.close();
 }
 
