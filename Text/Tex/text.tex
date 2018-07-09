@@ -249,7 +249,7 @@ Implementation of the recognition system consists of two parts, one responsible 
 \subsection{Input image data format}
 First, we have to define the form of input. There are two general approaches to representation of graphic data: vector graphics and raster graphics. Vector graphics data are usually more flexible, allowing us to perform deformations and scaling without loss of precision. They also take less space and can be converted into pixel map when needed. On the other hand, they are harder to produce, since because they are built on the knowledge of mathematical relations in the image. Since we expect the input to the program to represent rather simple black and white shapes or their combinations, without any additional information like color or different shades, we have decided to create the interface for vector graphics like input.
 
-\subsubsection{Image lines class}
+\subsection{Image lines class}
 Input to the shape recognition program is in the format of instance of \emph{ImageLines} class, defined in \emph{ImageAnalyzer.h} header file. This class wraps a vector of lines defining the shape, accessible through \emph{GetImageLines} method. The user is expected to fill the vector with lines representing the two dimensional image before passing it into the \emph{Analyze} method. The class offers several other methods, used primarily by the recognition algorithm. 
 Line is represented by the instance of class \emph{Line} in the same file, and the constructor accepts two \emph{float2} type vectors, first containing the start coordinates of the line, and second containing the end coordinates. Internally, the coordinates are transformed into three dimensional vectors into homogeneous coordinate system. 
 
@@ -325,20 +325,21 @@ Training the neural network consists of several steps. First step is to set up t
 //TODO simplify the interface, finish section
 
 \subsection{Recognition phase}
-When the neural network is ready, the user can set up the recognition system and use it in a game. Set up consists of several steps. It is necessary to load the neural network into the algorithm, using \emph{ImageAnalyzer::LoadNetwork} function, which takes string describing the path the network as an argument. Then, the user has to register the same descriptors uses for training of the loaded network again, togehter with the corresponding \emph{ShapeIndex} instance. Alternatively, the \emph{ShapeIndex} instance can be created given the order number of the corresponding shape descriptor when registered for the training. It is also necesssary to set up the algorithm properties the same way they have been set up during network training. When these steps are done, user can repeatadly call the \emph{ImageAnalyzer::Analyze} function to determine the shape hierarchy in the provided \emph{ImageLines} instance. The \emph{Analyze} function is thread safe, so many calls can be done at the same time. However, the set up has to be done synchronously and only once, before the first call of \emph{Analyze} function. 
+When the neural network is ready, the user can set up the recognition system and use it in a game. Set up consists of several steps. It is necessary to load the neural network into the algorithm, using \emph{ImageAnalyzer::LoadNetwork} function, which takes string describing the path the network as an argument. Then, the user has to register the same descriptors uses for training of the loaded network again, together with the corresponding \emph{ShapeIndex} instance. Alternatively, the \emph{ShapeIndex} instance can be created given the order number of the corresponding shape descriptor when registered for the training. It is also necessary to set up the algorithm properties the same way they have been set up during network training. When these steps are done, user can repeatedly call the \emph{ImageAnalyzer::Analyze} function to determine the shape hierarchy in the provided \emph{ImageLines} instance. The \emph{Analyze} function is thread safe, so many calls can be done at the same time. However, the set up has to be done synchronously and only once, before the first call of \emph{Analyze} function. 
+
+\section{Game}
+TODO
 
 \chapter{Results}
 
-\section{Precision}
-
-\subsection{Neural networks performance}
-For the correct functionality of the algorithm, it is required that the network is able to recognize the shapes. There are numerous parameters for the neural networks, like the training algorithm choice, architecture, activation function. Because it is not feasible to test every combination of the paramters, we have tested the influence of only a several of these parameters, with the following set up:
+\section{Neural networks performance}
+For the correct functionality of the algorithm, it is required that the network is able to recognize the shapes. There are numerous parameters for the neural networks, like the training algorithm choice, architecture, activation function. Because it is not feasible to test every combination of the parameters, we have tested the influence of only a several of these parameters, with the following set up:
 \begin{enumerate}
 \item [Network architecture] The networks had a layered structure, with two hidden layers.
-\item [Training algorithm] resilient backpropagation, alias rprop.
-\item [Activation function] The Elliot activation function, faster version of sigmoid actvation function, which is considered a standard usable in most applications.
-\item [Shape descriptors] We have used four basic shapes: square, circle, traingle, water drop. 
-\item [Data] The training data and the test data were generated by the developed generator. The training data consisted of 150 000 images with some shape, each shape had the same amount of examples, and 50 000 images of random data without shape pattern. The test data consited of 40 000 images of examples of shapes, and 20 000 images of random data.
+\item [Training algorithm] resilient back-propagation, alias rprop.
+\item [Activation function] The Elliot activation function, faster version of sigmoid activation function, which is considered a standard usable in most applications.
+\item [Shape descriptors] We have used four basic shapes: square, circle, triangle, water drop. 
+\item [Data] The training data and the test data were generated by the developed generator. The training data consisted of 150 000 images with some shape, each shape had the same amount of examples, and 50 000 images of random data without shape pattern. The test data consisted of 40 000 images of examples of shapes, and 20 000 images of random data.
 \end{enumerate}
 
 The parameters that we have tested are these:
@@ -347,9 +348,9 @@ The parameters that we have tested are these:
 \item [The value of MSE] We have trained the networks at different levels of precision, with the target MSE values of 0.1, 0.07, 0.04 and 0.01.   
 \item [Algorithm settings] The neural networks were trained for different combinations of algorithm settings, with embeddings and composition off and on.
 \end{enumerate}
-The combinations of the parameters above gave us 3*3*4*4 = 150 trained neural networks to evaulate.
+The combinations of the parameters above gave us 3*3*4*4 = 150 trained neural networks to evaluate.
 
-\subsubsection{Evaluation}
+\section{Evaluation}
 The networks were evaluated in the following scenario. For each of the combinations of embeddings and composition being turned on or off, the dataset of 1000 images were generated, with the same amount of examples for each shape. Then, the network was assigned score computed as a sum of scores for each example. Score per example was one of:
 
 \begin{enumerate}
@@ -360,7 +361,7 @@ The networks were evaluated in the following scenario. For each of the combinati
 
 These rules mimic the usage of the network in the algorithm, where value above 0.5 is match and only maximum is considered. From the rules follows, that each network could achieve from -1000 to 2000 score points. 
 
-\subsubsection{Algorithm settings}
+\section{Algorithm settings}
 The following plots show the results. The X-axis represents score, the Y-axis represents final MSE of the network while training and each object represents single network, with training parameters as described in the legend.
 
 \begin{figure}[!htb]
@@ -401,10 +402,10 @@ The following plots show the results. The X-axis represents score, the Y-axis re
 	\caption{Scores on data with both embeddings and composition combined}
 \end{figure}
 
-From the \ref{fig:comp_com} is clear, that it is important to train the network for combinations of both embeddings and composition. More interesting is the observation from \ref{fig:simples_com} that turning on embeddings and composition affects the recognition of the simple shapes very slightly when reaching very low MSE. From the figures it can also be observed, that the tendency of overtraining is not present and it is preferable to aim for lower MSE values in training.
+From the \ref{fig:comp_com} is clear, that it is important to train the network for combinations of both embeddings and composition. More interesting is the observation from \ref{fig:simples_com} that turning on embeddings and composition affects the recognition of the simple shapes very slightly when reaching very low MSE. From the figures it can also be observed, that the tendency to over train is not present and it is preferable to aim for lower MSE values in training.
 
-\subsubsection{Network architecture}
-The following graphs show influence of different layer sizes on the overall performance of the network. Again, the X-axis represents score, the Y-axis represents final MSE of the network while training and each object represents single network, with architecuture descirbed in the legend. Color represents the size of the first hidden layer, while shape represents the size of second hidden layer.
+\section{Network architecture}
+The following graphs show influence of different layer sizes on the overall performance of the network. Again, the X-axis represents score, the Y-axis represents final MSE of the network while training and each object represents single network, with architecture described in the legend. Color represents the size of the first hidden layer, while shape represents the size of second hidden layer.
 
 \begin{figure}[!htb]
 \begin{center}
@@ -444,14 +445,14 @@ The following graphs show influence of different layer sizes on the overall perf
 
 The figures do not show any clear pattern. All the values used in the tests were able to achieve good results, even the network with the lowest number of neurons. It may be necessary to increase the number for higher count of shape descriptors, but for the four used shape descriptors, even the 100-10 network was sufficient.
 
-\subsubsection{Composition recognition}
+\section{Composition recognition}
 To measure composition precision, we have prepared 100 \emph{ImageLines} instances of composition examples. Each instance represented a shape composed of examples of another shape. In the algorithm we have used the best performing network trained for both composition and embeddings. Then we have analyzed the instances under the following set up:
 \begin{enumerate}
 \item COMPOSED\_SHAPES\_ENABLED = true;
 \item EMBEDDED\_SHAPES\_ENABLED = false;
 \item ROTATION\_ENABLED = false;
 \end{enumerate}
-We have tested different combinations of settings of variables COMPOSITION\_SAMPLES\_COUNT, COMPOSITION\_SAMPLES\_LIMIT and COMPOSITION\_WINDOW\_SIZE. We have compared the correct pattern shape with the recognized pattern shape for each test instance. The Y-axis shows pecentage of correct pattern shape recognitions and the X-axis shows a count of samples made around the shape contour.In the figure \ref{fig:com} and \ref{fig:com_speed} The COMPOSITION\_WINDOW\_SIZE is represented by the color and the COMPOSITION\_SAMPLES\_LIMIT by the shape. The COMPOSITION\_SAMPLES\_COUNT is on the X-axis. 
+We have tested different combinations of settings of variables COMPOSITION\_SAMPLES\_COUNT, COMPOSITION\_SAMPLES\_LIMIT and COMPOSITION\_WINDOW\_SIZE. We have compared the correct pattern shape with the recognized pattern shape for each test instance. The Y-axis shows percentage of correct pattern shape recognitions and the X-axis shows a count of samples made around the shape contour.In the figure \ref{fig:com} and \ref{fig:com_speed} The COMPOSITION\_WINDOW\_SIZE is represented by the color and the COMPOSITION\_SAMPLES\_LIMIT by the shape. The COMPOSITION\_SAMPLES\_COUNT is on the X-axis. 
 \begin{figure}[!htb]
 \begin{center}
 \label{fig:com}
@@ -460,7 +461,7 @@ We have tested different combinations of settings of variables COMPOSITION\_SAMP
 	\centering
 	\caption{Precision of composition recognition}
 \end{figure}
-In the \ref{fig:com}, we can see that success rate grows with the incresing number of samples. We can also see that the red and black colors representing the smaller sizes of the sample window perform better with the higher sample count. There is also a great drop in success rate when increasing the sample limit even by one. There are several factors that affect the recongition. The sampling window follows the ideal path from the shape descriptor, but the real shape is usually more or less deformed, which means that the window will hit only a part of the pattern shape. The pattern shapes can be of various sizes which is hard to aproximate by single size of the sampling window. And even the window hits the whole pattern shape, there is very high chance of hitting also the noise from other shape patterns, or from embeddings. All these factors make the recognition for the network very difficult. From the shape locations in \ref{fig:com} we can deduce that the network is rarely able to recognize even a single pattern shape correctly, and after 40 samples, the success rate does not improve much and stays somewhere between 40\% and 60\%.
+In the \ref{fig:com}, we can see that success rate grows with the increasing number of samples. We can also see that the red and black colors representing the smaller sizes of the sample window perform better with the higher sample count. There is also a great drop in success rate when increasing the sample limit even by one. There are several factors that affect the recognition. The sampling window follows the ideal path from the shape descriptor, but the real shape is usually more or less deformed, which means that the window will hit only a part of the pattern shape. The pattern shapes can be of various sizes which is hard to approximate by single size of the sampling window. And even the window hits the whole pattern shape, there is very high chance of hitting also the noise from other shape patterns, or from embeddings. All these factors make the recognition for the network very difficult. From the shape locations in \ref{fig:com} we can deduce that the network is rarely able to recognize even a single pattern shape correctly, and after 40 samples, the success rate does not improve much and stays somewhere between 40\% and 60\%.
 
 \begin{figure}[!htb]
 \begin{center}
@@ -472,9 +473,43 @@ In the \ref{fig:com}, we can see that success rate grows with the incresing numb
 \end{figure}
 It is clear that the algorithm becomes gradually slower with the increasing number of samples as shown in \ref{fig:com_speed}. The total time will also increase substantially if the rotation is turned on.
 
-\subsubsection{Rotation}
+\section{Rotation}
+Rotation invariance is achieved by redrawing the image at different angles and returning the best match from all samples [TODO ref description]. We tested the influence of the ROTATION\_SAMPLES\_COUNT on the precision and speed of the algorithm. In the figure \ref{fig:rotation_simple_precision} we can see that the precision reaches very high success rate at 15 samples and the computation time is linear to samples count and \ref{fig:rotation_simple_speed}. However, the performance of rotation recognition on composed shapes is much worse both in precision and computation time. From \ref{fig:rotation_comp_precision} we can see that the precision reaches about 70\% at 15 samples and improves only a little when we increase the samples count. The speed of recognition of composed shapes is slower by a magnitude \ref{fig:rotation_comp_speed}. This is caused by the fact, that composed shapes contain a lot more lines than the simple shapes. We can deduce that setting ROTATION\_SAMPLES\_COUNT to higher than 15 is rather impractical.
+\begin{figure}[!htb]
+\begin{center}
+\label{fig:rotation_simple_precision}
+\includegraphics[width=\linewidth]{ext/rotation_simple_precision.png}
+\end{center}
+	\centering
+	\caption{Precision of rotation recognition of simple shapes}
+\end{figure}
 
+\begin{figure}[!htb]
+\begin{center}
+\label{fig:rotation_simple_speed}
+\includegraphics[width=\linewidth]{ext/rotation_simple_speed.png}
+\end{center}
+	\centering
+	\caption{Performance of rotation recognition of simple shapes}
+\end{figure}
 
+\begin{figure}[!htb]
+\begin{center}
+\label{fig:rotation_comp_precision}
+\includegraphics[width=\linewidth]{ext/rotation_comp_precision.png}
+\end{center}
+	\centering
+	\caption{Precision of rotation recognition of composed shapes}
+\end{figure}
+
+\begin{figure}[!htb]
+\begin{center}
+\label{fig:rotation_comp_speed}
+\includegraphics[width=\linewidth]{ext/rotation_comp_speed.png}
+\end{center}
+	\centering
+	\caption{Performance of rotation recognition of composed shapes}
+\end{figure}
 
 
 
