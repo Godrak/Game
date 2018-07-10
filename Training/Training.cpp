@@ -204,7 +204,7 @@ void Training::GenerateData(const std::string &filename, int validDataCount,
         name += activeDescriptor->GetName();
 
         ImageLines image;
-        if (randomizer.ratio() > 0.5f && COMPOSED_SHAPES_ENABLED) {
+        if (randomizer.ratio() < COMPOSED_SHAPE_PROBABILITY && COMPOSED_SHAPES_ENABLED) {
             image = ComposeShapes(activeDescriptor, activeModifier, randomizer.next(6, 10));
             name += "_" + activeModifier->GetName();
         } else {
@@ -220,13 +220,13 @@ void Training::GenerateData(const std::string &filename, int validDataCount,
             auto poi = activeDescriptor->GetPointsOfInterest();
             if (!poi.empty()) {
                 for (float3 p : poi) {
-                    if (randomizer.ratio() > 0.5) {
+                    if (randomizer.ratio() < FIRST_LEVEL_EMBEDDED_SHAPE_PROBABILITY) {
                         auto *innerShapeDescriptor = RandomShapeDescriptor();
 
                         name += "_" + innerShapeDescriptor->GetName();
 
                         ImageLines poiImage;
-                        if (randomizer.ratio() > 0.8) {
+                        if (randomizer.ratio() > COMPOSED_SHAPE_PROBABILITY) {
                             poiImage = DrawShape(innerShapeDescriptor);
                             name += "_zero";
                         } else {
@@ -246,13 +246,13 @@ void Training::GenerateData(const std::string &filename, int validDataCount,
                         poi = innerShapeDescriptor->GetPointsOfInterest();
                         if (!poi.empty()) {
                             for (float3 p2 : poi) {
-                                if (randomizer.ratio() > 0.5) {
+                                if (randomizer.ratio() < SECOND_LEVEL_EMBEDDED_SHAPE_PROBABILITY) {
                                     innerShapeDescriptor = RandomShapeDescriptor();
 
                                     name += "_" + innerShapeDescriptor->GetName();
 
                                     ImageLines innerPoiImage;
-                                    if (randomizer.ratio() > 0.7) {
+                                    if (randomizer.ratio() > COMPOSED_SHAPE_PROBABILITY) {
                                         innerPoiImage = DrawShape(innerShapeDescriptor);
                                         name += "_zero";
                                     } else {

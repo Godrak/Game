@@ -239,7 +239,7 @@ void composition() {
     }
 }
 
-int main() {
+int rotationTests() {
     using namespace ImageAnalyzer;
     LoadNetwork("../network.net");
 
@@ -300,4 +300,8 @@ int main() {
     }
 
     return 0;
+}
+
+int main2(){
+
 }

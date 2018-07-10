@@ -11,6 +11,10 @@ using namespace LineDrawer;
 
 namespace Training {
 
+    float FIRST_LEVEL_EMBEDDED_SHAPE_PROBABILITY = 0.5f;
+    float SECOND_LEVEL_EMBEDDED_SHAPE_PROBABILITY = 0.3f;
+    float COMPOSED_SHAPE_PROBABILITY = 0.3f;
+
     ShapeIndex RegisterShapeDescriptor(unique_ptr<ShapeDescriptor> shapeDescriptor);
 
     void GenerateData(const std::string &filename, int validDataCount,
