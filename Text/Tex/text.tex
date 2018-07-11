@@ -4,9 +4,9 @@
 Magic has been a popular part of computer games since their beginning. In many games, magic has its own lore and laws that make it systematical. Great examples of a complexity of magical spells are games \emph{Magicka} and \emph{Magicka 2}, where player casts spells by combining eight elements \ref{fig:magicka}. For example, using only earth element results in a rock thrown at the enemy, but adding fire will create a classic fireball.
 \begin{figure}[!htb]
   \centering
+  \includegraphics[width=0.5\textwidth]{ext/magicka.png}
+  \caption{\emph{Magicka} spell interface}
   \label{fig:magicka}
-    \includegraphics[width=0.5\textwidth]{ext/magicka.png}
-    \caption{\emph{Magicka} spell interface}
 \end{figure}
 
 In books and movies, we can see wizards performing complicated hand gestures, or drawing on the floor some complex shapes. However, it is usually very easy to do magic in games, since players can cause magical storms by pushing a few buttons. This spoils the feeling of magic as something extraordinary and secret. We would like to allow developers take a different approach, which requires players focus and concentration, as well as possible cooperation in spell casting.
@@ -15,13 +15,14 @@ While a majority of games binds spells to buttons, there are several games that 
 
 \section{Pattern recognition in current games}
 
-Since symbols and gestures are an integral part of the magic, there were many attempts to bring them into video game environment. We can divide gestural system approaches into three categories, which are overlapping, as sometimes combination of these approaches can be used. The following categories and facts are taken from \cite{gameMagic}.
+Since symbols and gestures are an integral part of the magic, there were many attempts to bring them into video game environment. \citet{gameMagic} provides a classification of gestural systems into three categories, which are overlapping, as sometimes combination of these approaches can be used. The following categories and facts are taken from \citet{gameMagic}.
 
-\subsection{Alternative controllers}
+\begin{description}
+\item[Alternative controllers]
 One such category is systems that utilize alternative controllers to mouse and keyboard, such as Kinect. Recent game representing this category is \emph{Fable: The Journey}, player casts spells by moving his hands, for example, push spell is cast by pushing into the air. Kinect is used to track and recognize patterns made by the player. While moves are simple in nature, such as waving sideways or back and forth, both hands at the same time can be used, resulting in quite complex gestures.
 
-\subsection{Restricted drawing forms}
-Another technique used in several games is to let player draw into a predefined grid, or through predefined points. Both \emph{Castlevania: Dawn of Sorrow} and \emph{Deep Labyrinth} take advantage of Nintendo DS drawing interface that allows players to draw magic signs. In \emph{Castlevania}, players draw signs by connecting glowing points in a circle in out of combat situations \ref{fig:castlevania}. \emph{Deep Labyrinth} introduces special casting interface as well, consisting of 3x3 sized grid, where player connects dots. These approaches take away part of the freedom, but they make recognition algorithms much easier, e.g. by tracing only the order of points and selecting the right spell.
+\item[Restricted drawing forms]
+Another technique used in several games is to let player draw into a predefined grid, or through predefined points. Both \emph{Castlevania: Dawn of Sorrow} and \emph{Deep Labyrinth} take advantage of Nintendo DS drawing interface that allows players to draw magic signs. In \emph{Castlevania}, players draw signs by connecting glowing points in a circle in out-of-combat situations, as seen in \cref{fig:castlevania}. \emph{Deep Labyrinth} introduces special casting interface as well, consisting of 3x3 sized grid, where player connects dots. These approaches take away part of the freedom, but they make recognition algorithms much easier, e.g. by tracing only the order of points and selecting the right spell.
 
 \begin{figure}[!htb]
 \begin{center}
@@ -32,58 +33,74 @@ Another technique used in several games is to let player draw into a predefined 
     \caption{\emph{Castlevania: Dawn of Sorrow} spell interface}
 \end{figure}
 
-\subsection{Drawing}
-The last category is for examples that are most similar to our goal. One of the first games to integrate some form of pattern recognition is \emph{Black \& White}, where the player takes a role of the god. Using a mouse, players are able to cast miracles by drawing a specific pattern onto the ground \ref{fig:blackwhite}. The player can draw anything anywhere on the ground, and the game has to recognize if it matches some of the miracle patterns. Alternatively, they could also cast miracle by clicking on a button, possibly because a lot of players had trouble drawing the miracles. A similar approach to recognition of player drawn spells and their recognition was used in \emph{Arx Fatalis}. Players were drawing symbols into the air with a mouse, and the sequence of symbols represented some spell. While casting, game encoded mouse moves into characters in 8-directions precision, each direction representing some letter. After player finished their spell, a Levenshtein distance was calculated from each spell to the users created sequence and candidate with the lowest Levenshtein cost was returned as matching spell.
+\item[Free-hand drawing]
+The last category is for examples that are most similar to our goal. One of the first games to integrate some form of pattern recognition is \emph{Black \& White}, where the player takes a role of the god. Using a mouse, players are able to cast miracles by drawing a specific pattern onto the ground \ref{fig:blackwhite}. The player can draw anything anywhere on the ground, and the game has to recognize if it matches some of the miracle patterns. Alternatively, they could also cast miracle by clicking on a button, possibly because a lot of players had trouble drawing the miracles. A similar approach to recognition of player drawn spells and their recognition was used in \emph{Arx Fatalis}. Players were drawing symbols into the air with a mouse, and the sequence of symbols represented some spell. While casting, game encoded mouse moves into characters in 8-directions precision, each direction representing some letter. After player finished their spell, a Levenshtein distance was calculated from each predefined spell sequence to the user's created sequence and the candidate with the lowest Levenshtein cost was returned as a matching spell.
 
-\begin{figure}[!htb]
-\begin{center}
+\begin{figure}
+\centering
+\includegraphics[width=.3\linewidth]{ext/gestureteleport.png}
+\quad
+\includegraphics[width=.3\linewidth]{ext/gesturefireball.png}
+\caption{\emph{Black \& White} teleport and fireball gestures}
 \label{fig:blackwhite}
-\includegraphics[width=.3\linewidth]{ext/gestureteleport.png}\quad\includegraphics[width=.3\linewidth]{ext/gesturefireball.png}
-\end{center}
-    \centering
-    \caption{\emph{Black \& White} teleport and fireball gestures}
 \end{figure}
 
 \section{Goals}
 
-We would like to allow players to draw complex spells. Instead of a sequence of symbols recorded over time, players could draw symbols arranged in a shape of another symbol, or embed one symbol in another. We also want our approach to be applicable in multi-player environments, where new situations can occur, such as multiple players drawing one spell. We don't want to introduce aiding structures such as trigger points since they require order in which they were passed and force player to draw in a certain way or direction. They are also not very usable in a multi-player environment since they can't handle multiple people drawing at the same time.
+We would like to allow players to draw complex spells. Instead of a sequence of symbols recorded over time, players could draw symbols arranged in a shape of another symbol, or embed one symbol in another. We also want our approach to be applicable in multi-player environments, where new situations can occur, such as multiple players drawing one spell. We don't want to introduce the aiding structures such as trigger points since they require and order in which they were passed and force the player to draw in a certain way or direction. They are also not very suitable for a multi-player environment since they can't handle multiple people drawing at the same time.
 
 For the purpose of this work, we specify the following requirements that we have on our recognition system.
-TODO enumeration 
+\begin{description}
 
-\subsection{Durability against shape deformations}
-Since we want to recognize hand-drawn shapes, our system has to be prepared for human imprecise drawing, especially when drawing with a mouse. However, defining what is deformed within some boundaries and should be recognized, and what is too deformed, is not an easy task.
+\item [Durability against shape deformations]
+Since we want to recognize hand-drawn shapes, our system has to be prepared for human-like imprecise drawing, especially when drawing with a mouse. However, defining what is deformed within some boundaries and should be recognized, and what is too deformed, is not an easy task.
 
-\subsection{Extendability}
+\item [Extensibility]
 We would like to offer an easy-to-use library that can be applied to other projects. For this purposes, we would like to let users define their own shapes that should be recognized. Our framework will offer interfaces for both preparing their own shapes and using them in pattern recognition.
 
-\subsection{Speed}
+\item [Performance]
 Our system should be applicable in demanding video games environment, prepared for the possibility of many players drawing their spells. To achieve this, we require fast recognition technique as well as usability in a parallel environment. 
 
-\subsection{Recognition of embedded shapes}
-To allow players cast complex spells, we need to give them an ability to somehow encode multiple symbols in one spell. They might do is using shape embeddings. Each defined shape can contain several areas, where other shapes might occur. These areas and their content are then processed in our recognition system as well.
+\item [Recognition of embedded shapes]
+To allow players cast complex spells, we need to give them an ability to somehow encode multiple symbols in one spell. One possible way to do it are shape embeddings. Each defined shape can contain several areas, where other shapes might occur. These areas are then processed in our recognition system and classified.
 
-\subsection{Recognition of shape conglomerations}
-For the purpose of this work, shape conglomeration is a group of shapes representing the same shape class e.g. circle, arranged such that the whole conglomeration forms another shape. We can also look at it as taking the lines of the shape, sampling many spots from them, and then replacing all the spots with the same shape.
+\item [Recognition of shape conglomerations]
+For the purpose of this work, we consider shape conglomeration a group of shapes from the same shape class e.g. circle, arranged such that the whole conglomeration forms another shape. We can also look at it as taking the curves of the shape, sampling them uniformly, and then replacing all the samples with the pattern shape.
 
-\section{Approaches}
+\item [Approach]
+To achieve our goals, we divide the work into several steps. First, we choose a pattern recognition algorithm which best suits our needs from several reviewed algorithms. Then we modify it to recognize embedded shapes and shape conglomerations since this topic is not very well covered. We use our system in a simple game, but we try to utilize most of the abilities of our recognition system to demonstrate its functionality. Finally, we measure its performance. We focus on two aspects of our implementation: performance and recognition effectiveness.
 
-To achieve our goals, we divide the work into several steps. First, we will choose a pattern recognition algorithm which best suits our needs from several reviewed algorithms. Then we modify it to recognize embedded shapes and shape conglomerations since this topic is not very well covered. We use our system in a simple game, but we try to utilize most of the abilities of our recognition system to demonstrate its functionality. Finally, we will measure its performance. We focus on two aspects of our implementation: speed and recognition effectiveness.
+\end{description}
 
 \chapter{Pattern Recognition}
 
 \section{Pattern Recognition problem}
-First, we need to define what we actually mean by pattern recognition. \begin{quotation}
+First, we need to define what is actually meant by pattern recognition. \begin{quotation}
 The Pattern Recognition problem consists in determining a procedure that, on the basis of the attributes, excluding those that define the classification criterion assigns each entity to its proper class.
 \end{quotation} \cite{formalMethods}
- Pattern recognition problem is a broad term for classification problems based on similarity of the features of classified objects, see \cite{formatMethods} for precise mathematical definition. We will focus more on the shape recognition problems category, which can be viewed as a subcategory of pattern recognition. A shape can be typically defined as an equivalence class under the group of transformations, and the problem is then to algorithmically approximate the human-like visual pattern recognition. 
+ Pattern recognition problem is a broad term for classification problems based on similarity of the features of classified objects, see \citet{formatMethods} for precise mathematical definition. We will focus more on the shape recognition problems category, which can be viewed as a subcategory of pattern recognition. A shape can be typically defined as an equivalence class under the group of transformations, and the problem is then to algorithmically approximate the human-like visual pattern recognition. 
 
-\section{Algorithms division}
-There are hundreds of algorithms for pattern recognition as it is a central problem for computer vision. We divide pattern recognition algorithms by different properties.
+\section{Algorithms classification}
+There are variety of algorithms on pattern recognition and they can be categorized based on different features. Approach classes based on \citet{imageRecognition} are:
+\begin{description}
+\item [Statistical approach] Algorithms in this category rely on the underlaying probability model. The shape class is determined by its extracted features and the probability distributions of the shape belonging to each class. An example of such algorithm is a naive Bayess classifier.
 
-We can divide them based on the creation process of the classifier into learning-based approaches and template-based approaches \cite{skeletonMatching}. In the learning-based approaches, pattern classifiers are obtained through training on classified samples. In the template based approaches, patterns are described by templates and the recognition problem transforms into searching for the best matching template for a given input image.
+\item [Nonmetric approach] This class contains decision tress, syntactic methods, and rule-based classifiers. The idea of these algorithms is that each shape can be decomposed into the simplest sub-patterns called primitives. These primitives are then viewed as a language and the shape class as a set of rules, from which the shape can be derived. However, the inference of the grammar rules from the training data is difficult and the detection of the primitives as well.
 
-We can also divide the algorithms as stated in \cite{distanceTransform} based on the level of preprocessing into three classes: algorithms that use pixel values directly, e.g. correlation methods; algorithms that use low-level features such as edges and corners, e.g. distance transform method; and algorithms that use high-level features such as identified objects or relation between the features, e.g. graph-theoretic-methods.
+\item [Cognitive approach] Neural networks and support vector machines belong to this class. Neural networks are inspired by human brains. They can be described as massively parallel computation systems and they can learn complex input-output relationships. \begin{quotation} However, in spite of the seemingly different underlying principles, most of the neural network models are implicitly similar to statistical pattern recognition methods. \end{quotation} \cite{imageRecognition}
+
+\end{description}
+
+We can also divide the algorithms based on the creation process of the classifier into learning-based approaches and template-based approaches \cite{skeletonMatching}. In the learning-based approaches, pattern classifiers are obtained through training on classified samples. In the template based approaches, patterns are described by templates and the recognition problem transforms into searching for the best matching template for a given input image.
+
+Another classification proposed by \citet{distanceTransform} divides the algorithms into three classes based on the level of preprocessing:
+\begin{description}
+\item Algorithms that use pixel values directly, e.g. correlation methods.
+\item Algorithms that use low-level features such as edges and corners, e.g. distance transform method.
+\item Algorithms that use high-level features such as identified objects or relation between the features, e.g. graph-theoretic-methods.
+\end{description}
+
+Given the amount of algorithms to choose from, we have decided to describe only a few of them, namely normalized cross-correlation, shape contexts object matching and matching of shapes using dynamic programming, which are described on this chapter. Then we dedicate the whole chapter to neural networks, which we use in our algorithm implementation.
 
 \section{Normalized cross-correlation}
 Following description is taken from the work of \cite{crossCorrLewis}.
@@ -102,7 +119,7 @@ c(u,v)=\sum_{x,y} f(x,y) * t(x-u, y-v).
 
 Other two terms express energy (brightness) of template and image, respectively. We perform this computation for all possible values of u,v looking for the lowest value. Computing distance this way has several serious drawbacks. It is computationally heavy, it may give false matches if the image energy changes a lot with the position. Also, the range of values of cross-correlation term depends on the size of the template and it is not invariant to scaling and rotation. 
 
-The slowness of the method can be partially solved by computing the cross-correlation in a frequency domain using some form of a signal transform. Fourier transform is the common one, but other transformations were discovered, such as wavelet transforms [into.pdf p.90]. Convolution theorem states that when all conditions are met, Fourier transform of a convolution is an element-wise product of Fourier transforms of input signals. From Convolution theorem follows that time domain or space domain convolution is equivalent to element-wise multiplication in the frequency domain. To compute convolution, we simply need to take element-wise multiplications of Fourier transforms of signals to be convoluted. Cross-correlation differs in that we take the complex conjugate of the Fourier transform of the second signal.
+The slowness of the method can be partially solved by computing the cross-correlation in a frequency domain using some form of a signal transform. Fourier transform is the common one, but other transformations were discovered, such as the wavelet transforms \cite{patternRecNN}. Convolution theorem states that when all conditions are met, Fourier transform of a convolution is an element-wise product of Fourier transforms of input signals. From Convolution theorem follows that time domain or space domain convolution is equivalent to element-wise multiplication in the frequency domain. To compute convolution, we simply need to take element-wise multiplications of Fourier transforms of signals to be convoluted. Cross-correlation differs in that we take the complex conjugate of the Fourier transform of the second signal.
 
 Problems with the range of cross-correlation value and dependency on brightness can be fixed by using normalized cross-correlation, where image and template vectors are normalized to unit length. Other desired aspects, such as scale invariance, has been addressed in many algorithms using a cross-correlation method. However, they usually introduce some trade-offs and they may not achieve all the required properties together. 
 
@@ -113,12 +130,11 @@ Normalized cross-correlation
 where $\bar{t}$ is the mean of the feature and $\bar{f}_{u\,v}$ is the mean of $f(x\,y)$ in the region under the feature \cite{crossCorrLewis}.
 
 \section{Shape matching and object recognition using shape contexts}
-[TODO templateMatchingSimple.pdf ]
-Shape matching using shape contexts is usually based on extracted features, which generally introduces a more robust recognition of deformed images. In the reviewed algorithm, we try to find corresponding feature points of an image and a template, and we attempt to compute their distance as a sum of errors of corresponding points.
+Shape matching using shape contexts is usually based on extracted features, which generally introduces a more robust recognition of deformed images. In the reviewed algorithm from \Citet{simple}, we try to find corresponding feature points of an image and a template, and we attempt to compute their distance as a sum of errors of corresponding points.
 
 We treat an image as a set of points, and we assume that each shape is represented by a finite subset of its points. We extract from both image and template a certain number of feature points, the paper advises about 100 points. They do not need to be key-points, such as maxima of curvature or corners. This allows us to use a simple extraction method like edge detection. In our algorithm, we might also represent players drawings directly as a set of edges. 
 
-With feature points extracted, we need to find corresponding points. To do so, in the [TODO templateMatchingSimple.pdf], they introduce a shape context descriptor. For each sample point $p$, we can create a set of vectors originating from $p$ to all other feature points. Such a set of vectors represents positions of other sample points relative to the origin point. The more sample points we choose, the more is this shape descriptor exact.
+With feature points extracted, we need to find corresponding points. To do so, \citet{simple} introduces a shape context descriptor. For each sample point $p$, we can create a set of vectors originating from $p$ to all other feature points. Such a set of vectors represents positions of other sample points relative to the origin point. The more sample points we choose, the more is this shape descriptor exact.
 
 However, such descriptor might be too detailed and too sensitive to intraclass variations. In the paper, they presented a more robust and compact shape descriptor. The idea is that for each point $p$, we compute coarse histogram by assigning other points to bins in polar coordinates with a center in $p$. [TODO polar coordinates image] Polar coordinates are more sensitive to points near p. We can then compute the cost of matching two pints as 
 
@@ -130,12 +146,12 @@ where $ h_{i}(k) $ and $ h_{j}(k) $ represent the K-bin normalized histogram at 
 \begin{equation*}
 H(pi) = \sum_{i} C(p_{i}\,q_{pi(i)}).
 \end{equation*}
-This can be solved in $O(N^3)$ time using the Hungarian method [templateMatchingSimple.pdf p5 ref 42]. 
+This can be solved in $O(N^3)$ time using the Hungarian method\cite{simple}. 
 
 We can achieve scaling invariance by normalizing all radial distances by the mean distance, and rotation invariance is obtained when searching for the lowest cost among all permutations. according to the paper, this method is robust against small geometric disturbances.
 
 \section{Matching of Shapes Using Dynamic Programming}
-Another method proposed by [DynamicProgramming.pdf] introduces an algorithm which uses dynamic programming combined with high-level features. Similarly to the previous algorithm, we try to compute a distance of template and image, but in a different way.
+Another method proposed by \citet{convex} introduces an algorithm which uses dynamic programming combined with high-level features. Similarly to the previous algorithm, we try to compute a distance of template and image, but in a different way.
 
 The algorithm requires that both shape and template are represented as a sequence of convex and concave segments, split by inflex points. The idea of the algorithm is to recursively merge segments using two grammar rules $CVC -> C$ and $VCV -> V$, where V denotes concave and C convex segment. Simultaneously, merging cost is computed using a merging cost function, and results are stored in the dynamic programming table, with additional information.
 
@@ -164,25 +180,29 @@ Since algorithm assumes, that first segments of shape and template are aligned a
 Contrary to the previous algorithm, we now require the extraction of high-level features, we need to extract convex and concave segments in correct order. However, we obtain a matching algorithm that is independent of shape translation, scaling and rotation. We can also directly control invariance to deformations using the lambda parameter.
 
 \chapter{Neural networks}
-Neural networks are mathematical models inspired by a behavior of a biological nervous system. They have been successfully used to solve problems in many different areas, including image and pattern recognition. They can be used in problems, where we can't mathematically describe the solution given the instance of the problem, or doing so would be overly complicated. We have chosen a neural networks approach as a core of our system. They don't require feature extraction since they can learn it themselves. They also have a great ability to generalize, which has been used for the recognition of shape conglomerations.
+\todo{tady chybi dost referenci do literatury}
+Neural networks are mathematical models inspired by a behavior of a biological nervous system \cite{bishop}. They have been successfully used to solve problems in many different areas, including image and pattern recognition. They can be used in problems, where we can't mathematically describe the solution given the instance of the problem, or doing so would be overly complicated. We have chosen a neural networks approach as a core of our system. They don't require feature extraction since they can learn it themselves. They also have a great ability to generalize, which has been used for the recognition of shape conglomerations.
 
 \section{Neuron}
-Artificial neural networks are structures built for parallel data processing. The basic network unit is a neuron, which is characterized by its input and output connection weights, the activation function and bias.
+Artificial neural networks are structures built for parallel data processing. The basic network unit is a neuron, which is characterized by its input and output connection weights, the activation function and a bias. The neural network is built from a number of connected neurons, usually in a layered structure, and the network learning can be characterized as a process of altering the weights of the connections between neurons and the biases of the neurons.
 
 TODO model of neuron obrazek
 TODO activation function
+\subsection{Activation function}
+Activation function characterizes the behavior of the neuron. When the values from the input connections are computed, the activation function is applied onto the sum of the values and the result is passed further to other neurons.
 
 \section{Artificial neural network}
 An artificial neural network is a mathematical model, consisting of a set of neurons interconnected by connections.
 More exactly it is a set 
-$
-M  =  (N,C,I,O,w,t), where: $
- $N is a finite set of neurons,$
- $C \subset N x N is nonempty set of oriented connections,$
-$I \subset N is nonempty set of input neurons,$
-$O \subset N is nonempty set of output neurons,$
-$w : C -> R is weight function, $
-$t : N->R bias function.$
+$M  =  (N,C,I,O,w,t),  where: $
+\begin{description}
+\item $N  is  a  finite  set  of  neurons.$
+\item $C \subset N x N  is  nonempty  set  of  oriented  connections.$
+\item $I \subset N  is  nonempty  set  of  input  neurons.$
+\item $O \subset N  is  nonempty  set  of  output  neurons.$
+\item $w : C -> R  is  weight  function.$
+\item $t : N->R  bias  function.$
+\end{description}
 
 In practice, multilayer neural networks are commonly used. Multilayer networks are networks, in which neurons are organized in layers starting with the input layer and ending with the output layer, with hidden layers in between. For each neuron in this structure, its input connections originate only in a previous layer, and its output connections reach only to the following layer. 
 
@@ -199,7 +219,7 @@ Learning process consists of showing inputs to the network and adjusting its con
 \subsection{Back-propagation algorithm}
 Back-propagation is one of the most popular algorithms for neural networks training, and it serves as a base for many other algorithms.
 
-The algorithm is based on the gradient descent method. In the first step, input is evaluated and mean square error of output is computed. However, different error function may be used. Then we can apply chain rule for partial derivatives to get:
+The algorithm is based on the gradient descent method. In the first step, the input is evaluated and the mean square error of the output is computed. However, different error function may be used. Then we can apply the chain rule for partial derivatives to get:
 \begin{equation*}
 \frac{\partial E}{\partial w_{ij}} = \frac{\partial E}{\partial a_{j}} \frac{\partial a_{j}}{\partial w_{ij}}
 \end{equation*}
