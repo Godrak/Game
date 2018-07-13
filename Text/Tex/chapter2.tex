@@ -1,0 +1,101 @@
+\chapter{Implementation}
+In the first part of this chapter we describe the recognition system and in the second part we describe the game demo demonstrating the usage of the algorithm. Implementation of the recognition system consists of two parts, one responsible for the actual recognition, and one for the training of neural network based on user-defined shapes. The usage of the framework consists of three steps:
+\begin{description}
+\item[1.] Defining the shapes and setting up desired recognition parameters.
+\item[2.] Training the neural network to classify the defined shapes.
+\item[3.] Using the framework and the trained network to recognize patterns.
+\end{description}
+
+\section{Data representations}
+We have developed several data classes that are crucial for the algorithm functionality. The \texttt{ImageLines} is a class that holds the input to the algorithm. The next class is a \texttt{shape descriptor}, an abstract class whose implementations are used to describe shapes, and the last one is a \texttt{ShapeNode} class for the output data representation.
+
+\begin{description}
+\item [Image lines class]
+First, we have to define the form of input. There are two general approaches to the representation of the graphics data: vector graphics and raster graphics. Vector graphics data are usually more flexible, allowing us to perform deformations and scaling without loss of precision. They also take less space and can be converted into a pixel map when needed. On the other hand, they are harder to produce, because they are built on the knowledge of mathematical relations in the image. 
+
+We expect the input to the program to represent rather simple black and white shapes or their combinations, without any additional information like color or different shades. We also expect the input to be created on the computer in a game, rather than from a photo, and this environment, it is common to use vector graphics. We have then decided to create the interface for the vector graphics form of input.
+
+The format of input is an instance of the \texttt{ImageLines} class, defined in the \texttt{ImageAnalyzer.h} header file. This class wraps a vector of lines defining the shape, accessible through \texttt{GetImageLines} method. The user is expected to fill the vector with the lines representing the two-dimensional image before passing it into the \texttt{Analyze} method. The class offers several other methods, used primarily by the recognition algorithm. 
+
+A line is represented by the instance of class \texttt{Line}, whose constructor accepts two \texttt{float2} type vectors, first containing the start coordinates of the line, and second containing the end coordinates. Internally, the coordinates are transformed into three-dimensional vectors of a homogeneous coordinate system. 
+
+\item [Shape descriptors]
+Shape descriptors are a key part of the system, as they are used both during training of the neural network and during analysis of image. They provide the algorithm with the information about the expected line positions and possible embedded shape locations.
+
+User can define their own shapes by inheriting from the abstract class \texttt{ShapeDescriptor} defined in \texttt{ImageAnalyzer.h} file. The shape descriptors use a parametric curves approach to define shapes. Abstract class functions, which should be defined by the user, take parameter \texttt{t} in the range of $[0-1]$ as an argument, and return a point on the curve in a 2D space in the range of $[0-1]^2$.
+
+The curve does not have to be continuous, but it has to return value for every parameter value in the range, and also thread safety of some methods is required. It is then recommended to keep the shape complexity low, as some very small details may be lost in the data preparation for the training. 
+
+\item [Output data format]
+Output is in the form of instance of \texttt{ShapeNode} class defined in \texttt{ImageAnalyzer.h} file. It represents a tree structure, where each node contains the recognized shape index, conglomeration shape index and embedded shapes as children. Indexes are numbers assigned to each descriptor during algorithm setup. \todo{podobny syntatickemu stromu}  \todo{schema}
+
+\end{description}
+
+\section{Recognition process}
+The recognition process starts in the \texttt{Analyze} method, declared in the \texttt{ImageAnalyzer.h} file. It accepts an instance of \texttt{ImageLines} class as an argument, and returns \texttt{ShapeNode} instance describing the recognized elements in the image.
+
+The image lines are first normalized, which means transformed into the $[0-1]^2$ coordinate space. This transformation is essentially a rescaling, preserving both the length ratio and angles. Then, the top level shape is analyzed by drawing the lines into the pixel map, which is then passed into the trained neural network as a vector of numbers. 
+
+Generally, the highest network output is the matched shape pattern, but only if the value is higher than a user-set constant. There are usually several more steps involved, described below:
+
+\begin{description}
+\item [Rotated shapes] If a recognition of rotated shapes is enabled, the image lines are rotated user-defined times by an appropriate angle value, re-drawn and analyzed by the network at each angle. 
+
+The network returns a vector of values, each output's value signaling the similarity to the shape assigned to the output, and the highest value is considered the matched shape. If there are several highest network outputs for different rotations with the same value, the first highest value among all outputs is considered. A recognized shape index is returned along with its matching rotation, in which it scored the highest network output.
+
+\item[Compound shape]
+When the top level shape is recognized, its shape descriptor is used to sample the theoretical curve points uniformly at the interval $[0-1]$. Then, for each sampled point, this point is expanded into a small square, the original image is clipped to this square, discarding the lines outside, and the result is analyzed recursively. Recognized shapes are counted over all samples, and if the count of matches for any shape is high enough, the top level shape is recognized as a compound shape created from a number of smaller shapes of the type with the highest count.Pattern shapes that form the composition are not tested for compound shapes.
+
+\item [Embedded shape]
+To recognize embedded shapes, we use the shape descriptor of the shape recognized previously, and focus on the embedded shapes locations. For each embedded shape location defined in the shape descriptor, we clip the image lines to that area, and recursively run the \texttt{Analyze} method on the result. If the recognition of rotated shapes is enabled, we transform the area by inverse an rotation to the matched rotation.
+
+\end{description}
+
+\section{Neural network preparation}
+\todo{reference na FANN}
+We use the \emph{FANN} neural network library to train and use neural networks. This open source software is easy to use and install while having a lot of options in terms of network architecture and training. Thanks to its simplicity, we were able to develop an automatized training system for the networks.
+
+\subsection{Training data}
+Training the neural network requires a training dataset. Since we want to allow the extensibility in the form of user defined shapes, we have two options. Either to let the user somehow make his own dataset, which is not very convenient, or generate the data procedurally and try to approximate human-like drawing. 
+We decided for the second option. We generate the data based on the shape descriptors registered by the user and on the algorithm settings. To generate a data sample for the neural network, we take the shape descriptor and create a \texttt{ImageLines} instance from it. 
+Based on the algorithm settings, it will be either a deformed simple shape instance or an instance of a compound shape. In the case of creating a deformed simple shape, shape curve is sampled many times using the shape descriptor, and the points are connected by lines. 
+To approximate the deformations each sample can be moved in the direction perpendicular to the line between the original position of the last point, and the original position of the the transformed point. \todo{picture}.
+
+The transformation  offset is linearly magnified and then reduced, resulting in a heuristics that try to approximate some of the humans like deformations of drawn shapes. Then, the line between the previous and new point is added to the image instance. 
+
+In the case of the shape conglomeration, the shape curve is sampled much less frequently and each point is replaced by rescaled image lines of a randomly chosen shape, but this shape is the same for the whole composition. \todo{picture}
+
+\subsection{Training}
+Training is done using the generated data from the previous methods and the \emph{FANN} library. 
+First, the training data and test data are generated,The size of the test data is one-third of the size of training data. Then the network is repeatedly trained on the training data until it reaches the user set up MSE, or until it stops improving.
+
+Internally, it starts with a high MSE target value, which is then gradually lowered, and in between the improvement ratio is checked. The algorithm used for training the network is called \emph{RPROP}, an improved version of the quickprop algorithm because we achieved best results with this algorithm in terms of the improvements stability. In the neural network, we use an \emph{Elliot} activation function.
+
+\section{Game prototype}
+The game, which demonstrates the usage of this pattern recognition work, has been developed using the URHO3D game engine in version 1.7\todo{cite}. \begin{quotation} Urho3D is a free lightweight, cross-platform 2D and 3D game engine implemented in C++ and released under the MIT license. Greatly inspired by OGRE and Horde3D. \end{quotation} It is easy to learn and use, and comes with many examples together with source codes of how to use it. It is built on a component-based scene model. 
+
+\subsection{Game description}
+The game is only a prototype to show the usability of the recognition algorithm. In the game, the player controls the character from a top down view perspective. The player can move and attack the enemies, but most importantly cast spells by drawing. 
+
+Spells in the game are represented by totem objects, so each time the player casts spell, a totem is created. These totem have different effects on the characters, they can be positive effects that affect the player's character, like healing, or negative effects that affect enemies, like burning. The task for the player is to survive and destroy all the enemies in the game. 
+Now we describe some of the constructs of the game implementation:
+
+\begin{description}
+\item [Drawable texture] \texttt{DrawableTexture} is a component attached to ground in the game. It allows player to draw shapes onto the ground. This component handles the lines sampling and glowing shape line nodes.
+
+\item [Characters] The player's character and the enemies are represented by a composition of several components: the animated mutant model component, the health component and movement component. The enemies have also an AI component attached, while the player's character has an controller component attached which causes it to listen to the keyboard controls, and the caster component, which allows the character to extract the shape from the drawable texture, transforming the shape into an \texttt{ImageLines} instance for the recognition.
+
+\item [SpellSystem] The \texttt{SpellSystem} component is a initialization component for the recognition algorithm. It is created only once for the game and the algorithm setup is situated in the constructor. It holds the shape indexes and is responsible for the algorithm output parsing and construction of the spell.
+
+\item [Spell] An instance of a node with the spell component is created each time the player casts a spell. It is a temporary class, serving as a placeholder for the totem object. It invokes the algorithm's \texttt{Analyze} method in a separate thread and waits for the result. This way, the game doesn't freeze while the algorithm analyzes the image. The place of the totem is marked by a green fire while the image is analyzed. 
+
+\item [Totem] The core of the game are totem objects and all the spell effects are represented by them. Each totem has a duration for which it exists and an area of effect around it, where the characters are influenced by its presence. The totem can have several effects to it attached.
+
+\item [Effects]  Effects are components attached to the totems. When a character is inside an area of effect of the totem, the totem applies all of its effects on the character. However, the effects can also be of an single activation type, in which case they are activated only once when the totem is created. An example of such effect is increasing the totem duration.
+
+\item [States] When an effect with duration is applied onto the character, a state component is attached to it. For example, when an over time healing effect is applied onto a character, the healing state component is attached to the character for a given duration.
+
+\end{description}
+
+\subsection{Spell system}
+The game spell system consists of several parts. First is the \emph{DrawableTexture} component, which is attached to the ground entity. This component is able to track players drawings and store them as lists of points, each list representing one continuous line. When the player presses the button to cast the spell, the \emph{Caster} component attached to their character extracts the lines in a rectangular area around the character and transforms them into the vector of lines. Then the instance of \emph{Spell} class defined in the \emph{SpellSystem.h} file is created. There, the \emph{ImageAnalyzer::Analyze} method is finally called in a different thread and when the analysis is done, the result is parsed and the spell is cast.

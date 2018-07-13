@@ -1,0 +1,53 @@
+\chapter{User guide}
+\todo{Tohle je tradicne Appendix --- pro vlastni text prace to neni moc podstatny, krome toho ze tam chces nekam velice jednoduse (idealne v obrazku) popsat to API a rict proc je skvely, a pak se jen odkazes na appendix kde to vysvetlujes.}
+\section{Recognition system}
+\subsection{Creation of shape descriptor}
+For the training as well as for the recognition, shape descriptors are required. The shape descriptors have several behavioral limitations, that need to be followed by the user. The intended purpose of the descriptor is to describe a single 2D shape in a $[0\,1]^2$ rectangular area. The descriptor is expected to return the same shape every time, without any modifications, and all of its methods should return the same values when called with the same parameters. It is also required, that all of the shape descriptor methods are thread safe. It is then recommended to design the shape descriptor as a class with a constant inner state. Not following these rules may result in the unexpected and dysfunctional behavior of the system. The user can create a shape descriptor by including the \texttt{ImageAnalyzer.h} header file and inheriting from the class \texttt{ShapeDescriptor}. This class contains several abstract methods, that should be implemented:
+\begin{description}
+\item[\texttt{GetName()}] Returns the name of the shape a string. This is only for debugging purposes and it does not have to be unique or even constant. However, it is recommended to return a constant unique name among the descriptors.
+
+\item[\texttt{GetPoint(\texttt{float} t)}] Function overload with one parameter \texttt{t} returns a point of the curve, based on the \texttt{t} parameter. It is recommended to normalize the parameter into $[0\,1]$ range by \texttt{NormalizeParam} function.
+
+\item[\texttt{GetPoint(float last\_t, float t, float point)}] Function overload with three parameters, that allows the descriptor to describe noncontinuous curves. The \emph{point} parameter passed by reference should be filled with the same value as from \texttt{GetPoint(t)} as it describes the point of the curve. Then the function should return true if the curve is continuous on the interval $[last_t\, t]$, otherwise false.
+
+\item[\texttt{GetPointsOfInterest()}] Function, that describes places, where an embedded shape may appear. It returns a vector of \texttt{float3} type, where the first two numbers denote the top left corner of the square area, and the third number is the size of the square.
+\end{description}
+
+Examples of shapes descriptors can be found in the \texttt{ExampleShapeDescriptors.h} file.
+
+\subsection{Algorithm properties}
+There are several variables then can be set up and influence the functionality of the software. They can be found in the \emph{ImageAnalyzer} namespace. Some of them are used both in the training and in the recognition. It is necessary then for the user to be consistent and use the same settings for the recognition as they used for the training.
+
+\todo{tosamy, enumerate vs. description, taky sem to predelal aby me nebolely voci :D }
+\begin{description}
+\item[\texttt{DEBUG\_IMAGE\_SAVE}] Boolean variable with default value false. If true, the images created during the recognition are saved as BMP files onto the hard disk, but only in the initial rotation of the image.
+
+\item[\texttt{COMPOSED\_SHAPES\_ENABLED}] Boolean variable with default value true. If false, recognition algorithm recognizes the whole shape but does not search for the pattern shape that might compose it. During training, the examples generating algorithm does not produce compositions of the shape, so the network is not trained to recognize the composed shape.
+
+\item[\texttt{COMPOSITION\_SAMPLES\_COUNT}] Integer variable describing the amount of samples taken when searching for the pattern shapes. This variable has no effect when composed shapes are disabled.
+
+\item[\texttt{COMPOSITION\_WINDOW\_SIZE}] Float variable that describes the size of the sampling window used during composition matching. The actual window is a square with a side size of 2*\texttt{COMPOSITION\_WINDOW\_SIZE}. This variable has no effect when composed shapes are disabled.
+
+\item[\texttt{COMPOSITION\_SAMPLES\_LIMIT}] Integer variable describing the number of minimum pattern shape matches. If the count of the pattern shape matches is lower, the pattern shape is not recognized. This variable has no effect when composed shapes are disabled.
+
+\item[\texttt{EMBEDDED\_SHAPES\_ENABLED}] Boolean variable with default value true. If false, recognition algorithm ignores the positions, where embedded shapes might be, and recognizes only the top level shape and its composing shape. During training, the generating algorithm will not generate embedded shapes, and the network will not be trained to filter out these locations, where they might appear.
+
+\item[\texttt{ROTATIONS\_ENABLED}] Boolean variable with default value true. If false, recognition algorithm will not test different shape rotations for the best match, but will rather use the initial rotation. This variable does not have an impact on training since rotation recognition is not a task of the neural network.
+
+\item[\texttt{ROTATION\_SAMPLES\_COUNT}] The amount of samples created when matching rotated shape. It directly determines the rotation step angle size, which is 360/\texttt{ROTATION\_SAMPLES\_COUNT}. This variable has no effect when rotations are disabled.
+
+\item[\texttt{DEBUG\_OUPUT}] Integer variable with default value 1. Controls the amount of debug info of the recognition system. If set to 0 or lower, no debug output is produced. If set to value 1, prints recognized shape with its matching rotation and its composing shape, for the top level shape and each embedded shape. If set to 2 or higher, produces the same output as with value 1, but also all network outputs from the analysis are printed for all the rotations.
+
+\item[\texttt{IMAGE\_SIDE\_SIZE}] Integer variable, controls the size of the images that are created during analysis. Every time there is an instance of \emph{ImageLines} class that should be analyzed by the network, the lines are drawn into the square pixel map of a size set by this variable. It is also directly connected with the network input layer size, which has to be the second power of this value. The default value is 32, which means that the neural network has an input layer of size 1024 neurons, and the images produced in the algorithm are pixel maps of $32*32$ pixels.
+
+\end{description}
+
+\subsection{Training phase}
+Training the neural network consists of several steps. The first step is to set up the variables controlling the behavior of the recognition and training algorithms. By including the \emph{Training.h} file, the user can access the \emph{ImageAnalyzer} namespace for setting up the variables, and the \emph{Training} namespace for the training functions. After setting the variables, it is necessary to register the desired shape descriptors through function \emph{Training::RegisterShapeDescriptor}. This function takes a unique pointer to the shape descriptor as its parameter, and returns an instance of \emph{ShapeIndex} class. This class is only a wrapper over integers but it works as an identifier of the shape for the network. Then it is necessary to create an instance of \emph{TrainingCase} class, representing the trained neural network. The class takes a vector of integers as its parameter, where each number in the vector represents the number of neurons in one layer. 
+//TODO simplify the interface, finish section
+
+\subsection{Recognition phase}
+When the neural network is ready, the user can set up the recognition system and use it in a game. Set up consists of several steps. It is necessary to load the neural network into the algorithm, using \emph{ImageAnalyzer::LoadNetwork} function, which takes string describing the path to the network as an argument. Then, the user has to register the same descriptors uses for the training of the loaded network again, together with the corresponding \emph{ShapeIndex} instance. Alternatively, the \emph{ShapeIndex} instance can be created given the order number of the corresponding shape descriptor when registered for the training. It is also necessary to set up the algorithm properties the same way they have been set up during network training. When these steps are done, the user can repeatedly call the \emph{ImageAnalyzer::Analyze} function to determine the shape hierarchy in the provided \emph{ImageLines} instance. The \emph{Analyze} function is thread safe, so many calls can be done at the same time. However, the set up has to be done synchronously and only once, before the first call of \emph{Analyze} function. 
+
+\section{Game}
+TODO
