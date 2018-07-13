@@ -25,8 +25,9 @@ public:
     explicit SpellSystem(Context *context) : LogicComponent(context) {
         using namespace std;
 
-        ImageAnalyzer::COMPOSED_SHAPES_ENABLED = false;
-        ImageAnalyzer::EMBEDDED_SHAPES_ENABLED = false;
+        ImageAnalyzer::COMPOSED_SHAPES_ENABLED = true;
+        ImageAnalyzer::EMBEDDED_SHAPES_ENABLED = true;
+        ImageAnalyzer::ROTATIONS_ENABLED = false;
 
         ImageAnalyzer::RegisterShapeDescriptor(square, std::unique_ptr<SquareDescriptor>(new SquareDescriptor()));
         ImageAnalyzer::RegisterShapeDescriptor(circle, std::unique_ptr<CircleDescriptor>(new CircleDescriptor()));

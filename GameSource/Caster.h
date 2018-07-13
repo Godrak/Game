@@ -10,7 +10,7 @@ using namespace Urho3D;
 class Caster : public LogicComponent {
 URHO3D_OBJECT(Caster, LogicComponent);
 private:
-    float rectangleSize = 20;
+    float rectangleSize = 40;
     Node *spellRectangle = NULL;
     Curve *currentCurve = NULL;
     float timeToNextSample = DRAWING_SAMPLE_TIME;
