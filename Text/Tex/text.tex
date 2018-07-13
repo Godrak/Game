@@ -1,6 +1,9 @@
 %\todo{Obcas se trochu hodi ten text rozdelit do vic souboru, je to pak prehlednejsi (a mensi overkill na editaci)}
+\todo{predelat na spravny format pdf}
+\todo{zeptat se na odkazy u obrazku a odkazy u FANN a URHO3D}
 
 \chapter{Introduction}
+\todo{prefrazovat, projit, vylepsit}
 \label{chap:gf}
 
 Magic has been a popular part of computer games since their beginning. In many games, magic has its own lore and laws that make it systematical. Great examples of a complexity of magical spells are games \emph{Magicka} and \emph{Magicka 2}, where player casts spells by combining eight elements \ref{fig:magicka}. For example, using only earth element results in a rock thrown at the enemy, but adding fire will create a classic fireball.
@@ -11,7 +14,7 @@ Magic has been a popular part of computer games since their beginning. In many g
   \label{fig:magicka}
 \end{figure}
 
-In books and movies, we can see wizards performing complicated hand gestures, or drawing on the floor some complex shapes. However, it is usually very easy to do magic in games, since players can cause magical storms by pushing a few buttons. This spoils the feeling of magic as something extraordinary and secret. We would like to allow developers take a different approach, which requires players focus and concentration, as well as possible cooperation in spell casting.
+In books and movies, we can see wizards performing complicated hand gestures, or drawing on the floor some complex shapes. However, in games it is quite easy to do magic, since players often push a few buttons for even the strongest spells. This spoils the feeling of magic as something extraordinary and secret. We would like to allow developers to take a different approach, which requires players focus and concentration, as well as possible cooperation in spell casting.
 
 While a majority of games binds spells to buttons, there are several games that used pattern recognition in their spell system. However, these systems recognized only simple gestures or patterns. Our goal is to make a more robust recognition system, that allows players to draw complex patterns.
 
@@ -21,22 +24,24 @@ Since symbols and gestures are an integral part of the magic, there were many at
 
 \begin{description}
 \item[Alternative controllers]
-One such category is systems that utilize alternative controllers to mouse and keyboard, such as Kinect. Recent game representing this category is \emph{Fable: The Journey}, player casts spells by moving his hands, for example, push spell is cast by pushing into the air. Kinect is used to track and recognize patterns made by the player. While moves are simple in nature, such as waving sideways or back and forth, both hands at the same time can be used, resulting in quite complex gestures.
+One such category are systems that utilize alternative controllers to mouse and keyboard, such as Kinect. Recent game from this category is \emph{Fable: The Journey}, where player casts spells by moving his hands. For example, push spell is cast by pushing into the air. Patterns made by the player are then recognized using Kinect technology. While moves are simple in nature, such as waving sideways or back and forth, both hands at the same time can be used, resulting in quite complex gestures.
 
 \item[Restricted drawing forms]
-Another technique used in several games is to let player draw into a predefined grid, or through predefined points. Both \emph{Castlevania: Dawn of Sorrow} and \emph{Deep Labyrinth} take advantage of Nintendo DS drawing interface that allows players to draw magic signs. In \emph{Castlevania}, players draw signs by connecting glowing points in a circle in out-of-combat situations, as seen in \cref{fig:castlevania}. \emph{Deep Labyrinth} introduces special casting interface as well, consisting of 3x3 sized grid, where player connects dots. These approaches take away part of the freedom, but they make recognition algorithms much easier, e.g. by tracing only the order of points and selecting the right spell.
+Another technique used in several games is to let player draw into a predefined grid, or through predefined points. Both \emph{Castlevania: Dawn of Sorrow} and \emph{Deep Labyrinth} take advantage of an Nintendo DS drawing interface that allows players to draw magic signs. 
+In \emph{Castlevania}, players draw signs by connecting glowing points in a circle in out-of-combat situations, as seen in \cref{fig:castlevania}. \emph{Deep Labyrinth} introduces special casting interface as well, consisting of 3x3 sized grid, where player connects dots. These approaches take away part of the freedom, but they make recognition algorithms much easier, e.g. by tracing only the order of points and selecting the right spell.
 
 \begin{figure}
 \centering
 \includegraphics[width=.3\linewidth]{ext/castlevania.png}
 \quad
 \includegraphics[width=.3\linewidth]{ext/castlevania2.png}
-\caption{\emph{Castlevania: Dawn of Sorrow} spell interface \XX{(image taken from ?)}}
 \label{fig:castlevania} %label se vaze na caption a musi bejt az po nem
+\caption{\emph{Castlevania: Dawn of Sorrow} spell interface \XX{(image taken from ?)}}
 \end{figure}
 
 \item[Free-hand drawing]
-The last category is for examples that are most similar to our goal. One of the first games to integrate some form of pattern recognition is \emph{Black \& White}, where the player takes a role of the god. Using a mouse, players are able to cast miracles by drawing a specific pattern onto the ground \ref{fig:blackwhite}. The player can draw anything anywhere on the ground, and the game has to recognize if it matches some of the miracle patterns. Alternatively, they could also cast miracle by clicking on a button, possibly because a lot of players had trouble drawing the miracles. A similar approach to recognition of player drawn spells and their recognition was used in \emph{Arx Fatalis}. Players were drawing symbols into the air with a mouse, and the sequence of symbols represented some spell. While casting, game encoded mouse moves into characters in 8-directions precision, each direction representing some letter. After player finished their spell, a Levenshtein distance was calculated from each predefined spell sequence to the user's created sequence and the candidate with the lowest Levenshtein cost was returned as a matching spell.
+To this category belong the examples that are most similar to our goal. One of the first games to integrate some form of pattern recognition of drawn shapes is \emph{Black \& White}, where the player takes a role of the god. Using a mouse, players are able to cast miracles by drawing a specific pattern onto the ground \ref{fig:blackwhite}. The player can draw anything anywhere on the ground, and its up to the game algorithm to recognize if it matches some of the miracle patterns. Alternatively, the player also cast miracle by clicking on a button, presumably because a lot of players had trouble drawing the miracles. 
+A similar approach to recognition of player drawn spells and their recognition is used in \emph{Arx Fatalis}. Players are drawing symbols into the air with a mouse and the sequence of symbols represents some spell. While casting, game encoded the mouse moves into characters in 8-directions precision, each direction representing some letter. After player finished their spell, a Levenshtein distance was calculated from each predefined spell sequence to the user's created sequence and the candidate with the lowest Levenshtein cost was returned as a matching spell.
 
 \begin{figure}
 \centering
@@ -51,16 +56,16 @@ The last category is for examples that are most similar to our goal. One of the 
 
 \section{Goals}
 
-We would like to allow players to draw complex spells. Instead of a sequence of symbols recorded over time, players could draw symbols arranged in a shape of another symbol, or embed one symbol in another. We also want our approach to be applicable in multi-player environments, where new situations can occur, such as multiple players drawing one spell. We don't want to introduce the aiding structures such as trigger points since they require and order in which they were passed and force the player to draw in a certain way or direction. They are also not very suitable for a multi-player environment since they can't handle multiple people drawing at the same time.
+We would like to allow players to draw complex spells. Instead of a sequence of symbols recorded over time, players could draw symbols arranged in a shape of another symbol, or embed one symbol in another. We also want our approach to be applicable in multi-player environments, where new situations can occur, such as multiple players drawing one spell. We don't want to introduce the aiding structures as in \cref{fig:castlevania} since they require and order in which they are passed and force the player to draw in a certain way or direction. They are also not very suitable for a multi-player environment since they can't handle multiple people drawing at the same time.
 
 For the purpose of this work, we specify the following requirements that we have on our recognition system.
 \begin{description}
 
 \item [Durability against shape deformations]
-Since we want to recognize hand-drawn shapes, our system has to be prepared for human-like imprecise drawing, especially when drawing with a mouse. However, defining what is deformed within some boundaries and should be recognized, and what is too deformed, is not an easy task.
+Since we want to recognize hand-drawn shapes, our system has to be prepared for human-like imprecise drawing, especially when drawing with a mouse. However, defining what is deformed within some boundaries and should be recognized, and what is too deformed, is a difficult task.
 
 \item [Extensibility]
-We would like to offer an easy-to-use library that can be applied to other projects. For this purposes, we would like to let users define their own shapes that should be recognized. Our framework will offer interfaces for both preparing their own shapes and using them in pattern recognition.
+We would like to offer an easy-to-use library that can be applied to other projects. For this purposes, we would like to let users define their own shapes that should be recognized. Our framework will offer interfaces for both preparing their own shapes and using them in the pattern recognition.
 
 \item [Performance]
 Our system should be applicable in demanding video games environment, prepared for the possibility of many players drawing their spells. To achieve this, we require fast recognition technique as well as usability in a parallel environment. 
@@ -71,18 +76,20 @@ To allow players cast complex spells, we need to give them an ability to somehow
 \item [Recognition of shape conglomerations]
 For the purpose of this work, we consider shape conglomeration a group of shapes from the same shape class e.g. circle, arranged such that the whole conglomeration forms another shape. We can also look at it as taking the curves of the shape, sampling them uniformly, and then replacing all the samples with the pattern shape.
 
-\item [Approach]
-To achieve our goals, we divide the work into several steps. First, we choose a pattern recognition algorithm which best suits our needs from several reviewed algorithms. Then we modify it to recognize embedded shapes and shape conglomerations since this topic is not very well covered. We use our system in a simple game, but we try to utilize most of the abilities of our recognition system to demonstrate its functionality. Finally, we measure its performance. We focus on two aspects of our implementation: performance and recognition effectiveness.
-
 \end{description}
 
-\chapter{Pattern Recognition}
+\subsection{Approach} \todo{vypsat kde co najdu}
+To achieve our goals, we divide the work into several steps. First, we choose a pattern recognition algorithm which best suits our needs from several reviewed algorithms. Then we modify it to recognize embedded shapes and shape conglomerations since this topic is not very well covered. We use our system in a simple game, but we try to utilize most of the abilities of our recognition system to demonstrate its functionality. Finally, we measure its performance. We focus on two aspects of our implementation: performance and recognition effectiveness.
 
-\section{Pattern Recognition problem}
+
+\chapter{Pattern recognition}
+In this chapter, we define the pattern recognition problem. We then describe several classes of algorithms that solve pattern recognition. In the next part, we review some of the algorithms, namely \emph{Normalized cross-correlation}, \emph{Shape matching and object recognition using shape contexts} and \emph{Matching of Shapes Using Dynamic Programming}. The last section is devoted to \emph{Artificial neural networks} as our chosen method for the implementation.
+
+\section{Pattern recognition definition}
 First, we need to define what is actually meant by pattern recognition. \begin{quotation}
 The Pattern Recognition problem consists in determining a procedure that, on the basis of the attributes, excluding those that define the classification criterion assigns each entity to its proper class.
 \end{quotation} \cite{formalMethods}
- Pattern recognition problem is a broad term for classification problems based on similarity of the features of classified objects, see \citet{formatMethods} for precise mathematical definition. We will focus more on the shape recognition problems category, which can be viewed as a subcategory of pattern recognition. A shape can be typically defined as an equivalence class under the group of transformations, and the problem is then to algorithmically approximate the human-like visual pattern recognition. 
+ Pattern recognition problem is a broad term for classification problems based on similarity of the features of classified objects, see \citet{formalMethods} for precise mathematical definition. We will focus more on the shape recognition problems category, which can be viewed as a subcategory of pattern recognition. A shape can be typically defined as an equivalence class under the group of transformations, and the problem is then to algorithmically approximate the human-like visual pattern recognition. 
 
 \section{Algorithms classification}
 There are variety of algorithms on pattern recognition and they can be categorized based on different features. Approach classes based on \citet{imageRecognition} are:
@@ -123,11 +130,11 @@ c(u,v)=\sum_{x,y} f(x,y) * t(x-u, y-v).
 
 Other two terms express energy (brightness) of template and image, respectively. We perform this computation for all possible values of u,v looking for the lowest value. Computing distance this way has several serious drawbacks. It is computationally heavy, it may give false matches if the image energy changes a lot with the position. Also, the range of values of cross-correlation term depends on the size of the template and it is not invariant to scaling and rotation. 
 
-The slowness of the method can be partially solved by computing the cross-correlation in a frequency domain using some form of a signal transform. Fourier transform is the common one, but other transformations were discovered, such as the wavelet transforms \cite{patternRecNN}. Convolution theorem states that when all conditions are met, Fourier transform of a convolution is an element-wise product of Fourier transforms of input signals. From Convolution theorem follows that time domain or space domain convolution is equivalent to element-wise multiplication in the frequency domain. To compute convolution, we simply need to take element-wise multiplications of Fourier transforms of signals to be convoluted. Cross-correlation differs in that we take the complex conjugate of the Fourier transform of the second signal.
-
+The slow performance of the method can be partially solved by computing the cross-correlation in a frequency domain using some form of a signal transform. Fourier transform is the common one, but other transformations were discovered, such as the wavelet transforms \cite{patternRecNN}. 
+Convolution theorem states that when all conditions are met, Fourier transform of a convolution is an element-wise product of Fourier transforms of input signals. From Convolution theorem follows that time domain or space domain convolution is equivalent to element-wise multiplication in the frequency domain. To compute convolution, we simply need to take element-wise multiplications of Fourier transforms of signals to be convoluted. Cross-correlation differs in that we take the complex conjugate of the Fourier transform of the second signal.
 Problems with the range of cross-correlation value and dependency on brightness can be fixed by using normalized cross-correlation, where image and template vectors are normalized to unit length. Other desired aspects, such as scale invariance, has been addressed in many algorithms using a cross-correlation method. However, they usually introduce some trade-offs and they may not achieve all the required properties together. 
 
-Normalized cross-correlation
+Normalized cross-correlation:
 \begin{equation*}
 \gamma(u\,v) = \frac{\sum_{x\,y}f(x\,y) [f(x\,y)-\bar{f}_{u\,v}][t(x-u\,y-v)-\bar{t}]} {\{ \sum_{x\,y}f(x\,y) [f(x\,y)-\bar{f}_{u\,v}]^2 \sum_{x\,y}[t(x-u\,y-v)-\bar{t}]^2  \}^{0.5}}
 \end{equation*}
@@ -178,24 +185,31 @@ Since merging of convex and concave segments is not possible, merging always inv
 \end{equation*}
 
 where lambda value controls merging tendency. With lower value, merging is more encouraged. For shapes with much detail, it is practical to set higher values, otherwise, these details may be lost during merging. 
-
 Since algorithm assumes, that first segments of shape and template are aligned and match, we may need to run the algorithm for all possible starting points of shape if we don't know the first segment beforehand.
 
 Contrary to the previous algorithm, we now require the extraction of high-level features, we need to extract convex and concave segments in correct order. However, we obtain a matching algorithm that is independent of shape translation, scaling and rotation. We can also directly control invariance to deformations using the lambda parameter.
 
-\chapter{Neural networks}
-\todo{tady chybi dost referenci do literatury}
+\section{Neural networks}
 Neural networks are mathematical models inspired by a behavior of a biological nervous system \cite{bishop}. They have been successfully used to solve problems in many different areas, including image and pattern recognition. They can be used in problems, where we can't mathematically describe the solution given the instance of the problem, or doing so would be overly complicated. We have chosen a neural networks approach as a core of our system. They don't require feature extraction since they can learn it themselves. They also have a great ability to generalize, which has been used for the recognition of shape conglomerations.
 
-\section{Neuron}
-Artificial neural networks are structures built for parallel data processing. The basic network unit is a neuron, which is characterized by its input and output connection weights, the activation function and a bias. The neural network is built from a number of connected neurons, usually in a layered structure, and the network learning can be characterized as a process of altering the weights of the connections between neurons and the biases of the neurons.
+\subsection{Neuron}
+Artificial neural networks are structures built for parallel data processing. The basic network unit is a neuron \ref{fig:neuron}, which is characterized by its input and output connection weights, the activation function and a bias. The neural network is built from a number of connected neurons, usually in a layered structure, and the network learning can be characterized as a process of altering the weights of the connections between neurons and the biases of the neurons.
 
-TODO model of neuron obrazek
-TODO activation function
-\subsection{Activation function}
-Activation function characterizes the behavior of the neuron. When the values from the input connections are computed, the activation function is applied onto the sum of the values and the result is passed further to other neurons.
+\begin{figure}
+\centering
+\includegraphics[width=.5\linewidth]{ext/neuron.png}
+\label{fig:neuron}
+\caption{The model of neuron unit}
+\end{figure}
 
-\section{Artificial neural network}
+Activation function characterizes the behavior of the neuron. When the values from the input connections are computed, the activation function is applied onto the sum of the values and the result is passed further to other neurons. Common examples of activation functions are the step function and the sigmoid function.
+
+\begin{description}
+	\item [step function] $ x \geq 0: f(x) = 1; x < 0: f(x) = 0. $
+	\item [sigmoid function] $ f(x) = \frac{1}{1+e^{-x}} $
+\end{description}
+
+\subsection{Artificial neural networks}
 An artificial neural network is a mathematical model, consisting of a set of neurons interconnected by connections.
 More exactly it is a set 
 $M  =  (N,C,I,O,w,t),  where: $
@@ -210,65 +224,92 @@ $M  =  (N,C,I,O,w,t),  where: $
 
 In practice, multilayer neural networks are commonly used. Multilayer networks are networks, in which neurons are organized in layers starting with the input layer and ending with the output layer, with hidden layers in between. For each neuron in this structure, its input connections originate only in a previous layer, and its output connections reach only to the following layer. 
 
-\section{Learning process}
+\subsection{Learning process}
 Learning process of an neural network is an optimization problem, where we want to optimize the error function. Error function describes a difference between actual and correct output values for given set of training data. One of the popular error functions is mean square error function:
 \begin{equation*}
-MSE  =  \frac{1}{n} \sum_{i=1}^{n} (Y_{i} - \hat{Y}_{i})^2.
+MSE = \frac{1}{n} \sum_{i=1}^{n} (Y_{i} - \hat{Y}_{i})^2.
 \end{equation*}
 
 Learning process consists of showing inputs to the network and adjusting its connection weights based on the actual and correct output values in order to lower the MSE.
 
-\section{Learning algorithms}
+\subsection{Learning algorithms}
 
-\subsection{Back-propagation algorithm}
+\subsubsection{Back-propagation algorithm}
 Back-propagation is one of the most popular algorithms for neural networks training, and it serves as a base for many other algorithms.
 
-The algorithm is based on the gradient descent method. In the first step, the input is evaluated and the mean square error of the output is computed. However, different error function may be used. Then we can apply the chain rule for partial derivatives to get:
+The algorithm is based on the gradient descent method. In the first step, the input is evaluated and the mean square error of the output is computed. However, a different error function may be used. We can compute the gradient $\frac{\partial E}{\partial w_{ij}}$ for a given training sample using the chain rule:
 \begin{equation*}
-\frac{\partial E}{\partial w_{ij}} = \frac{\partial E}{\partial a_{j}} \frac{\partial a_{j}}{\partial w_{ij}}
+\frac{\partial E}{\partial w_{ij}} = \frac{\partial E}{\partial in_{i}} \frac{\partial in_{i}}{\partial w_{ij}} = 
+a_{j}*\frac{\partial E}{\partial in_{i}} = a_{j}*\frac{\partial E}{\partial a_{i}}*\frac{\partial a_{i}}{\partial in_{i}}
 \end{equation*}
+where $E$ is the error function, $w_{ij}$ is the weight of the connection between the neurons $i$ and $j$, $in_{i}$ is the weighted sum of the inputs of the neuron $i$ and $a_{i}$ is the output value of the neuron $i$.
 
-When we use sigmoid activation function, we obtain:
+If we use the sigmoid activation function denoted $g$, the derivation is:
 \begin{equation*}
-\sigma_{j}  =  f'(a_{j})(d_{j} - y_{j}) = (1-y_{j})y_{j}(d_{j}-y_{j})\,
+\frac{dg}{dx}  =  g(x)(1-g(x))
 \end{equation*}
-where $\sigma$ is weight change. This expression tells us, in which direction does the error function descent fastest.
+which gives us:
+\begin{equation*}
+\frac{\partial E}{\partial in_{i}} = a_{i}(1-a_{i}) \frac{\partial E}{\partial a_{i}}.
+\end{equation*}
+We can put the equations together to obtain:
+\begin{equation*}
+\frac{\partial E}{\partial w_{ij}} = a_{j} a_{i}(1-a_{i}) \frac{\partial E}{\partial a_{i}}
+\end{equation*}
+There we have two possible cases for the neuron $i$:
+\begin{enumerate}
+\item [1.] $i$ is an output neuron. Then we get: 
+	\begin{equation*}
+	\frac{\partial E}{\partial a_{i}} = -(t_{i} - a_{i})
+	\end{equation*}
+	where the $t_{i}$ is the expected output for the neuron $i$ for the current input.
 
-Then we can evaluate the derivatives the error function like this
+\item [2.] $i$ is a hidden neuron. In this case we consider all neurons $k$ that recieve input from $i$. Since we are propagating backwards, we know the values $\frac{\partial E}{\partial a_{k}}$ for all $k$. Using chain rule again gives us:
+	\begin{equation*}
+	\frac{\partial E}{\partial a_{i}} = \sum_{k} \frac{\partial in_{k}}{\partial a_{i}} \frac{\partial E}{\partial in_{k}}
+	\end{equation*}
+and from combining the equations we get:
+	\begin{equation*}
+	\frac{\partial E}{\partial a_{i}} = \sum_{k} w_{ki}a_{k}(1-a_{k}) \frac{\partial E}{\partial a_{k}}
+	\end{equation*}
+\end{enumerate}
+Now we have defined gradient values $\frac{\partial E}{\partial w_{ij}}$ for all weights in a given neural network.
+We can then use the following rule to update the weights:
 \begin{equation*}
-\sigma_{j} = y_{j}(1-y_{j}) \sum_{k=1}^{c} w_{kj} \sigma_{k}
+\Delta^{t} w_{ij} = - \epsilon \frac {\partial E}{\partial w_{ij}} + \alpha \Delta w^{t-1}_{ij}.
 \end{equation*}
-where the sum runs over all output units. Now we can update the weights with a formula for the output layer
-\begin{equation*}
-\Delta w_{ji} = - \eta \sigma_{j} x_{i}
-\end{equation*}
-and for hidden layers
-\begin{equation*}
-\Delta w_{ji} =  - \eta \sum_{n} \sigma_{j}^{n} x_{i}^{n}
-\end{equation*}
+$\Delta^{t} w_{ij}$ is the change at time $t$ for the weight $w_{ij}$. The value $\epsilon$ is called the learning rate. If the learning rate is too low, it will take much longer to train the network. If it is too high, the algorithm will cross large section in the search space and oscillate.
 
 In summary, the input is evaluated and the difference between the correct and actual output is computed using error function. The difference is propagated back through the network and weights are updated using the gradient descent method. The whole process is repeated until the desired error value is achieved.
 
-\todo{Tady by bylo fajn hodit nejakou matematiku --- napr. reprodukovat ten dukaz proc se energie ty site pomoci jednoho backpropu zmensi.}
-
-\subsection{Quick-prop algorithm}
-The algorithm is an improved version of the backpropagation. It is based on independent optimization steps for each weight, rather than updating all weights at once. For the update computation, it requires data from the last iteration, which increases space complexity. 
+\subsubsection{Quick-prop algorithm}
+The quick-prop algorithm is an improved version of the backpropagation. It is based on independent optimization steps for each weight, rather than updating all weights at once. For the update computation, it requires data from the last iteration, which increases space complexity. 
 
 \begin{equation*}
-\Delta ^{(k)} w_{ij} = \Delta^{(k-1)} w_{ij}*(\frac {\bigtriangledown_{ij} E^{(k)})} {\bigtriangledown_{ij} E^{(k-1)} - \bigtriangledown_{ij} E^(k-1) - \bigtriangledown_{ij} E^{(k)} }
+\Delta ^{t} w_{ij} = \Delta^{t-1} w_{ij}*(\frac {\bigtriangledown_{ij} E^{t}} {\bigtriangledown_{ij} E^{t-1} - \bigtriangledown_{ij} E^{t}})
 \end{equation*}
-where $\Delta ^{(k)} w_{ij}$ is weight delta from \emph{kth} iteration and $\bigtriangledown_{ij} E^(k)$ denotes partial $w_ij$-derivation of error function E in kth iteration.
+where $\Delta ^{t} w_{ij}$ is weight delta from \emph{t} iteration and $\bigtriangledown_{ij} E^{t}$ denotes partial $w_{ij}$-derivation of error function E in \emph{t} iteration.
 
-\section{Convolution neural networks}
+\subsection{Convolution neural networks}
 Convolution neural networks are a modern solution to image recognition. They are similar to classic neural networks, but the main difference is that they expect the input to be an image, and they allow us to encode some of the properties of images naturally into their architecture.
 
 Neurons of convolutional networks have a layered architecture, like classic networks, but their layers consist of neurons arranged in a grid, similarly pixels of an image, and each neuron is connected only to a small corresponding area in next layer.  
 TODO image
 
-\section{Application of neural networks in pattern recognition}
-\cite{Bishop} Because of their generalization properties, neural network are successfully used in pattern recognition. They are able to approximate an arbitrary mapping between the input values and the output values. Because of this, we are not forced to do feature extraction and we can initialize the network with pixel values directly. It is however recommended to apply several pre-processing transformations that can improve the generalization performance significantly. One of these transformations is data dimensionality reduction which actually results in fewer input neurons. It can be in a form of color information removal, input normalization, or pixel averaging, where we group several pixel to one block and use average of each block as an input. More advanced transformation are for example lengths of edges extraction or closed areas size extraction. 
-
-\todo{prusvih -- vubec tady neni videt proc vlastne neuronovy site souvisej s pattern recognition! Mozna by nebylo od veci dat sem ``application of neural nets to pattern recognition'' a trochu to rozepsat -- jak se pripravuje obrazek pro neurony aby se to dalo sezvejkat, atd.}
+\subsection{Data preparation for pattern recognition}
+\cite{bishop} Because of their generalization properties, neural network are successfully used in pattern recognition. They are able to approximate an arbitrary mapping between the input values and the output values. Because of this, we are not forced to do feature extraction and we can initialize the network with pixel values directly. 
+It is however recommended to apply several pre-processing transformations that can improve the generalization performance significantly.
+\begin{description}
+\item [Input normalization]
+One of the common forms of pre-processing is input normalization. By applying a linear transformation we can arrange all of the inputs to have zero mean and unit standard deviation over the transformed training set.
+In practice, input normalization ensures that the inputs and target outputs stay in unit range, and we can expect that the weights should also be in unit range. We can then initialize the weights with suitable random number. Otherwise, we would have to find a solution, where the weight values differ distinctly.
+\item [Training with noise]
+Another technique that improves generalization is training with noise. It involves the addition of a random vector to the input vectors during training. in practice, it has been shown that training with noise can reduce over-fitting and improve network generalization.
+\item [Data dimensionality reduction]
+Data dimensionality reduction is a pre-processing method that actually results in fewer input neurons. It can be for example in the form of color information removal, or pixel averaging, where we group several pixel to one block and use average of each block as an input. By lowering the number of inputs, we lower the number of parameters that the learning process has to optimize.
+\item [feature extraction]
+Some of the more complicated techniques are based on feature extraction. Common are simple geometric primitives extractions, such as extraction of lines and their lengths, or angles. 
+\end{description}
 
 \chapter{Implementation}
 In the first part of this chapter we describe the recognition system and in the second part we describe the game demo demonstrating the usage of the algorithm. Implementation of the recognition system consists of two parts, one responsible for the actual recognition, and one for the training of neural network based on user-defined shapes. The usage of the framework consists of three steps:
@@ -283,17 +324,20 @@ We have developed several data classes that are crucial for the algorithm to wor
 
 \begin{description}
 \item [Image lines class]
-First, we have to define the form of input. There are two general approaches to the representation of graphics data: vector graphics and raster graphics. Vector graphics data are usually more flexible, allowing us to perform deformations and scaling without loss of precision. They also take less space and can be converted into a pixel map when needed. On the other hand, they are harder to produce, since because they are built on the knowledge of mathematical relations in the image. Since we expect the input to the program to represent rather simple black and white shapes or their combinations, without any additional information like color or different shades, we have decided to create the interface for vector graphics like input.
+First, we have to define the form of input. There are two general approaches to the representation of graphics data: vector graphics and raster graphics. Vector graphics data are usually more flexible, allowing us to perform deformations and scaling without loss of precision. They also take less space and can be converted into a pixel map when needed. On the other hand, they are harder to produce, since because they are built on the knowledge of mathematical relations in the image. 
 
-Input to the shape recognition program is in the format of instance of \texttt{ImageLines} class, defined in \texttt{ImageAnalyzer.h} header file. This class wraps a vector of lines defining the shape, accessible through \texttt{GetImageLines} method. The user is expected to fill the vector with the lines representing the two-dimensional image before passing it into the \texttt{Analyze} method. The class offers several other methods, used primarily by the recognition algorithm. 
+Since we expect the input to the program to represent rather simple black and white shapes or their combinations, without any additional information like color or different shades, we have decided to create the interface for the vector graphics form of input.
+
+The format of input is an instance of \texttt{ImageLines} class, defined in \texttt{ImageAnalyzer.h} header file. This class wraps a vector of lines defining the shape, accessible through \texttt{GetImageLines} method. The user is expected to fill the vector with the lines representing the two-dimensional image before passing it into the \texttt{Analyze} method. The class offers several other methods, used primarily by the recognition algorithm. 
 A line is represented by the instance of class \texttt{Line}, whose constructor accepts two \texttt{float2} type vectors, first containing the start coordinates of the line, and second containing the end coordinates. Internally, the coordinates are transformed into three-dimensional vectors of a homogeneous coordinate system. 
 
 \item [Shape descriptors]
 Shape descriptors are a key part of the system, as they are used both during training of the neural network to produce shape examples and during analysis of image. They provide the algorithm with the information about the expected line positions and possible embedded shape locations. User can define their own shapes by inheriting from the abstract class \texttt{ShapeDescriptor} defined in \texttt{ImageAnalyzer.h} file. The shape descriptors use a parametric curves approach to define shapes. Abstract class functions, which should be defined by the user, take parameter \texttt{t} in the range $[0-1]$ as an argument, and return a point on the curve in a 2D space in the range $[0-1]^2$. The curve does not have to be continuous, but it has to return value for every parameter value in the range, and also thread safety of some methods is required. It is then recommended to keep the shape complexity low, as some very small details may be lost in the data preparation for the training. 
 
 \item [Output data format]
-Output is in the form of instance of \texttt{ShapeNode} class defined in \texttt{ImageAnalyzer.h} file. It represents a tree structure, where each node contains the recognized shape index, conglomeration shape index and embedded shapes as children. Indexes are numbers assigned to each descriptor during algorithm setup.
+Output is in the form of instance of \texttt{ShapeNode} class defined in \texttt{ImageAnalyzer.h} file. It represents a tree structure, where each node contains the recognized shape index, conglomeration shape index and embedded shapes as children. Indexes are numbers assigned to each descriptor during algorithm setup. \todo{podobny syntatickemu stromu}  \todo{schema}
 
+\end{description}
 
 \section{Recognition process}
 The recognition process starts in the \texttt{Analyze} method, declared in the \texttt{ImageAnalyzer.h} file. It accepts an instance of \texttt{ImageLines} class as an argument, and returns \texttt{ShapeNode} instance describing the recognized elements in the image. The image lines are first normalized, which means transformed into the $[0-1]^2$ coordinate space. This transformation is essentially a rescaling, preserving the length ratio and angles. Then, the top level shape is analyzed by drawing the lines into the pixel map, which is then passed into the trained neural network as a vector of numbers. The highest network output is the matched shape pattern, but only if the value higher than a user-set constant. There are several more steps involved, described below:
@@ -306,6 +350,8 @@ When the top level shape is recognized, its shape descriptor is used to sample t
 
 \item [Embedded shape]
 To recognize embedded shapes, we use the shape descriptor of the shape recognized previously, and focus on the embedded shapes locations. For each embedded shape location defined in the shape descriptor, we clip the image lines to that area, and recursively run the \texttt{Analyze} method on the result.
+
+\end{description}
 
 \section{Neural network preparation}
 \todo{reference na FANN}
@@ -354,7 +400,7 @@ For the training as well as for the recognition, shape descriptors are required.
 
 \item[\texttt{GetPoint(\texttt{float} t)}] Function overload with one parameter \texttt{t} returns a point of the curve, based on the \texttt{t} parameter. It is recommended to normalize the parameter into $[0\,1]$ range by \texttt{NormalizeParam} function.
 
-\item[\texttt{GetPoint(\texttt{float} last_t, \texttt{float} t, \texttt{float} point)}] Function overload with three parameters, that allows the descriptor to describe noncontinuous curves. The \emph{point} parameter passed by reference should be filled with the same value as from \texttt{GetPoint(t)} as it describes the point of the curve. Then the function should return true if the curve is continuous on the interval $[last_t\, t]$, otherwise false.
+\item[\texttt{GetPoint(float last\_t, float t, float point)}] Function overload with three parameters, that allows the descriptor to describe noncontinuous curves. The \emph{point} parameter passed by reference should be filled with the same value as from \texttt{GetPoint(t)} as it describes the point of the curve. Then the function should return true if the curve is continuous on the interval $[last_t\, t]$, otherwise false.
 
 \item[\texttt{GetPointsOfInterest()}] Function, that describes places, where an embedded shape may appear. It returns a vector of \texttt{float3} type, where the first two numbers denote the top left corner of the square area, and the third number is the size of the square.
 \end{description}
@@ -370,17 +416,17 @@ There are several variables then can be set up and influence the functionality o
 
 \item[\texttt{COMPOSED\_SHAPES\_ENABLED}] Boolean variable with default value true. If false, recognition algorithm recognizes the whole shape but does not search for the pattern shape that might compose it. During training, the examples generating algorithm does not produce compositions of the shape, so the network is not trained to recognize the composed shape.
 
-\item[\texttt{COMPOSITION\_SAMPLES\_COUNT}] Integer varaible describing the amount of samples taken when searching for the pattern shapes. This varaible has no effect when compoed shapes are disabled.
+\item[\texttt{COMPOSITION\_SAMPLES\_COUNT}] Integer variable describing the amount of samples taken when searching for the pattern shapes. This variable has no effect when composed shapes are disabled.
 
-\item[\texttt{COMPOSITION\_WINDOW\_SIZE}] Float varaible that describes the size of the sampling window used during composition matching. The actual window is a square with a side size of 2*\texttt{COMPOSITION\_WINDOW\_SIZE}. This varaible has no effect when compoed shapes are disabled.
+\item[\texttt{COMPOSITION\_WINDOW\_SIZE}] Float variable that describes the size of the sampling window used during composition matching. The actual window is a square with a side size of 2*\texttt{COMPOSITION\_WINDOW\_SIZE}. This variable has no effect when composed shapes are disabled.
 
-\item[\texttt{COMPOSITION\_SAMPLES\_LIMIT}] Integer varaible describing the number of minimum pattern shape matches. If the count of the pattern shape matches is lower, the pattern shape is not recognized. This varaible has no effect when compoed shapes are disabled.
+\item[\texttt{COMPOSITION\_SAMPLES\_LIMIT}] Integer variable describing the number of minimum pattern shape matches. If the count of the pattern shape matches is lower, the pattern shape is not recognized. This variable has no effect when composed shapes are disabled.
 
 \item[\texttt{EMBEDDED\_SHAPES\_ENABLED}] Boolean variable with default value true. If false, recognition algorithm ignores the positions, where embedded shapes might be, and recognizes only the top level shape and its composing shape. During training, the generating algorithm will not generate embedded shapes, and the network will not be trained to filter out these locations, where they might appear.
 
 \item[\texttt{ROTATIONS\_ENABLED}] Boolean variable with default value true. If false, recognition algorithm will not test different shape rotations for the best match, but will rather use the initial rotation. This variable does not have an impact on training since rotation recognition is not a task of the neural network.
 
-\item[\texttt{ROTATION\_SAMPLES\_COUNT}] The amount of samples created when matching rotated shape. It directly determines the rotatation step angle size, which is 360/\texttt{ROTATION\_SAMPLES\_COUNT}. This variable has no effect when rotations are disabled.
+\item[\texttt{ROTATION\_SAMPLES\_COUNT}] The amount of samples created when matching rotated shape. It directly determines the rotation step angle size, which is 360/\texttt{ROTATION\_SAMPLES\_COUNT}. This variable has no effect when rotations are disabled.
 
 \item[\texttt{DEBUG\_OUPUT}] Integer variable with default value 1. Controls the amount of debug info of the recognition system. If set to 0 or lower, no debug output is produced. If set to value 1, prints recognized shape with its matching rotation and its composing shape, for the top level shape and each embedded shape. If set to 2 or higher, produces the same output as with value 1, but also all network outputs from the analysis are printed for all the rotations.
 
@@ -429,10 +475,11 @@ The networks were evaluated in the following scenario. For each of the combinati
 
 These rules mimic the usage of the network in the algorithm, where value above 0.5 is a match and only maximum is considered. From the rules follows, that each network could achieve from -1000 to 2000 score points. 
 
-\section{Algorithm settings}
-\todo{tohle by se melo jmenovat mozna jako ``influence of learning algorithm parameters''?}
+\section{Algorithm parameters optimization}
 Plot in \cref{fig:simples_com} shows the measurements of algorithm performance for various parameters, as described in the legend. \todo{nasledujici patri do captionu toho figure! misto toho by chtelo rict co ten vysledek vlastne znamena --- napr. zjistili jsme ze je neco optimalni nebo ze neco se vylozene nehodi?}The X-axis represents score, the Y-axis represents final MSE of the network in training and each object represents a single network, with training parameters as described in the legend.
 
+\todo{exportovat grafy jako pdf}
+\todo{lepe popsat co v tom grafu je}
 \begin{figure}
 \centering
 \includegraphics[width=.8\linewidth]{ext/figure_simples_com.png}
@@ -563,8 +610,9 @@ Rotation invariance is achieved by redrawing the image at different angles and r
 The ability of the algorithm to recognize embeddings depends on the shape descriptor definition. There the user can define the points of interest by their position and size. These two parameters form a rectangular area where the algorithm will search for embedded shape. It is then recommended to set the size of this area lower, to avoid fragments of the top shape appearing in this area, which might cause the network to not recognize the embedded shape. If the embeddings should appear in the composed shapes, the area should be even smaller, otherwise, the fragments of the pattern shapes will appear inside. The speed is influenced by the number of embeddings such that every point of interest if analyzed recursively.
 
 \todo{Chces sem dat nekolik screenshotu ze hry ktery demonstrujou jak to nakonec vypada. Zaroven by nebylo spatny ukazat nejakej malej sample tech trenovacich a generovanejch dat, pripadne nejaky outliery (ty sou vzdycky zajimavy). Obecne by hodne prospel i zajimavej obrazek toho co presne vizualne znamena embedding a composition, hned k zacatku tyhle kapitoly.}
+\todo{Diskusion jen pokud je potreba, jinak je to uz popsane vyse}
 
-\section{Conclusion}
+\chapter*{Conclusion}
+\todo{2-3 odstavce, o tom co jsem udelal co neudelal vuci intru. v present perfect. future work, improvements. create game - turn based ideally alternativni pristup ke kompozicim - kreslit mysi neprakticiky, gpu pararelizace}
 
-\section{Discussion}
-
+\todo{obrazky - ukazat co je conglomeration, pattern shape, embedded shape atd..}
