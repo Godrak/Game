@@ -44,10 +44,10 @@ Generally, the highest network output is the matched shape pattern, but only if 
 The network returns a vector of values, each output's value signaling the similarity to the shape assigned to the output, and the highest value is considered the matched shape. If there are several highest network outputs for different rotations with the same value, the first highest value among all outputs is considered. A recognized shape index is returned along with its matching rotation, in which it scored the highest network output.
 
 \item[Compound shape]
-When the top level shape is recognized, its shape descriptor is used to sample the theoretical curve points uniformly at the interval $[0-1]$. Then, for each sampled point, this point is expanded into a small square, the original image is clipped to this square, discarding the lines outside, and the result is analyzed recursively. Recognized shapes are counted over all samples, and if the count of matches for any shape is high enough, the top level shape is recognized as a compound shape created from a number of smaller shapes of the type with the highest count.Pattern shapes that form the composition are not tested for compound shapes.
+When the top level shape is recognized, its shape descriptor is used to sample the theoretical curve points via parameter $t$ uniformly on interval $[0-1]$. Then, for each sampled point, this point is expanded into a small square, the original image is clipped to this square, discarding the lines outside, and the result is analyzed recursively. Recognized shapes are counted over all samples, and if the count of matches for any shape is high enough, the top level shape is recognized as a compound shape created from a number of smaller shapes of the type with the highest count.Pattern shapes that form the composition are not tested for compound shapes.
 
 \item [Embedded shape]
-To recognize embedded shapes, we use the shape descriptor of the shape recognized previously, and focus on the embedded shapes locations. For each embedded shape location defined in the shape descriptor, we clip the image lines to that area, and recursively run the \texttt{Analyze} method on the result. If the recognition of rotated shapes is enabled, we transform the area by inverse an rotation to the matched rotation.
+To recognize embedded shapes, we use the shape descriptor of the shape recognized previously, and focus on the embedded shape locations. For each embedded shape location defined in the shape descriptor, we clip the image lines to that area, and recursively run the \texttt{Analyze} method on the result. If the recognition of rotated shapes is enabled, we transform the area by inverse an rotation to the matched rotation. We don't analyze the embedded shape locations for the pattern shapes of composition and the recursion depth limit is 2. \todo{explain why?}
 
 \end{description}
 
@@ -56,9 +56,12 @@ To recognize embedded shapes, we use the shape descriptor of the shape recognize
 We use the \emph{FANN} neural network library to train and use neural networks. This open source software is easy to use and install while having a lot of options in terms of network architecture and training. Thanks to its simplicity, we were able to develop an automatized training system for the networks.
 
 \subsection{Training data}
-Training the neural network requires a training dataset. Since we want to allow the extensibility in the form of user defined shapes, we have two options. Either to let the user somehow make his own dataset, which is not very convenient, or generate the data procedurally and try to approximate human-like drawing. 
-We decided for the second option. We generate the data based on the shape descriptors registered by the user and on the algorithm settings. To generate a data sample for the neural network, we take the shape descriptor and create a \texttt{ImageLines} instance from it. 
-Based on the algorithm settings, it will be either a deformed simple shape instance or an instance of a compound shape. In the case of creating a deformed simple shape, shape curve is sampled many times using the shape descriptor, and the points are connected by lines. 
+Training the neural network requires a training dataset. Since we want to allow the extensibility in the form of user defined shapes, we have two options. Either to let the user somehow make his own dataset, which is not very convenient, or generate the data procedurally and try to approximate human-like drawing.
+
+We decided for the second option. We generate the data based on the shape descriptors registered by the user and on the algorithm settings. To generate a data sample for the neural network, we take the shape descriptor and create a \texttt{ImageLines} instance from it.
+
+Based on the algorithm settings, it will be either a deformed simple shape instance or an instance of a compound shape. In the case of creating a deformed simple shape, shape curve is sampled many times using the shape descriptor, and the points are connected by lines.
+ 
 To approximate the deformations each sample can be moved in the direction perpendicular to the line between the original position of the last point, and the original position of the the transformed point. \todo{picture}.
 
 The transformation  offset is linearly magnified and then reduced, resulting in a heuristics that try to approximate some of the humans like deformations of drawn shapes. Then, the line between the previous and new point is added to the image instance. 
