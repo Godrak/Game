@@ -15,9 +15,9 @@ namespace { //private
 namespace ImageAnalyzer {
     bool DEBUG_IMAGE_SAVE = false;
     bool COMPOSED_SHAPES_ENABLED = true;
-    int COMPOSITION_SAMPLES_COUNT = 16;
-    int COMPOSITION_SAMPLES_LIMIT = 5;
-    float COMPOSITION_WINDOW_SIZE = 0.1f;
+    int COMPOSITION_SAMPLES_COUNT = 40;
+    int COMPOSITION_SAMPLES_LIMIT = 1;
+    float COMPOSITION_WINDOW_SIZE = 0.08f;
     bool EMBEDDED_SHAPES_ENABLED = true;
     bool ROTATIONS_ENABLED = true;
     int ROTATION_SAMPLES_COUNT = 13;

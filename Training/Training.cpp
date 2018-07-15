@@ -6,6 +6,12 @@ namespace { // training private
     vector<unique_ptr<ShapeDescriptor>> shapeDescriptors{};
 }
 
+namespace Training {
+    float FIRST_LEVEL_EMBEDDED_SHAPE_PROBABILITY = 0.5f;
+    float SECOND_LEVEL_EMBEDDED_SHAPE_PROBABILITY = 0.3f;
+    float COMPOSED_SHAPE_PROBABILITY = 0.3f;
+}
+
 ShapeIndex Training::RegisterShapeDescriptor(unique_ptr<ShapeDescriptor> shapeDescriptor) {
     if (inProgress) {
         cout << "ERROR: cannot register new shape descriptor, training in progress" << endl;
@@ -205,7 +211,7 @@ void Training::GenerateData(const std::string &filename, int validDataCount,
 
         ImageLines image;
         if (randomizer.ratio() < COMPOSED_SHAPE_PROBABILITY && COMPOSED_SHAPES_ENABLED) {
-            image = ComposeShapes(activeDescriptor, activeModifier, randomizer.next(6, 10));
+            image = ComposeShapes(activeDescriptor, activeModifier, randomizer.next(6, 9));
             name += "_" + activeModifier->GetName();
         } else {
             float offset = (randomizer.ratio() * 0.2f - 0.1f);
@@ -279,6 +285,8 @@ void Training::GenerateData(const std::string &filename, int validDataCount,
         auto deformation = CreateScalingMatrix(
                 float2{0.8f + randomizer.ratio() * 0.4f, 0.8f + randomizer.ratio() * 0.4f});
         image.Transform(deformation);
+        auto rotation = CreateRotationMatrix(randomizer.ratio()*0.03f-0.015f,float2{0.5,0.5});
+        image.Transform(rotation);
 
         image.Normalize();
 
@@ -311,156 +319,29 @@ void Training::GenerateData(const std::string &filename, int validDataCount,
     trainingData.close();
 }
 
-/*
-void Training::Train(string networkFile) {
-    if (shapeDescriptors.empty()) {
-        cout << "ERROR: no shape descriptors registered for training" << endl;
-        return;
-    }
-
-    inProgress = true;
-    TrainingCase network(vector<unsigned int>{IMAGE_SIDE_SIZE * IMAGE_SIDE_SIZE,
-                                              256,
-                                              32,
-                                              (int) shapeDescriptors.size()});
-
-//    for (int i = 0; i < BATCH_COUNT; ++i) {
-//        cout << "generating batch " << i + 1 << " from " << BATCH_COUNT << endl;
-//        GenerateData("batch" + to_string(i) + ".data", BATCH_SIZE * 7 / 10.0f, BATCH_SIZE * 3 / 10.0f, false);
-//    }
-
-    Training::GenerateData("test.data", 10000, 10000, false);
-//    Training::GenerateData("training.data", 120000, 60000, false);
-    auto *testData = fann_read_train_from_file("test.data");
-    float mse = network.Test(testData);
-    float newMse = mse - 0.0001f;
-
-//    while (newMse < mse) {
-    for (int i = 0; i < 30; ++i) {
-        mse = newMse;
-        string name = "data" + to_string(i) + ".data";
-//        GenerateData(name, 10000, 10000, false);
-        network.LoadData(name);
-        network.Train(10000);
-        newMse = network.Test(testData);
-    }
-
-    network.Save(networkFile);
-    inProgress = false;
-}
- */
-/*
-void Training::ManualTraining(string networkFile) {
-    using namespace Training;
-    TrainingCase network(vector<unsigned int>{IMAGE_SIDE_SIZE * IMAGE_SIDE_SIZE, 512, 64,
-                                              (int) shapeDescriptors.size()});
-    string dataName = "data.data";
-    string prefix;
-    string networkName = "network.net";
-
-    int validDataCount;
-    int invalidDataCount;
-    int epochCount;
-    int repetitions;
-    float learningRate;
-    float learningMomentum;
-
-    while (true) {
-        char command;
-        cout << "awaiting command" << endl;
-        cin >> command;
-        switch (command) {
-            case 'g':
-                cout << "valid:" << endl;
-                cin >> validDataCount;
-                cout << " invalid:" << endl;
-                cin >> invalidDataCount;
-                cout << "dataName:" << endl;
-                cin >> dataName;
-
-                GenerateData(dataName, validDataCount, invalidDataCount, false);
-                cout << "data generated" << endl;
-                continue;
-            case 'l':
-                cout << "load  data, dataName:" << endl;
-                cin >> dataName;
-                network.LoadData(dataName);
-                cout << "data loaded" << endl;
-                continue;
-            case 'e':
-                cout << "epochCount:" << endl;
-                cin >> epochCount;
-                network.Train(epochCount);
-                continue;
-            case 's':
-                network.Save(networkName);
-                cout << "saved" << endl;
-                continue;
-            case 't': {
-                cout << "test, testFileName: " << endl;
-                string testFileName;
-                cin >> testFileName;
-                cout << "RESULT: " << network.Test(testFileName) << endl;
-            }
-                continue;
-            case 'm':
-                cout << "learning rate (default 0.7): " << endl;
-                cin >> learningRate;
-                cout << "learning momentum (default 0): " << endl;
-                cin >> learningMomentum;
-                network.SetLearningParams(learningRate, learningMomentum);
-                continue;
-            case 'q':
-                network.Save(networkName);
-                return;
-            case 'c':
-                cout << "testFilesPrefix: " << endl;
-                cin >> prefix;
-                cout << "valid:" << endl;
-                cin >> validDataCount;
-                cout << " invalid:" << endl;
-                cin >> invalidDataCount;
-                cout << "epochCount:" << endl;
-                cin >> epochCount;
-                cout << "repetitions:" << endl;
-                cin >> repetitions;
-                for (int i = 0; i < repetitions; ++i) {
-                    auto t = std::time(nullptr);
-                    cout << "time: " << std::asctime(std::localtime(&t)) << endl;
-                    cout << "repetition: " << i << " from " << repetitions << endl;
-                    dataName = prefix + to_string(i) + ".data";
-                    GenerateData(dataName, validDataCount, invalidDataCount, false);
-                    network.LoadData(dataName);
-                    cout << "data generated" << endl;
-                    network.Train(epochCount);
-                }
-                continue;
-            case 'Q':
-                return;
-            default:
-                cout << "invalid command" << endl;
-                cout << "g generate" << endl;
-                cout << "c complex" << endl;
-                cout << "m learning params" << endl;
-                cout << "e train" << endl;
-                cout << "t test" << endl;
-                cout << "s save" << endl;
-                cout << "q quit" << endl;
-                cout << "Q quit without save" << endl;
-                continue;
-
-        }
-    }
-}
-*/
-
-float Training::Train(Training::TrainingCase &trainingCase, bool generateData, float targetMSE, int dataSize) {
+float Training::Train(const string &name, vector<unsigned int> networkStructure, bool generateData, float targetMSE, int dataSize) {
     if (shapeDescriptors.empty()) {
         cout << "ERROR: no shape descriptors registered for training" << endl;
         return 0;
     }
 
     inProgress = true;
+
+    if (networkStructure.size() < 2){
+        cout << "ERROR: the network configuration has to have at least two layers" << endl;
+    }
+
+    if (networkStructure[0] != IMAGE_SIDE_SIZE*IMAGE_SIDE_SIZE){
+        cout << "ERROR: the first layer of the network should have size IMAGE_SIDE_SIZE*IMAGE_SIDE_SIZE" << endl;
+        return 0;
+    }
+
+    if (networkStructure[networkStructure.size()-1] != shapeDescriptors.size()){
+        cout << "ERROR: the last layer of the network should have the same size as the number of registered shape descriptors" << endl;
+        return 0;
+    }
+
+    TrainingCase trainingCase(networkStructure);
 
     if (generateData) {
         int testDataSize = dataSize / 3;
@@ -484,6 +365,8 @@ float Training::Train(Training::TrainingCase &trainingCase, bool generateData, f
     }
 
     inProgress = false;
+
+    trainingCase.Save(name+".net");
 
     return newMse;
 };

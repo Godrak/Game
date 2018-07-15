@@ -11,18 +11,14 @@ using namespace LineDrawer;
 
 namespace Training {
 
-    float FIRST_LEVEL_EMBEDDED_SHAPE_PROBABILITY = 0.5f;
-    float SECOND_LEVEL_EMBEDDED_SHAPE_PROBABILITY = 0.3f;
-    float COMPOSED_SHAPE_PROBABILITY = 0.3f;
+    extern float FIRST_LEVEL_EMBEDDED_SHAPE_PROBABILITY;
+    extern float SECOND_LEVEL_EMBEDDED_SHAPE_PROBABILITY;
+    extern float COMPOSED_SHAPE_PROBABILITY;
 
     ShapeIndex RegisterShapeDescriptor(unique_ptr<ShapeDescriptor> shapeDescriptor);
 
     void GenerateData(const std::string &filename, int validDataCount,
                       int invalidDataCount, bool generateImages = false, bool saveImageLines = false);
 
-    float Train(TrainingCase &trainingCase, bool generateData = true, float targetMSE =0.05, int dataSize = 300000);
-
-//    void Train(string networkFile);
-
-//    void ManualTraining(string networkFile);
+    float Train(const string& name, vector<unsigned int> networkStructure, bool generateData = true, float targetMSE =0.01, int dataSize = 300000);
 }

@@ -1,27 +1,6 @@
 #include "Training.h"
 #include "../ImageAnalyzer/ExampleShapeDescriptors.h"
 
-
-void StructureTraining() {
-    using namespace Training;
-
-    vector<unsigned int> layerOne = {100, 200, 300};
-    vector<unsigned int> layerTwo = {10, 20, 30};
-    vector<float> targetMse = {0.1, 0.07, 0.04, 0.01};
-
-    for (auto mse : targetMse) {
-        for (auto layerOneCount : layerOne) {
-            for (auto layerTwoCount : layerTwo) {
-                TrainingCase trainingCase(vector<unsigned int>{1024, layerOneCount, layerTwoCount, 4});
-                auto finalMse = Training::Train(trainingCase, false, mse);
-                trainingCase.Save("network" + to_string(layerOneCount) + "_" + to_string(layerTwoCount)
-                                 +"_mse:" + to_string(finalMse) + "embedded:"+to_string(ImageAnalyzer::EMBEDDED_SHAPES_ENABLED)
-                                  + "composed:" + to_string(ImageAnalyzer::COMPOSED_SHAPES_ENABLED) + ".net");
-            }
-        }
-    }
-};
-
 int main() {
     using namespace Training;
 
@@ -32,10 +11,11 @@ int main() {
 
     ImageAnalyzer::EMBEDDED_SHAPES_ENABLED = true;
     ImageAnalyzer::COMPOSED_SHAPES_ENABLED = true;
-    ImageAnalyzer::ROTATIONS_ENABLED = true;
+    ImageAnalyzer::ROTATIONS_ENABLED = false;
 //    GenerateData("test.data", 40000, 20000, false, false);
 //    GenerateData("training.data", 150000, 50000, false, false);
-    GenerateData("overallWithRotation.data", 10000, 0, false, true);
-//    StructureTraining();
+//    GenerateData("overallWithRotation.data", 1000, 0, true, false);
+
+    Training::Train("newGC",vector<unsigned int>{1024, 128,16,4});
     return 0;
 }

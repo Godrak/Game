@@ -19,9 +19,6 @@ void Training::TrainingCase::Train(int epochCount) {
     fann_train_on_data(ann, data, epochCount, 1, desiredError);
 }
 
-void Training::TrainingCase::Train(fann_train_data *data, int epochCount) {
-    fann_train_on_data(ann, data, epochCount, 1, desiredError);
-}
 
 void Training::TrainingCase::LoadData(const string &filename) {
     if (data != nullptr) {
@@ -29,13 +26,6 @@ void Training::TrainingCase::LoadData(const string &filename) {
     }
 
     data = fann_read_train_from_file((filename).c_str());
-}
-
-int Training::TrainingCase::Test(string dataName) {
-    auto *testData = fann_read_train_from_file(dataName.c_str());
-    int BF = Test(testData);
-    fann_destroy_train(testData);
-    return BF;
 }
 
 
@@ -50,12 +40,6 @@ float Training::TrainingCase::Test(fann_train_data *data) {
 
 void Training::TrainingCase::Save(const string &filename) {
     fann_save(ann, filename.c_str());
-}
-
-void Training::TrainingCase::SetLearningParams(float learningRate, float learningMomentum) {
-    fann_set_learning_rate(ann, learningRate);
-    fann_set_learning_momentum(ann, learningMomentum);
-
 }
 
 Training::TrainingCase::~TrainingCase() {

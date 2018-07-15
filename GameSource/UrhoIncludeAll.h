@@ -132,6 +132,6 @@ static const float EXPLOSION_TIME_LIMIT = 0.3f;
 
 //MUTANT
 static const float MUTANT_HEALTH = 200;
-static const float MUTANT_SPEED = 0.3f;
+static const float MUTANT_SPEED = 0.1f;
 static const float MUTANT_ATTACK_DURATION = 1.3f;
-static const float MUTANT_ATTACK_DAMAGE = 25.f;
+static const float MUTANT_ATTACK_DAMAGE = 0;//25.f;

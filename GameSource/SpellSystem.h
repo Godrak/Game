@@ -29,6 +29,8 @@ public:
         ImageAnalyzer::EMBEDDED_SHAPES_ENABLED = true;
         ImageAnalyzer::ROTATIONS_ENABLED = false;
 
+        ImageAnalyzer::DEBUG_IMAGE_SAVE = true;
+
         ImageAnalyzer::RegisterShapeDescriptor(square, std::unique_ptr<SquareDescriptor>(new SquareDescriptor()));
         ImageAnalyzer::RegisterShapeDescriptor(circle, std::unique_ptr<CircleDescriptor>(new CircleDescriptor()));
         ImageAnalyzer::RegisterShapeDescriptor(triangle, std::unique_ptr<TriangleDescriptor>(new TriangleDescriptor()));
@@ -50,6 +52,8 @@ public:
             totem->AddEffect(spellNode->CreateComponent<HealingEffect>());
         }
 
+        CreateAdvancedEffects(shape.shapePattern, spellNode, totem);
+
         if (!shape.childNodes.empty()) {
             CreateAdditionalEffects(shape.childNodes[0], spellNode, totem);
         }
@@ -69,20 +73,16 @@ public:
         }
     }
 
-    void CastSpell(Node *caster, vector<Line> lines, Vector3 position) {
-        if (lines.empty()) return;
-
-        auto *spellNode = GetScene()->CreateTemporaryChild();
-//        auto* spell = spellNode->CreateComponent<Spell>();
-//        spell->Start(ImageLines{lines},position);
-
-//        Totem *totem = CreateTotem(result, spellNode);
-//        totem->Activate(position);
-
-        auto *totem = spellNode->CreateComponent<Totem>();
-        totem->AddEffect(spellNode->CreateComponent<ExplosionsEffect>());
-        totem->Activate(position);
-
+    void CreateAdvancedEffects(ShapeIndex index, Node* spellNode, Totem *totem){
+        if (index == circle) {
+            totem->AddEffect(spellNode->CreateComponent<DefenseWallEffect>());
+        } else if (index == square) {
+            totem->AddEffect(spellNode->CreateComponent<ExplosionsEffect>());
+        } else if (index == triangle) {
+            totem->AddEffect(spellNode->CreateComponent<TowerEffect>());
+        } else if (index == drop) {
+            totem->AddEffect(spellNode->CreateComponent<MadnessEffect>());
+        }
     }
 };
 
