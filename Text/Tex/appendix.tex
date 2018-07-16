@@ -16,7 +16,7 @@ The user can create a shape descriptor by including the \texttt{ImageAnalyzer.h}
 
 \item[\texttt{GetPoint(float last\_t, float t, float \& point)}] Function overload with three parameters, that allows the descriptor to describe noncontinuous curves. The \emph{point} parameter passed by a reference should be filled with the same value as from \texttt{GetPoint(t)} as it describes the point of the curve. Then the function should return true if the curve is continuous on the interval $[last\_t, t]$, otherwise false.
 
-\item[\texttt{GetPointsOfInterest()}] Function, that describes places, where an embedded shape may appear. It returns a vector of \texttt{float3} type, where the first two numbers denote the top left corner of the square area, and the third number is the size of the square.
+\item[\texttt{GetPointsOfInterest()}] Function, that describes places, where an embedded shape may appear. It returns a vector of \texttt{float3} type, where the first two numbers denote the top left corner of the square area, and the third number is the size of the square. It is important for the correct functionality that the points of interest do not overlap with the shape curve, and that they are substantially smaller than the parent shape.
 \end{description}
 
 Examples of shapes descriptors can be found in the \texttt{ExampleShapeDescriptors.h} file. Be careful to return the points only in the normalized range $[0,1]^2$.

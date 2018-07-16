@@ -132,8 +132,8 @@ private:
     void createRectangle() {
         spellRectangle = GetScene()->CreateChild();
         auto *planeObject = spellRectangle->CreateComponent<StaticModel>();
-        planeObject->SetModel(GetSubsystem<ResourceCache>()->GetResource<Model>("Models/Plane.mdl"));
-        planeObject->SetMaterial(GetSubsystem<ResourceCache>()->GetResource<Material>("Materials/GoldTransparent.xml"));
+//        planeObject->SetModel(GetSubsystem<ResourceCache>()->GetResource<Model>("Models/Plane.mdl"));
+//        planeObject->SetMaterial(GetSubsystem<ResourceCache>()->GetResource<Material>("Materials/GoldTransparent.xml"));
         spellRectangle->SetScale(rectangleSize);
     }
 };

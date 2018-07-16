@@ -16,6 +16,6 @@ int main() {
 //    GenerateData("training.data", 150000, 50000, false, false);
 //    GenerateData("overallWithRotation.data", 1000, 0, true, false);
 
-    Training::Train("newGC",vector<unsigned int>{1024, 128,16,4});
+    Training::Train("newGC",vector<unsigned int>{1024, 100,10,4},false);
     return 0;
 }

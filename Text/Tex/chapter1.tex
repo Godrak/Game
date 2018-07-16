@@ -49,7 +49,7 @@ Other two terms express the energy (brightness) of the template and the image, r
 
 Computing distance this way has several serious drawbacks. It is computationally heavy since we have to consider every position and every pixel appears in the computation many times, based on the size of the template. The method may also give false matches if the image energy changes a lot with the position. Also, the range of values of cross-correlation term depends on the size of the template and it is not invariant to scaling and rotation. 
 
-The slow performance of the method can be partially solved by computing the cross-correlation in a frequency domain using some form of a signal transform. Fourier transform is the common one, but other transformations are possible and successfuly used, such as the wavelet transforms \cite{patternRecNN}.
+The slow performance of the method can be partially solved by computing the cross-correlation in a frequency domain using some form of a signal transform. Fourier transform is the common one, but other transformations are possible and successfully used, such as the wavelet transforms \cite{patternRecNN}.
 
 Convolution theorem states that when all conditions are met, Fourier transform of a convolution is an element-wise product of Fourier transforms of input signals. From Convolution theorem follows that time domain or space domain convolution is equivalent to element-wise multiplication in the frequency domain. To compute convolution, we simply need to take element-wise multiplications of Fourier transforms of signals to be convoluted. Cross-correlation differs in that we take the complex conjugate of the Fourier transform of the second signal. \todo{je tu potreba citace?}
 
@@ -88,7 +88,7 @@ This can be solved in $O(N^3)$ time using the Hungarian method\cite{simple}.
 A shape is represented by a discrete set of points sampled regularly along
 the contours. For every point, a log-polar histogram—the shape context—is
 computed which approximates the distribution of adjacent point locations
-relative to the reference point. \citet{simple}}
+relative to the reference point. image and description taken from \citet{simple}.}
 \label{fig:polarbins}
 \end{figure}
 \end{quotation}

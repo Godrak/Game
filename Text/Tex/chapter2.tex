@@ -28,12 +28,31 @@ User can define their own shapes by inheriting from the abstract class \texttt{S
 The curve does not have to be continuous, but it has to return value for every parameter value in the range, and also thread safety of some methods is required. It is then recommended to keep the shape complexity low, as some very small details may be lost in the data preparation for the training. 
 
 \item [Output data format]
-Output is in the form of instance of \texttt{ShapeNode} class defined in \texttt{ImageAnalyzer.h} file. It represents a tree structure, where each node contains the recognized shape index, conglomeration shape index and embedded shapes as children. Indexes are numbers assigned to each descriptor during algorithm setup. \todo{podobny syntatickemu stromu}  \todo{schema}
+Output is in the form of instance of \texttt{ShapeNode} class defined in \texttt{ImageAnalyzer.h} file. It represents a tree structure \ref{output0}, where each node contains the recognized shape index and it's pattern shape index. Embedded shapes are in a vector of child nodes. Indexes are numbers assigned to each descriptor during algorithm setup, except the \texttt{unknown} shape index, which serves as a placeholder for unrecognized shapes. We do not differentiate between the empty space and the unrecognized shape.
+
+\begin{figure}
+\centering
+\includegraphics[width=.3\linewidth]{ext/images/example_output0.png}
+\quad
+\includegraphics[width=.3\linewidth]{ext/images/example_output0.pdf}
+\caption{Image with expected output. The embeddings form a tree hierarchy, with a single shape in the root and it's embedded shapes as its sons. The \texttt{unknown} shape index marks both unrecognized shapes and empty space.}
+\label{output0}
+\end{figure}
+
+\begin{figure}
+\centering
+\includegraphics[width=.3\linewidth]{ext/images/example_output1.png}
+\quad
+\includegraphics[width=.3\linewidth]{ext/images/example_output1.pdf}
+\caption{The output schema for a more complicated image. }
+\label{output1}
+\end{figure}
+
 
 \end{description}
 
 \section{Recognition process}
-The recognition process starts in the \texttt{Analyze} method, declared in the \texttt{ImageAnalyzer.h} file. It accepts an instance of \texttt{ImageLines} class as an argument, and returns \texttt{ShapeNode} instance describing the recognized elements in the image.
+The recognition process \ref{fig:algoschema} starts in the \texttt{Analyze} method, declared in the \texttt{ImageAnalyzer.h} file. It accepts an instance of \texttt{ImageLines} class as an argument, and returns \texttt{ShapeNode} instance describing the recognized elements in the image.
 
 The image lines are first normalized, which means transformed into the $[0-1]^2$ coordinate space. This transformation is essentially a rescaling, preserving both the length ratio and angles. Then, the top level shape is analyzed by drawing the lines into the pixel map, which is then passed into the trained neural network as a vector of numbers. 
 
@@ -45,16 +64,25 @@ Generally, the highest network output is the matched shape pattern, but only if 
 The network returns a vector of values, each output's value signaling the similarity to the shape assigned to the output, and the highest value is considered the matched shape. If there are several highest network outputs for different rotations with the same value, the first highest value among all outputs is considered. A recognized shape index is returned along with its matching rotation, in which it scored the highest network output.
 
 \item[Compound shape]
-When the top level shape is recognized, its shape descriptor is used to sample the theoretical curve points via parameter $t$ uniformly on interval $[0-1]$. Then, for each sampled point, this point is expanded into a small square, the original image is clipped to this square, discarding the lines outside, and the result is analyzed recursively. Recognized shapes are counted over all samples, and if the count of matches for any shape is high enough, the top level shape is recognized as a compound shape created from a number of smaller shapes of the type with the highest count.Pattern shapes that form the composition are not tested for compound shapes.
+When the top level shape is recognized, its shape descriptor is used to sample the theoretical curve points via parameter $t$ uniformly on interval $[0-1]$. Then, for each sampled point, this point is expanded into a small square, the original image is clipped to this square, discarding the lines outside, and the result is analyzed recursively. 
+
+Recognized shapes are counted over all samples, and if the count of matches for any shape is high enough, the top level shape is recognized as a compound shape created from a number of smaller shapes of the type with the highest count. Pattern shapes that form the composition are not tested for compound shapes.
 
 \item [Embedded shape]
-To recognize embedded shapes, we use the shape descriptor of the shape recognized previously, and focus on the embedded shape locations. For each embedded shape location defined in the shape descriptor, we clip the image lines to that area, and recursively run the \texttt{Analyze} method on the result. If the recognition of rotated shapes is enabled, we transform the area by inverse an rotation to the matched rotation. We don't analyze the embedded shape locations for the pattern shapes of composition and the recursion depth limit is 2. \todo{explain why?}
+To recognize embedded shapes, we use the shape descriptor of the shape recognized previously, and focus on the embedded shape locations. For each embedded shape location defined in the shape descriptor, we clip the image lines to that area, and recursively run the \texttt{Analyze} method on the result. If the recognition of rotated shapes is enabled, we transform the area by inverse rotation to the matched rotation. We don't analyze the embedded shape locations for the pattern shapes of composition.
 
 \end{description}
 
+\begin{figure}
+\centering
+\includegraphics[width=.9\linewidth]{ext/images/algoschema.pdf}
+\caption{The figure shows a general algorithm schema. The dashed arrows show appearances of important data structures: \texttt{ImageLines}, \texttt{ShapeIndex} and \texttt{ShapeDescriptor}. The full lines describe the algorithm flow. The algorithm starts with the input, the output is built during the analysis. The algorithm stops when the shape is not recognized.}
+\label{fig:algoschema}
+\end{figure}
+
 \section{Neural network preparation}
 \todo{reference na FANN}
-We use the \emph{FANN} neural network library to train and use neural networks. This open source software is easy to use and install while having a lot of options in terms of network architecture and training. Thanks to its simplicity, we were able to develop an automatized training system for the networks.
+We use the \emph{FANN} neural network library to train and use neural networks. This open source software is easy to use and install while having a lot of options in terms of network architecture and training. Thanks to its simple interface, we were able to develop an automatized training system for the networks.
 
 \subsection{Training data}
 Training the neural network requires a training dataset. Since we want to allow the extensibility in the form of user defined shapes, we have two options. Either to let the user somehow make his own dataset, which is not very convenient, or generate the data procedurally and try to approximate human-like drawing.
@@ -63,7 +91,19 @@ We decided for the second option. We generate the data based on the shape descri
 
 Based on the algorithm settings, it will be either a deformed simple shape instance or an instance of a compound shape. In the case of creating a deformed simple shape, shape curve is sampled many times using the shape descriptor, and the points are connected by lines.
  
-To approximate the deformations each sample can be moved in the direction perpendicular to the line between the original position of the last point, and the original position of the the transformed point. \todo{picture}.
+To approximate the deformations each sample can be moved in the direction perpendicular to the line between the original position of the last point, and the original position of the the transformed point. \ref{deformed}
+
+\begin{figure}
+\centering
+\includegraphics[width=.3\linewidth]{ext/images/deformed0.png}
+\quad
+\includegraphics[width=.3\linewidth]{ext/images/deformed1.png}
+\quad
+\includegraphics[width=.3\linewidth]{ext/images/deformed2.png}
+
+\caption{Examples of deformations of the shapes.}
+\label{deformed}
+\end{figure}
 
 The transformation  offset is linearly magnified and then reduced, resulting in a heuristics that try to approximate some of the humans like deformations of drawn shapes. Then, the line between the previous and new point is added to the image instance. 
 
@@ -81,7 +121,7 @@ The game, which demonstrates the usage of this pattern recognition work, has bee
 \subsection{Game description}
 The game is only a prototype to show the usability of the recognition algorithm. In the game, the player controls the character from a top down view perspective. The player can move and attack the enemies, but most importantly cast spells by drawing. 
 
-Spells in the game are represented by totem objects, so each time the player casts spell, a totem is created. These totem have different effects on the characters, they can be positive effects that affect the player's character, like healing, or negative effects that affect enemies, like burning. The task for the player is to survive and destroy all the enemies in the game. 
+Spells in the game are represented by totem objects, so each time the player casts spell, a totem is created. These totem have different effects on the characters, they can be positive effects that affect the player's character, like healing, or negative effects that affect the enemies, like burning. The task for the player is to survive and destroy all the enemies in the game. 
 Now we describe some of the constructs of the game implementation:
 
 \begin{description}
