@@ -1,24 +1,24 @@
 \chapter{Pattern recognition}
-In this chapter, we define the pattern recognition problem. We then describe several classes of algorithms that solve pattern recognition. In the next part, we review some of the algorithms, namely \emph{Normalized cross-correlation}, \emph{Shape matching and object recognition using shape contexts} and \emph{Matching of Shapes Using Dynamic Programming}. The last section is devoted to \emph{Artificial neural networks} as our chosen method for the implementation.
+In this chapter, we define the pattern recognition problem. We then describe several classes of algorithms that solve pattern recognition. In the next part, we review some of the algorithms, namely the \emph{Normalized cross-correlation}, \emph{Shape matching and object recognition using shape contexts} and \emph{Matching of Shapes Using Dynamic Programming}. The last section is devoted to the \emph{Artificial neural networks} as our chosen method for the implementation.
 
 \section{Pattern recognition definition}
-First, we need to define what is actually meant by pattern recognition. \begin{quotation}
+First, we need to define what is actually meant by pattern recognition. \citet{formalMethods} \begin{quotation}
 The Pattern Recognition problem consists in determining a procedure that, on the basis of the attributes, excluding those that define the classification criterion assigns each entity to its proper class.
-\end{quotation} \cite{formalMethods}
+\end{quotation}
  Pattern recognition problem is a broad term for classification problems based on similarity of the features of classified objects, see \citet{formalMethods} for precise mathematical definition. We will focus more on the shape recognition problems category, which can be viewed as a subcategory of pattern recognition. A shape can be typically defined as an equivalence class under the group of transformations, and the problem is then to algorithmically approximate the human-like visual pattern recognition. 
 
 \section{Algorithms classification}
 There are variety of algorithms on pattern recognition and they can be categorized based on different features. Approach classes based on \citet{imageRecognition} are:
 \begin{description}
-\item [Statistical approach] Algorithms in this category rely on the underlaying probability model. The shape class is determined by its extracted features and the probability distributions of the shape belonging to each class. An example of such algorithm is a naive Bayess classifier.
+\item [Statistical approach] Algorithms in this category rely on the underlaying probability model. The shape class is determined by its extracted features and the probability distributions of the shape belonging to each class. An example of such algorithm is the naive Bayess classifier.
 
-\item [Nonmetric approach] This class contains decision tress, syntactic methods, and rule-based classifiers. The idea of these algorithms is that each shape can be decomposed into the simplest sub-patterns called primitives. These primitives are then viewed as a language and the shape class as a set of rules, from which the shape can be derived. However, the inference of the grammar rules from the training data is difficult and the detection of the primitives as well.
+\item [Nonmetric approach] This class contains decision tress, syntactic methods, and rule-based classifiers. The idea of these algorithms is that each shape can be decomposed into the simplest sub-patterns called primitives. These primitives are then viewed as a language and the shape class as a set of rules, from which the shape can be derived. However, the inference of the grammar rules from the training data and the detection of the primitives are difficult problems.
 
 \item [Cognitive approach] Neural networks and support vector machines belong to this class. Neural networks are inspired by human brains. They can be described as massively parallel computation systems and they can learn complex input-output relationships. \begin{quotation} However, in spite of the seemingly different underlying principles, most of the neural network models are implicitly similar to statistical pattern recognition methods. \end{quotation} \cite{imageRecognition}
 
 \end{description}
 
-We can also divide the algorithms based on the creation process of the classifier into learning-based approaches and template-based approaches \cite{skeletonMatching}. In the learning-based approaches, pattern classifiers are obtained through training on classified samples. In the template based approaches, patterns are described by templates and the recognition problem transforms into searching for the best matching template for a given input image.
+We can also divide the pattern recognition algorithms based on the creation process of the classifier into learning-based approaches and template-based approaches \cite{skeletonMatching}. In the learning-based approaches, pattern classifiers are obtained through training on classified samples. In the template based approaches, patterns are described by templates and the recognition problem transforms into searching for the best matching template for a given input image.
 
 Another classification proposed by \citet{distanceTransform} divides the algorithms into three classes based on the level of preprocessing:
 \begin{description}
@@ -27,12 +27,13 @@ Another classification proposed by \citet{distanceTransform} divides the algorit
 \item Algorithms that use high-level features such as identified objects or relation between the features, e.g. graph-theoretic-methods.
 \end{description}
 
-Given the amount of algorithms to choose from, we have decided to describe only a few of them, namely normalized cross-correlation, shape contexts object matching and matching of shapes using dynamic programming, which are described on this chapter. Then we dedicate the whole chapter to neural networks, which we use in our algorithm implementation.
+Given the amount of algorithms to choose from, we have decided to describe only a few of them, namely normalized cross-correlation, shape contexts object matching and matching of shapes using dynamic programming, which are described on this chapter. Then we dedicate the last section to neural networks, which we use in our algorithm implementation.
 
 \section{Normalized cross-correlation}
 Following description is taken from the work of \cite{crossCorrLewis}.
 Cross-correlation is a method to measure the similarity between a template and a given area of an image. The term cross-correlation itself means a difference between two signals. Its one of the oldest approaches to pattern and feature recognition and extraction, and still serves as a base for more complex algorithms.
-We compute an Euclidean distance of a image f and a template t, where pattern is on a position $(u\,v)$, by comparing corresponding pixels of the image at $(x\,y)$ and the template shifted to $(x-u\,y-v)$. 
+
+It works by computing the distance between an image and the searched template. We can compute an Euclidean distance of a image f and a template t, where pattern is on a position $(u\,v)$, by comparing corresponding pixels of the image at $(x\,y)$ and the template shifted to $(x-u\,y-v)$. 
 \begin{equation*}
 d_{f,t}^{2}(u,v)=\sum_{x,y} [ f(x,y) - t(x-u, y-v) ]^{2} 
 \end{equation*}
@@ -44,29 +45,33 @@ d_{f,t}^{2}(u,v)=\sum_{x,y} f(x,y)^{2} - 2c(u,v) + \sum_{x,y} t(x-u, y-v)^2
 c(u,v)=\sum_{x,y} f(x,y) * t(x-u, y-v).
 \end{equation*}
 
-Other two terms express energy (brightness) of template and image, respectively. We perform this computation for all possible values of u,v looking for the lowest value. Computing distance this way has several serious drawbacks. It is computationally heavy, it may give false matches if the image energy changes a lot with the position. Also, the range of values of cross-correlation term depends on the size of the template and it is not invariant to scaling and rotation. 
+Other two terms express the energy (brightness) of the template and the image, respectively. We perform this computation for all possible values of u,v looking for the lowest value. The we can then consider distances under the certain value a match, and the corresponding $u,v$ terms give us the location.
 
-The slow performance of the method can be partially solved by computing the cross-correlation in a frequency domain using some form of a signal transform. Fourier transform is the common one, but other transformations were discovered, such as the wavelet transforms \cite{patternRecNN}. 
-Convolution theorem states that when all conditions are met, Fourier transform of a convolution is an element-wise product of Fourier transforms of input signals. From Convolution theorem follows that time domain or space domain convolution is equivalent to element-wise multiplication in the frequency domain. To compute convolution, we simply need to take element-wise multiplications of Fourier transforms of signals to be convoluted. Cross-correlation differs in that we take the complex conjugate of the Fourier transform of the second signal.
-Problems with the range of cross-correlation value and dependency on brightness can be fixed by using normalized cross-correlation, where image and template vectors are normalized to unit length. Other desired aspects, such as scale invariance, has been addressed in many algorithms using a cross-correlation method. However, they usually introduce some trade-offs and they may not achieve all the required properties together. 
+Computing distance this way has several serious drawbacks. It is computationally heavy since we have to consider every position and every pixel appears in the computation many times, based on the size of the template. The method may also give false matches if the image energy changes a lot with the position. Also, the range of values of cross-correlation term depends on the size of the template and it is not invariant to scaling and rotation. 
+
+The slow performance of the method can be partially solved by computing the cross-correlation in a frequency domain using some form of a signal transform. Fourier transform is the common one, but other transformations are possible and successfuly used, such as the wavelet transforms \cite{patternRecNN}.
+
+Convolution theorem states that when all conditions are met, Fourier transform of a convolution is an element-wise product of Fourier transforms of input signals. From Convolution theorem follows that time domain or space domain convolution is equivalent to element-wise multiplication in the frequency domain. To compute convolution, we simply need to take element-wise multiplications of Fourier transforms of signals to be convoluted. Cross-correlation differs in that we take the complex conjugate of the Fourier transform of the second signal. \todo{je tu potreba citace?}
+
+Problems with the range of cross-correlation value and dependency on brightness can be fixed by using normalized cross-correlation, where the image and the template vectors are normalized to unit length. Other desired aspects, such as scale invariance, has been addressed in many algorithms using a cross-correlation method. However, they usually introduce some trade-offs and they may not achieve all the required properties together. 
 
 Normalized cross-correlation:
 \begin{equation*}
-\gamma(u\,v) = \frac{\sum_{x\,y}f(x\,y) [f(x\,y)-\bar{f}_{u\,v}][t(x-u\,y-v)-\bar{t}]} {\{ \sum_{x\,y}f(x\,y) [f(x\,y)-\bar{f}_{u\,v}]^2 \sum_{x\,y}[t(x-u\,y-v)-\bar{t}]^2  \}^{0.5}}
+\gamma(u,v) = \frac{\sum_{x,y}f(x,y) [f(x,y)-\bar{f}_{u,v}][t(x-u,y-v)-\bar{t}]} {\{ \sum_{x,y}f(x,y) [f(x,y)-\bar{f}_{u,v}]^2 \sum_{x,y}[t(x-u,y-v)-\bar{t}]^2\}^{0.5}}
 \end{equation*}
-where $\bar{t}$ is the mean of the feature and $\bar{f}_{u\,v}$ is the mean of $f(x\,y)$ in the region under the feature \cite{crossCorrLewis}.
+where $\bar{t}$ is the mean of the feature and $\bar{f}_{u,v}$ is the mean of the $f(x,y)$ in the region under the feature \cite{crossCorrLewis}.
 
 \section{Shape matching and object recognition using shape contexts}
-Shape matching using shape contexts is usually based on extracted features, which generally introduces a more robust recognition of deformed images. In the reviewed algorithm from \Citet{simple}, we try to find corresponding feature points of an image and a template, and we attempt to compute their distance as a sum of errors of corresponding points.
+Shape matching approaches using shape contexts are usually based on extracted features, which generally introduces a more robust recognition of deformed images. In the reviewed algorithm from \citet{simple}, we try to find corresponding feature points of the image and the template, and we attempt to compute their distance as a sum of errors of corresponding points.
 
-We treat an image as a set of points, and we assume that each shape is represented by a finite subset of its points. We extract from both image and template a certain number of feature points, the paper advises about 100 points. They do not need to be key-points, such as maxima of curvature or corners. This allows us to use a simple extraction method like edge detection. In our algorithm, we might also represent players drawings directly as a set of edges. 
+We treat an image as a set of points, and we assume that each shape is represented by a finite subset of its points. We extract from both image and template a certain number of feature points, the paper advises about 100 points. They do not need to be key-points, such as maxima of curvature or corners. This allows us to use a simple extraction method like edge detection. In our algorithm, we might use the representation of players drawings as a set of edges. 
 
-With feature points extracted, we need to find corresponding points. To do so, \citet{simple} introduces a shape context descriptor. For each sample point $p$, we can create a set of vectors originating from $p$ to all other feature points. Such a set of vectors represents positions of other sample points relative to the origin point. The more sample points we choose, the more is this shape descriptor exact.
+With feature points extracted, we need to find the corresponding points. To do so, \citet{simple} introduces a shape context descriptor. For each sample point $p$, we can create a set of vectors originating from $p$ to all other feature points. Such set of vectors represents positions of other sample points relative to the origin point. The more sample points we choose, the more is this shape descriptor exact.
 
-However, such descriptor might be too detailed and too sensitive to intraclass variations. In the paper, they presented a more robust and compact shape descriptor. The idea is that for each point $p$, we compute coarse histogram by assigning other points to bins in polar coordinates with a center in $p$. [TODO polar coordinates image] Polar coordinates are more sensitive to points near p. We can then compute the cost of matching two pints as 
+However, such descriptor might be too detailed and too sensitive to intraclass variations. In the paper, the authors presented a more robust and compact shape descriptor. The idea is that for each point $p$, we compute coarse histogram by assigning other points to bins in polar coordinates with a center in $p$. Polar coordinates are more sensitive to points near p. We can then compute the cost of matching two pints as 
 
 \begin{equation*}
-C_{ij} =  C(p_{i}\,q_{j}) = \frac{1}{2} \sum_{k=1}^{K} \frac{(h_{i}(k) - h_{j}(k))^2}{h_{i}(k) + h_{j}(k)}
+C_{ij} =  C(p_{i},q_{j}) = \frac{1}{2} \sum_{k=1}^{K} \frac{(h_{i}(k) - h_{j}(k))^2}{h_{i}(k) + h_{j}(k)}
 \end{equation*}
 
 where $ h_{i}(k) $ and $ h_{j}(k) $ represent the K-bin normalized histogram at $p_{i}$ and $q_{j}$. Given a set of costs $C_{i,j}$ between all pairs of points $p_{i}$ and $q_{j}$, we need to find the best alignment, which means that we want to minimize the total cost of matching 
@@ -75,24 +80,37 @@ H(pi) = \sum_{i} C(p_{i}\,q_{pi(i)}).
 \end{equation*}
 This can be solved in $O(N^3)$ time using the Hungarian method\cite{simple}. 
 
-We can achieve scaling invariance by normalizing all radial distances by the mean distance, and rotation invariance is obtained when searching for the lowest cost among all permutations. according to the paper, this method is robust against small geometric disturbances.
+\begin{quotation}
+\begin{figure}
+\centering
+\includegraphics[width=\linewidth]{ext/polarbins.png}
+\caption{A scheme of representation of point sets using shape context.
+A shape is represented by a discrete set of points sampled regularly along
+the contours. For every point, a log-polar histogram—the shape context—is
+computed which approximates the distribution of adjacent point locations
+relative to the reference point. \citet{simple}}
+\label{fig:polarbins}
+\end{figure}
+\end{quotation}
+
+We can achieve scaling invariance by normalizing all radial distances by the mean distance, and rotation invariance is obtained when searching for the lowest cost among all permutations. according to the paper, this method is also robust against small geometric disturbances.
 
 \section{Matching of shapes using dynamic programming}
-Another method proposed by \citet{convex} introduces an algorithm which uses dynamic programming combined with high-level features. Similarly to the previous algorithm, we try to compute a distance of template and image, but in a different way.
+Another method proposed by \citet{convex} introduces an algorithm which uses dynamic programming combined with high-level features extraction. Similarly to the previous algorithms, we try to compute a distance of template and image, but in a different way.
 
-The algorithm requires that both shape and template are represented as a sequence of convex and concave segments, split by inflex points. The idea of the algorithm is to recursively merge segments using two grammar rules $CVC -> C$ and $VCV -> V$, where V denotes concave and C convex segment. Simultaneously, merging cost is computed using a merging cost function, and results are stored in the dynamic programming table, with additional information.
+The algorithm requires that the both shape and the template are represented as a sequence of convex and concave segments, split by inflex points. The idea of the algorithm is to recursively merge segments using two grammar rules $CVC -> C$ and $VCV -> V$, where V denotes concave and C convex segment. Simultaneously, merging cost when the rules are applied is computed using a merging cost function, and the results are stored in the dynamic programming table, with additional information.
 
-Rows and columns of dynamic programming table represent inflex points of shape and template, respectively. At the end of the computation, each field $F(i,j)$ contains the minimal cost of merging first i-1 segments of shape and j-1 segments of template. Minimum cost is computed as:
+Rows and columns of the dynamic programming table represent the inflex points of the shape and the template, respectively. The cost $D(A,B)$ of matching shape A with shape B is defined as:
+\begin{equation*}
+D(A,B) = min_{T} \{g(i_T,j_T)\}
+\end{equation*}
+where $\{g(i_T,j_T)\}$ is a cost of a complete match. The complete match is characterized by a complete path $((i_{0},j_{0}),(i_{1},j_{1}, ..., (i_{T},j_{T}))$, i.e., a path that covers all segments of both shapes. In turn, $\{g(i_T,j_T)\}$ is defined as follows:
 
 \begin{equation*}
-g(i_{w},j_{w}) = min\{g(i_{w},j_{w}) + \phi(a(i_{w-1}|i_{w}), b(j_{w-1}|j_{w}))\}
+g(i_{T},j_{T}) = min_(i_w,j_w) \sum_{w=1}^{T} \phi(a(i_{w-1}|i_{w}), b(j_{w-1}|j_{w}))
 \end{equation*}
-where the minimum is over all possible values of 
-\begin{equation*}
-(i_{w-1}\,j_{w-1})  =  (i_{w} - 2m_{w} -1\, j_{w} - 2n_{w} - 1)
-\end{equation*}
-, where $m \geq 0$ and $n \leq 0$.
-Since merging of convex and concave segments is not possible, merging always involves an odd number of segments. Dissimilarity cost function: 
+
+Expression $\phi(a(i_{w-1}|i_{w}), b(j_{w-1}|j_{w}))$ represents the dissimilarity cost function defined as: 
 \begin{equation*}
 \phi(a(i_{w-1}|i_{w}), b(j_{w-1}|j_{w}))  =  \lambda MergingCost(a(i_{w-1}|i_{w}))  +
 \end{equation*}
@@ -100,13 +118,19 @@ Since merging of convex and concave segments is not possible, merging always inv
 \lambda MergingCost(b(j_{w-1}|j_{w}))  +  DissimilarityCost(a(i_{w-1}|i_{w}), b(j_{w-1}|j_{w}))
 \end{equation*}
 
-where lambda value controls merging tendency. With lower value, merging is more encouraged. For shapes with much detail, it is practical to set higher values, otherwise, these details may be lost during merging. 
+The first two terms in represent the cost of merging segments $a(i_{w-1}|i_{w})$ in shape A and segments $b(j_{w-1}|j_{w})$ in shape B, respectively, while the last term is the cost of associating the merged sequence $a(i_{w-1}|i_{w})$ with the merged sequence $b(j_{w-1}|j_{w})$. Each merging should be a recursive application of the grammar rules  $CVC -> C$ and $VCV -> V$.
+
+The lambda value controls merging tendency. With lower value, merging is more encouraged. For shapes with much detail, it is practical to set higher values, otherwise, these details may be lost during merging. 
+
+At the end of the computation, each field $F(i,j)$ od the dynamic table contains the minimal cost of merging the first $i-1$ segments of the shape and $j-1$ segments of the template.
+
 Since algorithm assumes, that first segments of shape and template are aligned and match, we may need to run the algorithm for all possible starting points of shape if we don't know the first segment beforehand.
+
 
 Contrary to the previous algorithm, we now require the extraction of high-level features, we need to extract convex and concave segments in correct order. However, we obtain a matching algorithm that is independent of shape translation, scaling and rotation. We can also directly control invariance to deformations using the lambda parameter.
 
 \section{Neural networks}
-Neural networks are mathematical models inspired by a behavior of a biological nervous system \cite{bishop}. They have been successfully used to solve problems in many different areas, including image and pattern recognition. They can be used in problems, where we can't mathematically describe the solution given the instance of the problem, or doing so would be overly complicated. We have chosen a neural networks approach as a core of our system. They don't require feature extraction since they can learn it themselves. They also have a great ability to generalize, which has been used for the recognition of shape conglomerations.
+Neural networks are mathematical models inspired by a behavior of a biological nervous system \cite{bishop}. They have been successfully used to solve problems in many different areas, including image and pattern recognition. They can be used in problems, where we can't mathematically describe the solution given the instance of the problem, or doing so would be overly complicated. We have chosen a neural networks approach as a core of our system. They don't require feature extraction since they can learn it themselves. They also have a great ability to generalize, which can be used for the recognition of the shape compositions.
 
 \subsection{Neuron}
 Artificial neural networks are structures built for parallel data processing. The basic network unit is a neuron \ref{fig:neuron}, which is characterized by its input and output connection weights, the activation function and a bias. The neural network is built from a number of connected neurons, usually in a layered structure, and the network learning can be characterized as a process of altering the weights of the connections between neurons and the biases of the neurons.
@@ -206,11 +230,22 @@ The quick-prop algorithm is an improved version of the backpropagation. It is ba
 \end{equation*}
 where $\Delta ^{t} w_{ij}$ is weight delta from \emph{t} iteration and $\bigtriangledown_{ij} E^{t}$ denotes partial $w_{ij}$-derivation of error function E in \emph{t} iteration.
 
-\subsection{Convolution neural networks}
-Convolution neural networks are a modern solution to image recognition. They are similar to classic neural networks, but the main difference is that they expect the input to be an image, and they allow us to encode some of the properties of images naturally into their architecture.
+\subsection{Advanced structures of neural networks}
+There are several advanced techniques in the neural networks field that are commonly used. We describe two of them, the convolution networks and deep neural networks.
 
-Neurons of convolutional networks have a layered architecture, like classic networks, but their layers consist of neurons arranged in a grid, similarly pixels of an image, and each neuron is connected only to a small corresponding area in next layer.  
-TODO image
+\begin{description}
+\item [Deep neural networks]
+All neural networks with more than two hidden layers can be considered deep neural networks. With the advantage of more layers, deep neural networks can outperform other methods of machine learning. The process of training such network is called \emph{deep learning}. 
+
+More layers allow the network to make more complicated model abstractions over the data. However, there are many challenges to overcome. Deep neural networks have a large number of parameters and training them is demanding on computational power. They are also prone to overfitting, as the added layers of abstraction allow them to find possible unforeseen dependencies in the training data.
+
+\item [Convolutional neural networks]
+Convolutional networks can be considered a special case of deep neural networks, because they usually have higher number of layers. They are well suited for pattern recognition directly from the pixels of the image because of their structure of layers with different purposes.
+For convolutional networks the convolutional layer is characteristic. This layer is essentially a filter, that performs feature extraction. The filter is composed from neurons that have shared weights, so that the filter performs the same operation on every part of the input. This in turn lowers the number of parameters of the network. Usually, more than one filter is used on the input image, allowing the network to extract different features from the simple ones like edges and corners, to very complex features, such as a house or a tree.
+\end{description}
+
+However, we have decided to use the classic feed-forward neural networks with two hidden layers. Because we want to allow the users train the network for their own defined shapes, we need to be able to perform the learning on the user side and offer a simple interface to do so. 
+This does not correspond well with the advanced neural network structures, which may require certain hardware or complicated learning process. The classic neural networks are on the other hand easy to learn in comparison, and they can still perform quite well in the recognition tasks.
 
 \subsection{Data preparation for pattern recognition}
 \cite{bishop} Because of their generalization properties, neural network are successfully used in pattern recognition. They are able to approximate an arbitrary mapping between the input values and the output values. Because of this, we are not forced to do feature extraction and we can initialize the network with pixel values directly. 

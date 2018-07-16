@@ -4,9 +4,6 @@
 \todo{ma byt intorduction chapter s cislem?}
 
 \chapter{Introduction}
-\todo{prefrazovat, projit, vylepsit}
-\label{chap:gf}
-
 Magic has been a popular part of computer games since their beginning. In many games, magic has its own lore and laws that make it systematical. Great examples of a complexity of magical spells are games \emph{Magicka} and \emph{Magicka 2}, where player casts spells by combining eight elements \ref{fig:magicka}. For example, using only earth element results in a rock thrown at the enemy, but adding fire will create a classic fireball.
 \begin{figure}[!htb]
   \centering
@@ -36,8 +33,8 @@ In \emph{Castlevania}, players draw signs by connecting glowing points in a circ
 \includegraphics[width=.3\linewidth]{ext/castlevania.png}
 \quad
 \includegraphics[width=.3\linewidth]{ext/castlevania2.png}
-\label{fig:castlevania} %label se vaze na caption a musi bejt az po nem
 \caption{\emph{Castlevania: Dawn of Sorrow} spell interface \XX{(image taken from ?)}}
+\label{fig:castlevania} %label se vaze na caption a musi bejt az po nem
 \end{figure}
 
 \item[Free-hand drawing]
@@ -79,5 +76,27 @@ For the purpose of this work, we consider shape conglomeration a group of shapes
 
 \end{description}
 
-\subsection{Approach} \todo{vypsat kde co najdu}
-To achieve our goals, we divide the work into several steps. First, we choose a pattern recognition algorithm which best suits our needs from several reviewed algorithms. Then we modify it to recognize embedded shapes and shape conglomerations since this topic is not very well covered. We use our system in a simple game, but we try to utilize most of the abilities of our recognition system to demonstrate its functionality. Finally, we measure its performance. We focus on two aspects of our implementation: performance and recognition effectiveness.
+\begin{figure}
+\centering
+\includegraphics[width=.3\linewidth]{ext/images/embedd.png}
+\quad
+\includegraphics[width=.3\linewidth]{ext/images/comp.png}
+\quad
+\includegraphics[width=.3\linewidth]{ext/images/comp_and_embed.png}
+
+\vspace{1cm}
+
+\centering
+\includegraphics[width=.3\linewidth]{ext/images/comp_in_comp.png}
+\quad
+\includegraphics[width=.3\linewidth]{ext/images/comp_in_comp2.png}
+\quad
+\includegraphics[width=.3\linewidth]{ext/images/triple.png}
+\caption{In the figure, embedded positions are always in the middle of the shape. From left to right: circle with embedded triangle; square composed of triangle; triangle composed of triangle, with water drop embedded; circle composed of triangles, with embedded circle composed of water drop; triangle composed of circle, with embedded triangle composed of circle; square composed of triangle, with embedded triangle, with embedded circle in the triangle}
+\label{fig:examples} 
+\end{figure}
+
+\subsection{Approach}
+To achieve our goals, we divide the work into several steps. First, we have reviewed approaches and algorithms commonly used to solve pattern recognition problem. We have closely examined three algorithms, namely the \emph{Normalized cross-correlation},\emph{Shape matching and object recognition using shape contexts} and \emph{Matching of Shapes Using Dynamic Programming}. Then we have described \emph{Artificial neural networks} and explain, how to apply them to pattern recognition. In the \cref{ch:impl}, we have described our algorithm, which is based on the neural networks. We also developed a simple game prototype, to demonstrate the usage of our recognition system. Finally, we perform measurements of the performance of our algorithm, with respect to recognition success rate and speed.
+
+In the appendix, we have described the interface of our algorithm and how to use it in another project. We have also provided a guide for the game.
