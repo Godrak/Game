@@ -27,7 +27,10 @@ public:
 
         ImageAnalyzer::COMPOSED_SHAPES_ENABLED = true;
         ImageAnalyzer::EMBEDDED_SHAPES_ENABLED = true;
-        ImageAnalyzer::ROTATIONS_ENABLED = false;
+        ImageAnalyzer::ROTATIONS_ENABLED = true;
+        ImageAnalyzer::ROTATION_SAMPLES_COUNT = 15;
+        ImageAnalyzer::COMPOSITION_SAMPLES_LIMIT = 5;
+        ImageAnalyzer::SHAPE_VALUE_LIMIT = 0.5;
 
         ImageAnalyzer::DEBUG_IMAGE_SAVE = true;
 

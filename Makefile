@@ -80,28 +80,6 @@ install/local/fast: preinstall/fast
 	/home/free/Documents/clion/bin/cmake/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
 .PHONY : install/local/fast
 
-# Special rule for the target rebuild_cache
-rebuild_cache:
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake to regenerate build system..."
-	/home/free/Documents/clion/bin/cmake/bin/cmake -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
-.PHONY : rebuild_cache
-
-# Special rule for the target rebuild_cache
-rebuild_cache/fast: rebuild_cache
-
-.PHONY : rebuild_cache/fast
-
-# Special rule for the target edit_cache
-edit_cache:
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "No interactive CMake dialog available..."
-	/home/free/Documents/clion/bin/cmake/bin/cmake -E echo No\ interactive\ CMake\ dialog\ available.
-.PHONY : edit_cache
-
-# Special rule for the target edit_cache
-edit_cache/fast: edit_cache
-
-.PHONY : edit_cache/fast
-
 # Special rule for the target install
 install: preinstall
 	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Install the project..."
@@ -123,6 +101,28 @@ list_install_components:
 list_install_components/fast: list_install_components
 
 .PHONY : list_install_components/fast
+
+# Special rule for the target rebuild_cache
+rebuild_cache:
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "Running CMake to regenerate build system..."
+	/home/free/Documents/clion/bin/cmake/bin/cmake -H$(CMAKE_SOURCE_DIR) -B$(CMAKE_BINARY_DIR)
+.PHONY : rebuild_cache
+
+# Special rule for the target rebuild_cache
+rebuild_cache/fast: rebuild_cache
+
+.PHONY : rebuild_cache/fast
+
+# Special rule for the target edit_cache
+edit_cache:
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --cyan "No interactive CMake dialog available..."
+	/home/free/Documents/clion/bin/cmake/bin/cmake -E echo No\ interactive\ CMake\ dialog\ available.
+.PHONY : edit_cache
+
+# Special rule for the target edit_cache
+edit_cache/fast: edit_cache
+
+.PHONY : edit_cache/fast
 
 # The main all target
 all: cmake_check_build_system
@@ -157,19 +157,6 @@ depend:
 .PHONY : depend
 
 #=============================================================================
-# Target rules for targets named Tests
-
-# Build rule for target.
-Tests: cmake_check_build_system
-	$(MAKE) -f CMakeFiles/Makefile2 Tests
-.PHONY : Tests
-
-# fast build rule for target.
-Tests/fast:
-	$(MAKE) -f CMakeFiles/Tests.dir/build.make CMakeFiles/Tests.dir/build
-.PHONY : Tests/fast
-
-#=============================================================================
 # Target rules for targets named Training
 
 # Build rule for target.
@@ -201,7 +188,6 @@ EasyBMP_1.06/EasyBMP.o: EasyBMP_1.06/EasyBMP.cpp.o
 
 # target to build an object file
 EasyBMP_1.06/EasyBMP.cpp.o:
-	$(MAKE) -f CMakeFiles/Tests.dir/build.make CMakeFiles/Tests.dir/EasyBMP_1.06/EasyBMP.cpp.o
 	$(MAKE) -f CMakeFiles/Training.dir/build.make CMakeFiles/Training.dir/EasyBMP_1.06/EasyBMP.cpp.o
 	$(MAKE) -f CMakeFiles/Game.dir/build.make CMakeFiles/Game.dir/EasyBMP_1.06/EasyBMP.cpp.o
 .PHONY : EasyBMP_1.06/EasyBMP.cpp.o
@@ -212,7 +198,6 @@ EasyBMP_1.06/EasyBMP.i: EasyBMP_1.06/EasyBMP.cpp.i
 
 # target to preprocess a source file
 EasyBMP_1.06/EasyBMP.cpp.i:
-	$(MAKE) -f CMakeFiles/Tests.dir/build.make CMakeFiles/Tests.dir/EasyBMP_1.06/EasyBMP.cpp.i
 	$(MAKE) -f CMakeFiles/Training.dir/build.make CMakeFiles/Training.dir/EasyBMP_1.06/EasyBMP.cpp.i
 	$(MAKE) -f CMakeFiles/Game.dir/build.make CMakeFiles/Game.dir/EasyBMP_1.06/EasyBMP.cpp.i
 .PHONY : EasyBMP_1.06/EasyBMP.cpp.i
@@ -223,7 +208,6 @@ EasyBMP_1.06/EasyBMP.s: EasyBMP_1.06/EasyBMP.cpp.s
 
 # target to generate assembly for a file
 EasyBMP_1.06/EasyBMP.cpp.s:
-	$(MAKE) -f CMakeFiles/Tests.dir/build.make CMakeFiles/Tests.dir/EasyBMP_1.06/EasyBMP.cpp.s
 	$(MAKE) -f CMakeFiles/Training.dir/build.make CMakeFiles/Training.dir/EasyBMP_1.06/EasyBMP.cpp.s
 	$(MAKE) -f CMakeFiles/Game.dir/build.make CMakeFiles/Game.dir/EasyBMP_1.06/EasyBMP.cpp.s
 .PHONY : EasyBMP_1.06/EasyBMP.cpp.s
@@ -261,7 +245,6 @@ ImageAnalyzer/ImageAnalyzer.o: ImageAnalyzer/ImageAnalyzer.cpp.o
 
 # target to build an object file
 ImageAnalyzer/ImageAnalyzer.cpp.o:
-	$(MAKE) -f CMakeFiles/Tests.dir/build.make CMakeFiles/Tests.dir/ImageAnalyzer/ImageAnalyzer.cpp.o
 	$(MAKE) -f CMakeFiles/Training.dir/build.make CMakeFiles/Training.dir/ImageAnalyzer/ImageAnalyzer.cpp.o
 	$(MAKE) -f CMakeFiles/Game.dir/build.make CMakeFiles/Game.dir/ImageAnalyzer/ImageAnalyzer.cpp.o
 .PHONY : ImageAnalyzer/ImageAnalyzer.cpp.o
@@ -272,7 +255,6 @@ ImageAnalyzer/ImageAnalyzer.i: ImageAnalyzer/ImageAnalyzer.cpp.i
 
 # target to preprocess a source file
 ImageAnalyzer/ImageAnalyzer.cpp.i:
-	$(MAKE) -f CMakeFiles/Tests.dir/build.make CMakeFiles/Tests.dir/ImageAnalyzer/ImageAnalyzer.cpp.i
 	$(MAKE) -f CMakeFiles/Training.dir/build.make CMakeFiles/Training.dir/ImageAnalyzer/ImageAnalyzer.cpp.i
 	$(MAKE) -f CMakeFiles/Game.dir/build.make CMakeFiles/Game.dir/ImageAnalyzer/ImageAnalyzer.cpp.i
 .PHONY : ImageAnalyzer/ImageAnalyzer.cpp.i
@@ -283,7 +265,6 @@ ImageAnalyzer/ImageAnalyzer.s: ImageAnalyzer/ImageAnalyzer.cpp.s
 
 # target to generate assembly for a file
 ImageAnalyzer/ImageAnalyzer.cpp.s:
-	$(MAKE) -f CMakeFiles/Tests.dir/build.make CMakeFiles/Tests.dir/ImageAnalyzer/ImageAnalyzer.cpp.s
 	$(MAKE) -f CMakeFiles/Training.dir/build.make CMakeFiles/Training.dir/ImageAnalyzer/ImageAnalyzer.cpp.s
 	$(MAKE) -f CMakeFiles/Game.dir/build.make CMakeFiles/Game.dir/ImageAnalyzer/ImageAnalyzer.cpp.s
 .PHONY : ImageAnalyzer/ImageAnalyzer.cpp.s
@@ -294,7 +275,6 @@ ImageAnalyzer/LinAlgExtended.o: ImageAnalyzer/LinAlgExtended.cpp.o
 
 # target to build an object file
 ImageAnalyzer/LinAlgExtended.cpp.o:
-	$(MAKE) -f CMakeFiles/Tests.dir/build.make CMakeFiles/Tests.dir/ImageAnalyzer/LinAlgExtended.cpp.o
 	$(MAKE) -f CMakeFiles/Training.dir/build.make CMakeFiles/Training.dir/ImageAnalyzer/LinAlgExtended.cpp.o
 	$(MAKE) -f CMakeFiles/Game.dir/build.make CMakeFiles/Game.dir/ImageAnalyzer/LinAlgExtended.cpp.o
 .PHONY : ImageAnalyzer/LinAlgExtended.cpp.o
@@ -305,7 +285,6 @@ ImageAnalyzer/LinAlgExtended.i: ImageAnalyzer/LinAlgExtended.cpp.i
 
 # target to preprocess a source file
 ImageAnalyzer/LinAlgExtended.cpp.i:
-	$(MAKE) -f CMakeFiles/Tests.dir/build.make CMakeFiles/Tests.dir/ImageAnalyzer/LinAlgExtended.cpp.i
 	$(MAKE) -f CMakeFiles/Training.dir/build.make CMakeFiles/Training.dir/ImageAnalyzer/LinAlgExtended.cpp.i
 	$(MAKE) -f CMakeFiles/Game.dir/build.make CMakeFiles/Game.dir/ImageAnalyzer/LinAlgExtended.cpp.i
 .PHONY : ImageAnalyzer/LinAlgExtended.cpp.i
@@ -316,7 +295,6 @@ ImageAnalyzer/LinAlgExtended.s: ImageAnalyzer/LinAlgExtended.cpp.s
 
 # target to generate assembly for a file
 ImageAnalyzer/LinAlgExtended.cpp.s:
-	$(MAKE) -f CMakeFiles/Tests.dir/build.make CMakeFiles/Tests.dir/ImageAnalyzer/LinAlgExtended.cpp.s
 	$(MAKE) -f CMakeFiles/Training.dir/build.make CMakeFiles/Training.dir/ImageAnalyzer/LinAlgExtended.cpp.s
 	$(MAKE) -f CMakeFiles/Game.dir/build.make CMakeFiles/Game.dir/ImageAnalyzer/LinAlgExtended.cpp.s
 .PHONY : ImageAnalyzer/LinAlgExtended.cpp.s
@@ -327,7 +305,6 @@ ImageAnalyzer/LineDrawer.o: ImageAnalyzer/LineDrawer.cpp.o
 
 # target to build an object file
 ImageAnalyzer/LineDrawer.cpp.o:
-	$(MAKE) -f CMakeFiles/Tests.dir/build.make CMakeFiles/Tests.dir/ImageAnalyzer/LineDrawer.cpp.o
 	$(MAKE) -f CMakeFiles/Training.dir/build.make CMakeFiles/Training.dir/ImageAnalyzer/LineDrawer.cpp.o
 	$(MAKE) -f CMakeFiles/Game.dir/build.make CMakeFiles/Game.dir/ImageAnalyzer/LineDrawer.cpp.o
 .PHONY : ImageAnalyzer/LineDrawer.cpp.o
@@ -338,7 +315,6 @@ ImageAnalyzer/LineDrawer.i: ImageAnalyzer/LineDrawer.cpp.i
 
 # target to preprocess a source file
 ImageAnalyzer/LineDrawer.cpp.i:
-	$(MAKE) -f CMakeFiles/Tests.dir/build.make CMakeFiles/Tests.dir/ImageAnalyzer/LineDrawer.cpp.i
 	$(MAKE) -f CMakeFiles/Training.dir/build.make CMakeFiles/Training.dir/ImageAnalyzer/LineDrawer.cpp.i
 	$(MAKE) -f CMakeFiles/Game.dir/build.make CMakeFiles/Game.dir/ImageAnalyzer/LineDrawer.cpp.i
 .PHONY : ImageAnalyzer/LineDrawer.cpp.i
@@ -349,37 +325,9 @@ ImageAnalyzer/LineDrawer.s: ImageAnalyzer/LineDrawer.cpp.s
 
 # target to generate assembly for a file
 ImageAnalyzer/LineDrawer.cpp.s:
-	$(MAKE) -f CMakeFiles/Tests.dir/build.make CMakeFiles/Tests.dir/ImageAnalyzer/LineDrawer.cpp.s
 	$(MAKE) -f CMakeFiles/Training.dir/build.make CMakeFiles/Training.dir/ImageAnalyzer/LineDrawer.cpp.s
 	$(MAKE) -f CMakeFiles/Game.dir/build.make CMakeFiles/Game.dir/ImageAnalyzer/LineDrawer.cpp.s
 .PHONY : ImageAnalyzer/LineDrawer.cpp.s
-
-Tests/main.o: Tests/main.cpp.o
-
-.PHONY : Tests/main.o
-
-# target to build an object file
-Tests/main.cpp.o:
-	$(MAKE) -f CMakeFiles/Tests.dir/build.make CMakeFiles/Tests.dir/Tests/main.cpp.o
-.PHONY : Tests/main.cpp.o
-
-Tests/main.i: Tests/main.cpp.i
-
-.PHONY : Tests/main.i
-
-# target to preprocess a source file
-Tests/main.cpp.i:
-	$(MAKE) -f CMakeFiles/Tests.dir/build.make CMakeFiles/Tests.dir/Tests/main.cpp.i
-.PHONY : Tests/main.cpp.i
-
-Tests/main.s: Tests/main.cpp.s
-
-.PHONY : Tests/main.s
-
-# target to generate assembly for a file
-Tests/main.cpp.s:
-	$(MAKE) -f CMakeFiles/Tests.dir/build.make CMakeFiles/Tests.dir/Tests/main.cpp.s
-.PHONY : Tests/main.cpp.s
 
 Training/Networks.o: Training/Networks.cpp.o
 
@@ -387,7 +335,6 @@ Training/Networks.o: Training/Networks.cpp.o
 
 # target to build an object file
 Training/Networks.cpp.o:
-	$(MAKE) -f CMakeFiles/Tests.dir/build.make CMakeFiles/Tests.dir/Training/Networks.cpp.o
 	$(MAKE) -f CMakeFiles/Training.dir/build.make CMakeFiles/Training.dir/Training/Networks.cpp.o
 .PHONY : Training/Networks.cpp.o
 
@@ -397,7 +344,6 @@ Training/Networks.i: Training/Networks.cpp.i
 
 # target to preprocess a source file
 Training/Networks.cpp.i:
-	$(MAKE) -f CMakeFiles/Tests.dir/build.make CMakeFiles/Tests.dir/Training/Networks.cpp.i
 	$(MAKE) -f CMakeFiles/Training.dir/build.make CMakeFiles/Training.dir/Training/Networks.cpp.i
 .PHONY : Training/Networks.cpp.i
 
@@ -407,7 +353,6 @@ Training/Networks.s: Training/Networks.cpp.s
 
 # target to generate assembly for a file
 Training/Networks.cpp.s:
-	$(MAKE) -f CMakeFiles/Tests.dir/build.make CMakeFiles/Tests.dir/Training/Networks.cpp.s
 	$(MAKE) -f CMakeFiles/Training.dir/build.make CMakeFiles/Training.dir/Training/Networks.cpp.s
 .PHONY : Training/Networks.cpp.s
 
@@ -417,7 +362,6 @@ Training/Training.o: Training/Training.cpp.o
 
 # target to build an object file
 Training/Training.cpp.o:
-	$(MAKE) -f CMakeFiles/Tests.dir/build.make CMakeFiles/Tests.dir/Training/Training.cpp.o
 	$(MAKE) -f CMakeFiles/Training.dir/build.make CMakeFiles/Training.dir/Training/Training.cpp.o
 .PHONY : Training/Training.cpp.o
 
@@ -427,7 +371,6 @@ Training/Training.i: Training/Training.cpp.i
 
 # target to preprocess a source file
 Training/Training.cpp.i:
-	$(MAKE) -f CMakeFiles/Tests.dir/build.make CMakeFiles/Tests.dir/Training/Training.cpp.i
 	$(MAKE) -f CMakeFiles/Training.dir/build.make CMakeFiles/Training.dir/Training/Training.cpp.i
 .PHONY : Training/Training.cpp.i
 
@@ -437,7 +380,6 @@ Training/Training.s: Training/Training.cpp.s
 
 # target to generate assembly for a file
 Training/Training.cpp.s:
-	$(MAKE) -f CMakeFiles/Tests.dir/build.make CMakeFiles/Tests.dir/Training/Training.cpp.s
 	$(MAKE) -f CMakeFiles/Training.dir/build.make CMakeFiles/Training.dir/Training/Training.cpp.s
 .PHONY : Training/Training.cpp.s
 
@@ -447,7 +389,6 @@ Training/main.o: Training/main.cpp.o
 
 # target to build an object file
 Training/main.cpp.o:
-	$(MAKE) -f CMakeFiles/Tests.dir/build.make CMakeFiles/Tests.dir/Training/main.cpp.o
 	$(MAKE) -f CMakeFiles/Training.dir/build.make CMakeFiles/Training.dir/Training/main.cpp.o
 .PHONY : Training/main.cpp.o
 
@@ -457,7 +398,6 @@ Training/main.i: Training/main.cpp.i
 
 # target to preprocess a source file
 Training/main.cpp.i:
-	$(MAKE) -f CMakeFiles/Tests.dir/build.make CMakeFiles/Tests.dir/Training/main.cpp.i
 	$(MAKE) -f CMakeFiles/Training.dir/build.make CMakeFiles/Training.dir/Training/main.cpp.i
 .PHONY : Training/main.cpp.i
 
@@ -467,7 +407,6 @@ Training/main.s: Training/main.cpp.s
 
 # target to generate assembly for a file
 Training/main.cpp.s:
-	$(MAKE) -f CMakeFiles/Tests.dir/build.make CMakeFiles/Tests.dir/Training/main.cpp.s
 	$(MAKE) -f CMakeFiles/Training.dir/build.make CMakeFiles/Training.dir/Training/main.cpp.s
 .PHONY : Training/main.cpp.s
 
@@ -479,11 +418,10 @@ help:
 	@echo "... depend"
 	@echo "... install/strip"
 	@echo "... install/local"
-	@echo "... rebuild_cache"
-	@echo "... edit_cache"
 	@echo "... install"
 	@echo "... list_install_components"
-	@echo "... Tests"
+	@echo "... rebuild_cache"
+	@echo "... edit_cache"
 	@echo "... Training"
 	@echo "... Game"
 	@echo "... EasyBMP_1.06/EasyBMP.o"
@@ -501,9 +439,6 @@ help:
 	@echo "... ImageAnalyzer/LineDrawer.o"
 	@echo "... ImageAnalyzer/LineDrawer.i"
 	@echo "... ImageAnalyzer/LineDrawer.s"
-	@echo "... Tests/main.o"
-	@echo "... Tests/main.i"
-	@echo "... Tests/main.s"
 	@echo "... Training/Networks.o"
 	@echo "... Training/Networks.i"
 	@echo "... Training/Networks.s"

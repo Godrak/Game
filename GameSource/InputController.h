@@ -65,6 +65,24 @@ public:
         } else {
             caster->endCurve();
         }
+
+        if (input->GetKeyDown(KEY_E)) {
+            PODVector<Node *> mutants;
+            GetScene()->GetChildrenWithComponent<Mutant>(mutants);
+            for (auto mutant : mutants){
+                auto ai = mutant->GetComponent<SimpleAI>();
+                if (ai != NULL) ai->SetActive(false);
+            }
+        }
+
+        if (input->GetKeyDown(KEY_R)) {
+            PODVector<Node *> mutants;
+            GetScene()->GetChildrenWithComponent<Mutant>(mutants);
+            for (auto mutant : mutants){
+                auto ai = mutant->GetComponent<SimpleAI>();
+                if (ai != NULL) ai->SetActive(true);
+            }
+        }
     }
 
 private:

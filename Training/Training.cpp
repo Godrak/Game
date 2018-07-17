@@ -345,8 +345,8 @@ float Training::Train(const string &name, vector<unsigned int> networkStructure,
 
     if (generateData) {
         int testDataSize = dataSize / 3;
-        Training::GenerateData("test.data", testDataSize / 2, testDataSize / 2, false);
-        Training::GenerateData("training.data", dataSize / 2, dataSize / 2, false);
+        Training::GenerateData("test.data", testDataSize*3 / 4, testDataSize / 4, false);
+        Training::GenerateData("training.data", dataSize *3/ 4, dataSize / 4, false);
     }
 
     auto *testData = fann_read_train_from_file("test.data");

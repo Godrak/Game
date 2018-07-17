@@ -18,12 +18,20 @@ URHO3D_OBJECT(SimpleAI, LogicComponent);
         currentTarget = target;
     }
 
+    bool IsActive() const {
+        return active;
+    }
+
+    void SetActive(bool a) {
+        active = a;
+    }
+
     void Update(float timeStep) override {
         LogicComponent::Update(timeStep);
         auto *entity = GetNode()->GetDerivedComponent<Entity>();
 
         // Get new target if none. Do not constantly scan for new targets to conserve CPU time
-        if (currentTarget.Get() == NULL) {
+        if (currentTarget.Get() == NULL && active) {
             newTargetTimer += timeStep;
             if (newTargetTimer > 0.5)
                 GetNewTarget();
@@ -31,7 +39,7 @@ URHO3D_OBJECT(SimpleAI, LogicComponent);
 
         Node *targetNode = currentTarget.Get();
 
-        if (targetNode != NULL) {
+        if (targetNode != NULL && active) {
             auto *targetBody = targetNode->GetComponent<RigidBody>();
 
             float deltaX = 0.0f;
@@ -61,6 +69,7 @@ URHO3D_OBJECT(SimpleAI, LogicComponent);
     }
 
     WeakPtr<Node> currentTarget;
+    bool active = true;
     float newTargetTimer{};
     float dirChangeTime{};
     Vector3 rndDirection;

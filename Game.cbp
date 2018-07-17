@@ -37,26 +37,6 @@
 					<DistClean command="/usr/bin/make -f &quot;/home/free/dev/Runecraft/Game/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
-			<Target title="rebuild_cache">
-				<Option working_dir="/home/free/dev/Runecraft/Game"/>
-				<Option type="4"/>
-				<MakeCommands>
-					<Build command="/usr/bin/make -f &quot;/home/free/dev/Runecraft/Game/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
-					<CompileFile command="/usr/bin/make -f &quot;/home/free/dev/Runecraft/Game/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -f &quot;/home/free/dev/Runecraft/Game/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -f &quot;/home/free/dev/Runecraft/Game/Makefile&quot;  VERBOSE=1 clean"/>
-				</MakeCommands>
-			</Target>
-			<Target title="edit_cache">
-				<Option working_dir="/home/free/dev/Runecraft/Game"/>
-				<Option type="4"/>
-				<MakeCommands>
-					<Build command="/usr/bin/make -f &quot;/home/free/dev/Runecraft/Game/Makefile&quot;  VERBOSE=1 edit_cache"/>
-					<CompileFile command="/usr/bin/make -f &quot;/home/free/dev/Runecraft/Game/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
-					<Clean command="/usr/bin/make -f &quot;/home/free/dev/Runecraft/Game/Makefile&quot;  VERBOSE=1 clean"/>
-					<DistClean command="/usr/bin/make -f &quot;/home/free/dev/Runecraft/Game/Makefile&quot;  VERBOSE=1 clean"/>
-				</MakeCommands>
-			</Target>
 			<Target title="install">
 				<Option working_dir="/home/free/dev/Runecraft/Game"/>
 				<Option type="4"/>
@@ -77,63 +57,21 @@
 					<DistClean command="/usr/bin/make -f &quot;/home/free/dev/Runecraft/Game/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
-			<Target title="Tests">
-				<Option output="/home/free/dev/Runecraft/Game/bin/Tests" prefix_auto="0" extension_auto="0"/>
-				<Option working_dir="/home/free/dev/Runecraft/Game/bin"/>
-				<Option object_output="./"/>
-				<Option type="1"/>
-				<Option compiler="gcc"/>
-				<Compiler>
-					<Add option="-DURHO3D_STATIC_DEFINE"/>
-					<Add option="-DURHO3D_ANGELSCRIPT"/>
-					<Add option="-DURHO3D_IK"/>
-					<Add option="-DURHO3D_LOGGING"/>
-					<Add option="-DURHO3D_LUA"/>
-					<Add option="-DURHO3D_NAVIGATION"/>
-					<Add option="-DURHO3D_NETWORK"/>
-					<Add option="-DURHO3D_PHYSICS"/>
-					<Add option="-DURHO3D_PROFILING"/>
-					<Add option="-DURHO3D_THREADING"/>
-					<Add option="-DURHO3D_URHO2D"/>
-					<Add option="-DURHO3D_WEBP"/>
-					<Add directory="/usr/local/include"/>
-					<Add directory="/usr/local/include/Urho3D/ThirdParty"/>
-					<Add directory="/usr/local/include/Urho3D/ThirdParty/Bullet"/>
-					<Add directory="/usr/local/include/Urho3D/ThirdParty/Lua"/>
-				</Compiler>
+			<Target title="rebuild_cache">
+				<Option working_dir="/home/free/dev/Runecraft/Game"/>
+				<Option type="4"/>
 				<MakeCommands>
-					<Build command="/usr/bin/make -f &quot;/home/free/dev/Runecraft/Game/Makefile&quot;  VERBOSE=1 Tests"/>
+					<Build command="/usr/bin/make -f &quot;/home/free/dev/Runecraft/Game/Makefile&quot;  VERBOSE=1 rebuild_cache"/>
 					<CompileFile command="/usr/bin/make -f &quot;/home/free/dev/Runecraft/Game/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
 					<Clean command="/usr/bin/make -f &quot;/home/free/dev/Runecraft/Game/Makefile&quot;  VERBOSE=1 clean"/>
 					<DistClean command="/usr/bin/make -f &quot;/home/free/dev/Runecraft/Game/Makefile&quot;  VERBOSE=1 clean"/>
 				</MakeCommands>
 			</Target>
-			<Target title="Tests/fast">
-				<Option output="/home/free/dev/Runecraft/Game/bin/Tests" prefix_auto="0" extension_auto="0"/>
-				<Option working_dir="/home/free/dev/Runecraft/Game/bin"/>
-				<Option object_output="./"/>
-				<Option type="1"/>
-				<Option compiler="gcc"/>
-				<Compiler>
-					<Add option="-DURHO3D_STATIC_DEFINE"/>
-					<Add option="-DURHO3D_ANGELSCRIPT"/>
-					<Add option="-DURHO3D_IK"/>
-					<Add option="-DURHO3D_LOGGING"/>
-					<Add option="-DURHO3D_LUA"/>
-					<Add option="-DURHO3D_NAVIGATION"/>
-					<Add option="-DURHO3D_NETWORK"/>
-					<Add option="-DURHO3D_PHYSICS"/>
-					<Add option="-DURHO3D_PROFILING"/>
-					<Add option="-DURHO3D_THREADING"/>
-					<Add option="-DURHO3D_URHO2D"/>
-					<Add option="-DURHO3D_WEBP"/>
-					<Add directory="/usr/local/include"/>
-					<Add directory="/usr/local/include/Urho3D/ThirdParty"/>
-					<Add directory="/usr/local/include/Urho3D/ThirdParty/Bullet"/>
-					<Add directory="/usr/local/include/Urho3D/ThirdParty/Lua"/>
-				</Compiler>
+			<Target title="edit_cache">
+				<Option working_dir="/home/free/dev/Runecraft/Game"/>
+				<Option type="4"/>
 				<MakeCommands>
-					<Build command="/usr/bin/make -f &quot;/home/free/dev/Runecraft/Game/Makefile&quot;  VERBOSE=1 Tests/fast"/>
+					<Build command="/usr/bin/make -f &quot;/home/free/dev/Runecraft/Game/Makefile&quot;  VERBOSE=1 edit_cache"/>
 					<CompileFile command="/usr/bin/make -f &quot;/home/free/dev/Runecraft/Game/Makefile&quot;  VERBOSE=1 &quot;$file&quot;"/>
 					<Clean command="/usr/bin/make -f &quot;/home/free/dev/Runecraft/Game/Makefile&quot;  VERBOSE=1 clean"/>
 					<DistClean command="/usr/bin/make -f &quot;/home/free/dev/Runecraft/Game/Makefile&quot;  VERBOSE=1 clean"/>
@@ -265,27 +203,22 @@
 			</Target>
 		</Build>
 		<Unit filename="/home/free/dev/Runecraft/Game/EasyBMP_1.06/EasyBMP.cpp">
-			<Option target="Tests"/>
 			<Option target="Training"/>
 			<Option target="Game"/>
 		</Unit>
 		<Unit filename="/home/free/dev/Runecraft/Game/EasyBMP_1.06/EasyBMP.h">
-			<Option target="Tests"/>
 			<Option target="Training"/>
 			<Option target="Game"/>
 		</Unit>
 		<Unit filename="/home/free/dev/Runecraft/Game/EasyBMP_1.06/EasyBMP_BMP.h">
-			<Option target="Tests"/>
 			<Option target="Training"/>
 			<Option target="Game"/>
 		</Unit>
 		<Unit filename="/home/free/dev/Runecraft/Game/EasyBMP_1.06/EasyBMP_DataStructures.h">
-			<Option target="Tests"/>
 			<Option target="Training"/>
 			<Option target="Game"/>
 		</Unit>
 		<Unit filename="/home/free/dev/Runecraft/Game/EasyBMP_1.06/EasyBMP_VariousBMPutilities.h">
-			<Option target="Tests"/>
 			<Option target="Training"/>
 			<Option target="Game"/>
 		</Unit>
@@ -350,79 +283,61 @@
 			<Option target="Game"/>
 		</Unit>
 		<Unit filename="/home/free/dev/Runecraft/Game/ImageAnalyzer/ExampleShapeDescriptors.h">
-			<Option target="Tests"/>
 			<Option target="Training"/>
 			<Option target="Game"/>
 		</Unit>
 		<Unit filename="/home/free/dev/Runecraft/Game/ImageAnalyzer/GrayScaleImage.h">
-			<Option target="Tests"/>
 			<Option target="Training"/>
 			<Option target="Game"/>
 		</Unit>
 		<Unit filename="/home/free/dev/Runecraft/Game/ImageAnalyzer/ImageAnalyzer.cpp">
-			<Option target="Tests"/>
 			<Option target="Training"/>
 			<Option target="Game"/>
 		</Unit>
 		<Unit filename="/home/free/dev/Runecraft/Game/ImageAnalyzer/ImageAnalyzer.h">
-			<Option target="Tests"/>
 			<Option target="Training"/>
 			<Option target="Game"/>
 		</Unit>
 		<Unit filename="/home/free/dev/Runecraft/Game/ImageAnalyzer/LinAlgExtended.cpp">
-			<Option target="Tests"/>
 			<Option target="Training"/>
 			<Option target="Game"/>
 		</Unit>
 		<Unit filename="/home/free/dev/Runecraft/Game/ImageAnalyzer/LinAlgExtended.h">
-			<Option target="Tests"/>
 			<Option target="Training"/>
 			<Option target="Game"/>
 		</Unit>
 		<Unit filename="/home/free/dev/Runecraft/Game/ImageAnalyzer/LineDrawer.cpp">
-			<Option target="Tests"/>
 			<Option target="Training"/>
 			<Option target="Game"/>
 		</Unit>
 		<Unit filename="/home/free/dev/Runecraft/Game/ImageAnalyzer/LineDrawer.h">
-			<Option target="Tests"/>
 			<Option target="Training"/>
 			<Option target="Game"/>
 		</Unit>
 		<Unit filename="/home/free/dev/Runecraft/Game/ImageAnalyzer/NeuralNetwork.h">
-			<Option target="Tests"/>
 			<Option target="Training"/>
 			<Option target="Game"/>
 		</Unit>
 		<Unit filename="/home/free/dev/Runecraft/Game/ImageAnalyzer/Randomizer.h">
-			<Option target="Tests"/>
 			<Option target="Training"/>
 			<Option target="Game"/>
 		</Unit>
 		<Unit filename="/home/free/dev/Runecraft/Game/LinAlg/linalg.h">
 			<Option target="Game"/>
 		</Unit>
-		<Unit filename="/home/free/dev/Runecraft/Game/Tests/main.cpp">
-			<Option target="Tests"/>
-		</Unit>
 		<Unit filename="/home/free/dev/Runecraft/Game/Training/Networks.cpp">
-			<Option target="Tests"/>
 			<Option target="Training"/>
 		</Unit>
 		<Unit filename="/home/free/dev/Runecraft/Game/Training/Networks.h">
-			<Option target="Tests"/>
 			<Option target="Training"/>
 		</Unit>
 		<Unit filename="/home/free/dev/Runecraft/Game/Training/Training.cpp">
-			<Option target="Tests"/>
 			<Option target="Training"/>
 		</Unit>
 		<Unit filename="/home/free/dev/Runecraft/Game/Training/Training.h">
-			<Option target="Tests"/>
 			<Option target="Training"/>
 		</Unit>
 		<Unit filename="/home/free/dev/Runecraft/Game/Training/main.cpp">
-			<Option target="Tests"/>
 			<Option target="Training"/>
 		</Unit>
 		<Unit filename="/home/free/dev/Runecraft/Game/bin/CoreData">

@@ -22,6 +22,7 @@ namespace ImageAnalyzer {
     extern int ROTATION_SAMPLES_COUNT;
     extern int DEBUG_OUTPUT;
     extern int IMAGE_SIDE_SIZE;
+    extern float SHAPE_VALUE_LIMIT;
     extern float LINE_DRAWING_STEP_SIZE;
 
 

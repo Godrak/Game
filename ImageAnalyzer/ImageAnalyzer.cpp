@@ -23,6 +23,8 @@ namespace ImageAnalyzer {
     int ROTATION_SAMPLES_COUNT = 13;
     int DEBUG_OUTPUT = 1;
     int IMAGE_SIDE_SIZE = 32;
+    int RECURSION_LIMIT = 2;
+    float SHAPE_VALUE_LIMIT = 0.6;
     float LINE_DRAWING_STEP_SIZE = 0.5f;
 }
 
@@ -49,7 +51,7 @@ ShapeIndex CountShapes(const vector<ShapeIndex> &shapes, int &count) {
     return maxIndex;
 }
 
-ShapeIndex AnalyzeImageLines(ImageLines imageLines, float &matchingRotation) {
+ShapeIndex AnalyzeImageLines(ImageLines imageLines, float &matchingRotation, float& maxValue) {
     imageLines.Normalize();
     vector<vector<float>> outputs;
     vector<float> rotations;
@@ -92,16 +94,16 @@ ShapeIndex AnalyzeImageLines(ImageLines imageLines, float &matchingRotation) {
     }
 
     int shape = -1;
-    if (maxShapeValue > 0.6f) {
+    if (maxShapeValue > SHAPE_VALUE_LIMIT) {
         shape = maxIndex;
     }
-
+    maxValue = maxShapeValue;
     return ShapeIndex(shape);
 }
 
 ShapeIndex AnalyzeImageLines(ImageLines imageLines) {
-    float rotation;
-    return AnalyzeImageLines(imageLines, rotation);
+    float rotation, value;
+    return AnalyzeImageLines(imageLines, rotation, value);
 };
 
 Line::Line(const float2 &startPoint, const float2 &endPoint) {
@@ -112,11 +114,11 @@ Line::Line(const float2 &startPoint, const float2 &endPoint) {
 Line::Line(const float3 &start, const float3 &end) : start(start), end(end) {}
 
 
-ShapeNode ImageAnalyzer::Analyze(ImageLines imageLines) {
+ShapeNode AnalyzeRec(ImageLines imageLines, int recursionDepth) {
     ShapeNode node;
-    float matchingRotation;
+    float matchingRotation, maxValue;
     imageLines.Normalize();
-    node.shape = AnalyzeImageLines(imageLines, matchingRotation);
+    node.shape = AnalyzeImageLines(imageLines, matchingRotation, maxValue);
 
     if (DEBUG_IMAGE_SAVE) {
         DrawLines(imageLines, IMAGE_SIDE_SIZE, LINE_DRAWING_STEP_SIZE).SaveToFile(
@@ -124,7 +126,7 @@ ShapeNode ImageAnalyzer::Analyze(ImageLines imageLines) {
     }
 
     if (DEBUG_OUTPUT > 0)
-        cout << endl << GetNameByIndex(node.shape) << "  " << "rotation: " << matchingRotation << endl;
+        cout << endl << GetNameByIndex(node.shape) << "  " << "value: " << maxValue << "  " << "rotation: " << matchingRotation << endl;
 
     auto shapeDesc = shapeDescriptors.find(node.shape);
     if (shapeDesc != shapeDescriptors.end()) {
@@ -160,7 +162,7 @@ ShapeNode ImageAnalyzer::Analyze(ImageLines imageLines) {
             node.shapePattern = patternShape;
         }
 
-        if (EMBEDDED_SHAPES_ENABLED) {
+        if (EMBEDDED_SHAPES_ENABLED && recursionDepth < RECURSION_LIMIT) {
             for (float3 poi : shapeDescriptor->GetPointsOfInterest()) {
                 ImageLines copy = imageLines;
                 copy.Transform(CreateRotationMatrix(matchingRotation, float2(0.5f, 0.5f)));
@@ -170,13 +172,17 @@ ShapeNode ImageAnalyzer::Analyze(ImageLines imageLines) {
                             "debug/r" + to_string(randomizer.ratio()));
                 }
                 copy.Clip(float2(poi.x, poi.y), float2(poi.x, poi.y) + float2(poi.z, poi.z));
-                node.childNodes.push_back(Analyze(copy));
+                node.childNodes.push_back(AnalyzeRec(copy, recursionDepth+1));
             }
         }
 
     }
 
     return node;
+}
+
+ShapeNode ImageAnalyzer::Analyze(ImageLines imageLines){
+    return AnalyzeRec(imageLines,0);
 }
 
 string ImageAnalyzer::GetNameByIndex(ShapeIndex index) {

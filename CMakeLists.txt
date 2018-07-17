@@ -50,6 +50,6 @@ add_executable(Training ${TRAINING_SOURCE_FILES})
 target_link_libraries(Training fann)
 
 #setup test files
-set(TEST_SOURCE_FILES ${TEST} ${TRAINING} ${ANALYZER} ${BMP})
-add_executable(Tests ${TEST_SOURCE_FILES})
-target_link_libraries(Tests fann)
+#set(TEST_SOURCE_FILES ${TEST} ${TRAINING} ${ANALYZER} ${BMP})
+#add_executable(Tests ${TEST_SOURCE_FILES})
+#target_link_libraries(Tests fann)
