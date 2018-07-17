@@ -4,29 +4,35 @@
 \todo{ma byt intorduction chapter s cislem?}
 
 \chapter{Introduction}
-Magic has been a popular part of computer games since their beginning. In many games, magic has its own lore and laws that make it systematical. Great examples of a complexity of magical spells are games \emph{Magicka} and \emph{Magicka 2}, where player casts spells by combining eight elements \ref{fig:magicka}. For example, using only earth element results in a rock thrown at the enemy, but adding fire will create a classic fireball.
-\begin{figure}[!htb]
+Magic has always been a popular part of computer games. In many games, magic has its own lore and laws that make it systematical. Great examples of the complexity of magical spell systems include the games \emph{Magicka} and \emph{Magicka 2}, where the player casts spells by combining eight elements (as seen on \cref{fig:magicka}): For example, using only earth element results in a rock thrown at the enemy, but adding fire will create a classic fireball.
+
+\begin{figure}
   \centering
   \includegraphics[width=0.5\textwidth]{ext/magicka.png}
   \caption{\emph{Magicka} spell interface}
   \label{fig:magicka}
 \end{figure}
 
-In books and movies, we can see wizards performing complicated hand gestures, or drawing on the floor some complex shapes. However, in games it is quite easy to do magic, since players often push a few buttons for even the strongest spells. This spoils the feeling of magic as something extraordinary and secret. We would like to allow developers to take a different approach, which requires players focus and concentration, as well as possible cooperation in spell casting.
+In books and movies, wizards can be seen performing complicated hand gestures or drawing complex shapes in order to cast spells. In games, on the other hand, casting magic is usually extremely easy --- the players may often just push a correct button to cause the most advanced magical storms. This spoils the feeling of magic as something extraordinary, complicated, dark, and requiring years of study at the corresponding (imaginary) department of the MFF. Complicated magic systems not only allow the game developers to engage players in a better game experience with the subtle atmospheric feeling of the underlying magic system; the spellcasting itself can also be thought of as a constructive part of the game, requring focus, some amount of creative thinking, and possibly cooperation with other players.
 
-While a majority of games binds spells to buttons, there are several games that used pattern recognition in their spell system. However, these systems recognized only simple gestures or patterns. Our goal is to make a more robust recognition system, that allows players to draw complex patterns.
+In this thesis, we focus on the constructive kind of spell casting: While the majority of games simply binds spells to buttons, there are several that use some kind of different system. One class of such systems uses pattern recognition algorithms to translate the player's image-like (or, say, rune-like) input to a spell definition. However, as shown in the next section, these systems usually recognize only simple gestures or patterns, which is partly caused by the difficulties in implementing such a system\footnote{In this thesis we ignore other difficulties, which mainly include various marketing and accessibility issues.}. The goal of this thesis is to create a comprehensive pattern recognition system that can be easily plugged into games to allow simple and robust recognition of player-drawn shapes and their translation to an arbitrary spell system.
 
 \section{Pattern recognition in current games}
 
-Since symbols and gestures are an integral part of the magic, there were many attempts to bring them into video game environment. \citet{gameMagic} provides a classification of gestural systems into three categories, which are overlapping, as sometimes combination of these approaches can be used. The following categories and facts are taken from \citet{gameMagic}.
+Symbols and gestures are usually an integral part of the magic, there were many attempts to bring them into video game environment. \citet{gameMagic} provides a following classification of existing gestural systems into three categories (which sometimes overlap or allow an interesting combination):
+
+\todo{Tohle je copypaste nebo rewording? nemuzu najit PDF od ty knizky.}
 
 \begin{description}
 \item[Alternative controllers]
-One such category are systems that utilize alternative controllers to mouse and keyboard, such as Kinect. Recent game from this category is \emph{Fable: The Journey}, where player casts spells by moving his hands. For example, push spell is cast by pushing into the air. Patterns made by the player are then recognized using Kinect technology. While moves are simple in nature, such as waving sideways or back and forth, both hands at the same time can be used, resulting in quite complex gestures.
+Systems may utilize other controllers than mouse and keyboard, such as Wiimote or Kinect. A recent game from this category is \emph{Fable: The Journey}\todo{ref nebo footnote s linkem}, where the player casts spells by moving his hands: For example, push spell is cast by pushing into the air, which is recognized using Kinect technology. While the moves are simple in nature --- they mostly include waving sideways or back and forth --- both hands at the same time can be used, which results in quite complex gestures.
 
 \item[Restricted drawing forms]
-Another technique used in several games is to let player draw into a predefined grid, or through predefined points. Both \emph{Castlevania: Dawn of Sorrow} and \emph{Deep Labyrinth} take advantage of an Nintendo DS drawing interface that allows players to draw magic signs. 
-In \emph{Castlevania}, players draw signs by connecting glowing points in a circle in out-of-combat situations, as seen in \cref{fig:castlevania}. \emph{Deep Labyrinth} introduces special casting interface as well, consisting of 3x3 sized grid, where player connects dots. These approaches take away part of the freedom, but they make recognition algorithms much easier, e.g. by tracing only the order of points and selecting the right spell.
+A technique used in several games is to let player draw into a predefined grid, or through predefined points. Both \emph{Castlevania: Dawn of Sorrow} and \emph{Deep Labyrinth}\todo{zas linky nebo refy} take advantage of an Nintendo DS drawing interface that allows players to draw magic signs.
+
+In \emph{Castlevania}, players draw signs by connecting glowing points in a circle in out-of-combat situations, as seen in \cref{fig:castlevania}. \emph{Deep Labyrinth} introduces special casting interface that consists of $3\times 3$-grid, where the player connects dots.
+
+The restriction to pre-existing following grid takes away a part of the creative freedom, but makes recognition algorithms much easier to implement and run: For example, only tracing the order of the connected points in \emph{Deep Labyrinth} is sufficient to recognize the spell.
 
 \begin{figure}
 \centering
@@ -38,8 +44,9 @@ In \emph{Castlevania}, players draw signs by connecting glowing points in a circ
 \end{figure}
 
 \item[Free-hand drawing]
-To this category belong the examples that are most similar to our goal. One of the first games to integrate some form of pattern recognition of drawn shapes is \emph{Black \& White}, where the player takes a role of the god. Using a mouse, players are able to cast miracles by drawing a specific pattern onto the ground \ref{fig:blackwhite}. The player can draw anything anywhere on the ground, and its up to the game algorithm to recognize if it matches some of the miracle patterns. Alternatively, the player also cast miracle by clicking on a button, presumably because a lot of players had trouble drawing the miracles. 
-A similar approach to recognition of player drawn spells and their recognition is used in \emph{Arx Fatalis}. Players are drawing symbols into the air with a mouse and the sequence of symbols represents some spell. While casting, game encoded the mouse moves into characters in 8-directions precision, each direction representing some letter. After player finished their spell, a Levenshtein distance was calculated from each predefined spell sequence to the user's created sequence and the candidate with the lowest Levenshtein cost was returned as a matching spell.
+One of the first games to integrate some form of pattern recognition of drawn shapes is \emph{Black \& White}. Using a mouse, players (from the role of god) are able to cast miracles by drawing a specific pattern on the ground, as in \cref{fig:blackwhite}. The player can draw anything anywhere on the ground, and its up to the game logic to recognize if the result matches some of the miracle patterns. Alternatively, the player can still cast the miracle by clicking on a button --- presumably because a lot of players had trouble drawing the miracles.
+
+A similar approach to recognition of player-drawn spells is used in \emph{Arx Fatalis}. Players are drawing symbols into the air with a mouse, and a sequence of the drawn symbols represents some spell. While casting, game encodes the mouse moves to letters that represent the 8 directions (with some precision loss). After player finishes the spell, a Levenshtein distance is calculated from each predefined spell sequence to the player's sequence and the one with the lowest Levenshtein cost is returned as a matching spell.
 
 \begin{figure}
 \centering
@@ -54,27 +61,10 @@ A similar approach to recognition of player drawn spells and their recognition i
 
 \section{Goals}
 
-We would like to allow players to draw complex spells. Instead of a sequence of symbols recorded over time, players could draw symbols arranged in a shape of another symbol, or embed one symbol in another. We also want our approach to be applicable in multi-player environments, where new situations can occur, such as multiple players drawing one spell. We don't want to introduce the aiding structures as in \cref{fig:castlevania} since they require and order in which they are passed and force the player to draw in a certain way or direction. They are also not very suitable for a multi-player environment since they can't handle multiple people drawing at the same time.
+The result of the thesis allows the players to draw complex spells, preferably more complex than in \emph{Black\&White} or \emph{Arx Fatalis}. For that purpose, we create an algorithm that recognizes a set of basic symbols which can be arbitrarily combined to form new, very complex symbols.
 
-For the purpose of this work, we specify the following requirements that we have on our recognition system.
-\begin{description}
-
-\item [Durability against shape deformations]
-Since we want to recognize hand-drawn shapes, our system has to be prepared for human-like imprecise drawing, especially when drawing with a mouse. However, defining what is deformed within some boundaries and should be recognized, and what is too deformed, is a difficult task.
-
-\item [Extensibility]
-We would like to offer an easy-to-use library that can be applied to other projects. For this purposes, we would like to let users define their own shapes that should be recognized. Our framework will offer interfaces for both preparing their own shapes and using them in the pattern recognition.
-
-\item [Performance]
-Our system should be applicable in demanding video games environment, prepared for the possibility of many players drawing their spells. To achieve this, we require fast recognition technique as well as usability in a parallel environment. 
-
-\item [Recognition of embedded shapes]
-To allow players cast complex spells, we need to give them an ability to somehow encode multiple symbols in one spell. One possible way to do it are shape embeddings. Each defined shape can contain several areas, where other shapes might occur. These areas are then processed in our recognition system and classified.
-
-\item [Recognition of shape conglomerations]
-For the purpose of this work, we consider shape conglomeration a group of shapes from the same shape class e.g. circle, arranged such that the whole conglomeration forms another shape. We can also look at it as taking the curves of the shape, sampling them uniformly, and then replacing all the samples with the pattern shape.
-
-\end{description}
+\todo{tadyto asi musis rewordovat, mas to pak nazvany jinak}
+Possibilities of such combinations include convolution (symbol is made from other smaller symbols), plain combination (there are multiple symbols next to each other) and embedding (a symbol is put inside another symbol, or into a somehow important position relative to other symbol, e.g. on the top of a triangle). Several examples of symbols and their combinations is shown in \cref{fig:examples}.
 
 \begin{figure}
 \centering
@@ -96,7 +86,29 @@ For the purpose of this work, we consider shape conglomeration a group of shapes
 \label{fig:examples} 
 \end{figure}
 
-\subsection{Approach}
-To achieve our goals, we divide the work into several steps. First, we have reviewed approaches and algorithms commonly used to solve pattern recognition problem. We have closely examined three algorithms, namely the \emph{Normalized cross-correlation},\emph{Shape matching and object recognition using shape contexts} and \emph{Matching of Shapes Using Dynamic Programming}. Then we have described \emph{Artificial neural networks} and explain, how to apply them to pattern recognition. In the \cref{ch:impl}, we have described our algorithm, which is based on the neural networks. We also developed a simple game prototype, to demonstrate the usage of our recognition system. Finally, we perform measurements of the performance of our algorithm, with respect to recognition success rate and speed.
 
-In the appendix, we have described the interface of our algorithm and how to use it in another project. We have also provided a guide for the game.
+We refrain from using any aiding structures (as e.g. in \emph{Castlevania}) to retain generality of the system.
+
+For the purpose of evaluation the work, we specify the following requirements on the resulting recognition system:
+\begin{description}
+
+\item [Durability against shape deformations]
+Since we want to recognize hand-drawn shapes, our system has to be prepared for human-like imprecise drawing, especially when drawing with a mouse. However, drawing an exact line between a shape that should still be recognized and a shape that should be rejected is difficult and possibly subjective; we therefore only evaluate the performance on deformed shapes.
+
+\item [Extensibility]
+We would like to offer an easy-to-use library that can be used in other projects. For this purpose, the library users need to be able to define their own shapes that should be recognized. The library should act as a framework that offers interfaces for both preparing custom shapes and using them in the pattern recognition process.
+
+\item [Performance]
+Our system should be applicable in demanding video games environment, prepared for the possibility of many players drawing their spells at once. To achieve this, we require fast, ideally parallelizable recognition technique.
+
+\item [Recognition of embedded shapes]
+To allow players cast complex spells, we need to give them an ability to somehow encode multiple symbols in one spell. One possible way to do it are shape embeddings. Each defined shape can contain several areas, where other shapes might occur. These areas are then processed in our recognition system and classified.
+
+\item [Recognition of shape conglomerations]
+For the purpose of this work, we consider shape conglomeration a group of shapes from the same shape class e.g. circle, arranged such that the whole conglomeration forms another shape. We can also look at it as taking the curves of the shape, sampling them uniformly, and then replacing all the samples with the pattern shape.
+\end{description}
+
+\subsection{Approach}
+The thesis is divided into several steps: First chapter reviews the approaches and algorithms commonly used to solve the pattern recognition problem. We have closely examined three algorithms, namely the \emph{Normalized cross-correlation},\emph{Shape matching and object recognition using shape contexts} and \emph{Matching of Shapes Using Dynamic Programming}. In the same chapter, we described \emph{Artificial neural networks} and place them in the context of pattern recognition. In \cref{ch:impl}, we describe the implementation of the resulting neural-network-based recognition algorithm. The implementation is accompanied by a simple game prototype that is used to demonstrate the properties of the recognition system. Finally, we perform benchmarking of the performance of our algorithm, with respect to recognition success rate and speed.
+
+In the appendix, we describe the interface of our algorithm and provide a guide for using it in another project. A simple explanation of demonstrational game usage is also included.
