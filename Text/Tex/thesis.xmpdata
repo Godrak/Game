@@ -1,0 +1,10 @@
+
+% Metadata to be stored in PDF, see documentation of the pdfx package for more details.
+
+\Author{TODO}
+\Title{TODO}
+\Keywords{TODO}
+\Subject{TODO}
+\Publisher{Charles University}
+\setRGBcolorprofile{sRGB2014.icc}{sRGB2014}{ICC sRGB v2}{http://www.color.org/srgbprofiles.xalter}
+
