@@ -28,6 +28,8 @@ There are several variables then can be set up and influence the functionality o
 \begin{description}
 \item[\texttt{DEBUG\_IMAGE\_SAVE}] Boolean variable with default value false. Only for debugging purposes. If true, the images created during the recognition are saved as BMP files onto the hard disk into folder \texttt{debug/}, but only in the initial rotation of the image.
 
+\item[\texttt{DEBUG\_IMAGE\_SAVE\_SIDE\_SIZE}] Integer variable that controls the size of the debug images.
+
 \item[\texttt{COMPOSED\_SHAPES\_ENABLED}] Boolean variable with default value true. If false, recognition algorithm recognizes the whole shape but does not search for the pattern shape that might compose it. During training, the generating algorithm does not produce compositions of the shape, so the network is not trained to recognize the composed shapes.
 
 \item[\texttt{COMPOSITION\_SAMPLES\_COUNT}] Integer variable describing the amount of samples taken when searching for the pattern shapes. This variable has no effect when composed shapes are disabled. Otherwise, the interval $[0,1]$ is sampled uniformly and each sample is passed into the \texttt{GetPoint} method of the descriptor. The returned point is then expanded into the sampling window and checked for pattern shape.
@@ -43,6 +45,8 @@ There are several variables then can be set up and influence the functionality o
 \item[\texttt{ROTATION\_SAMPLES\_COUNT}] The amount of samples created when matching rotated shape. It directly determines the rotation step angle size, which is in degrees 360/\texttt{ROTATION\_SAMPLES\_COUNT}. This variable has no effect when rotations are disabled.
 
 \item[\texttt{DEBUG\_OUPUT}] Integer variable with default value 1. Controls the amount of debug info of the recognition system. If set to 0 or lower, no debug output is produced. If set to value 1, it prints recognized shape with its matching rotation and its composing shape to the standard output, for the top level shape and each embedded shape. If set to 2 or higher, produces the same output as with value 1, but also all network outputs from the analysis are printed for all the rotations.
+
+\item[\texttt{SHAPE\_VALUE\_LIMIT}] Float value that controls the recognition threshold. If the maximal network output is lower than this value, the shape is not recognized.
 
 \item[\texttt{IMAGE\_SIDE\_SIZE}] Integer variable, controls the size of the images that are created anytime during algorithm. Every time there is an instance of \texttt{ImageLines} class that should be analyzed by the network, the lines are drawn into the square pixel map of a size set by this variable and then serialized as an input to the network. The network input layer size has to be the second power of this value. The default value is 32, which means that the neural network has an input layer of size 1024 neurons, and the images produced in the algorithm are pixel maps of $32*32$ pixels.
 
@@ -117,63 +121,63 @@ Relations between the shape position, shape and effect are described by the foll
 
 \begin{figure}[p]
 \centering
-\includegraphics[width=.9\linewidth]{ext/scr/circle.png}
+\includegraphics[width=.47\linewidth]{ext/scr/circle.png}
 \quad
-\includegraphics[width=.9\linewidth]{ext/scr/circlee.png}
+\includegraphics[width=.47\linewidth]{ext/scr/circlee.png}
 \caption{The figures show a drawn circle and the created \emph{Shield} effect totem. The player's character has a shield recharging on it. }
 \label{fig:spell:circle}
 \end{figure}
 
 \begin{figure}[p]
 \centering
-\includegraphics[width=.9\linewidth]{ext/scr/square.png}
+\includegraphics[width=.47\linewidth]{ext/scr/square.png}
 \quad
-\includegraphics[width=.9\linewidth]{ext/scr/squaree.png}
+\includegraphics[width=.47\linewidth]{ext/scr/squaree.png}
 \caption{The figures show a drawn square and the created \emph{Fire} effect totem. The enemies in the area of effect of the totem are burning. }
 \label{fig:spell:square}
 \end{figure}
 
 \begin{figure}[p]
 \centering
-\includegraphics[width=.9\linewidth]{ext/scr/triangle.png}
+\includegraphics[width=.47\linewidth]{ext/scr/triangle.png}
 \quad
-\includegraphics[width=.9\linewidth]{ext/scr/trianglee.png}
+\includegraphics[width=.47\linewidth]{ext/scr/trianglee.png}
 \caption{The figures show a drawn triangle and the created \emph{Freezing} effect totem. The enemies in the area of effect of the totem are slower.}
 \label{fig:spell:triangle}
 \end{figure}
 
 \begin{figure}[p]
 \centering
-\includegraphics[width=.9\linewidth]{ext/scr/waterDrop.png}
+\includegraphics[width=.47\linewidth]{ext/scr/waterDrop.png}
 \quad
-\includegraphics[width=.9\linewidth]{ext/scr/waterDrope.png}
+\includegraphics[width=.47\linewidth]{ext/scr/waterDrope.png}
 \caption{The figures show a drawn water drop and the created \emph{Healing} effect totem. The player's character is healed in the presence of the totem.}
 \label{fig:spell:waterDrop}
 \end{figure}
 
 \begin{figure}[p]
 \centering
-\includegraphics[width=.9\linewidth]{ext/scr/embcircle.png}
+\includegraphics[width=.47\linewidth]{ext/scr/embcircle.png}
 \quad
-\includegraphics[width=.9\linewidth]{ext/scr/embcirclee.png}
+\includegraphics[width=.47\linewidth]{ext/scr/embcirclee.png}
 \caption{The first figure shows a triangle with an embedded circle. The second figure shows the created totem has the are of effect increased twice. }
 \label{fig:spell:embcircle}
 \end{figure}
 
 \begin{figure}[p]
 \centering
-\includegraphics[width=.9\linewidth]{ext/scr/embsquare.png}
+\includegraphics[width=.47\linewidth]{ext/scr/embsquare.png}
 \quad
-\includegraphics[width=.9\linewidth]{ext/scr/embsquaree.png}
+\includegraphics[width=.47\linewidth]{ext/scr/embsquaree.png}
 \caption{The first figure shows a circle with an embedded square. The second figure shows the created totem shields the character and grants it power state, increasing its attack.}
 \label{fig:spell:embsquare}
 \end{figure}
 
 \begin{figure}[p]
 \centering
-\includegraphics[width=.9\linewidth]{ext/scr/embwaterDrop.png}
+\includegraphics[width=.47\linewidth]{ext/scr/embwaterDrop.png}
 \quad
-\includegraphics[width=.9\linewidth]{ext/scr/embwaterDrop.png}
+\includegraphics[width=.47\linewidth]{ext/scr/embwaterDrope.png}
 \caption{The first figure shows a circle with an embedded water drop. The second figure shows the created totem shields the character and its \emph{Distraction} effect lures the enemies.}
 \label{fig:spell:embwaterDrop}
 \end{figure}
@@ -181,28 +185,37 @@ Relations between the shape position, shape and effect are described by the foll
 
 \begin{figure}[p]
 \centering
-\includegraphics[width=.9\linewidth]{ext/scr/patcircle.png}
+\includegraphics[width=.47\linewidth]{ext/scr/patcircle.png}
 \quad
-\includegraphics[width=.9\linewidth]{ext/scr/patcirclee.png}
+\includegraphics[width=.47\linewidth]{ext/scr/patcirclee.png}
 \caption{The first figure shows a square composed from circle pattern shapes. The second figure shows the \emph{WallEffect} caused by the circle pattern shape. }
 \label{fig:spell:patcircle}
 \end{figure}
 
 \begin{figure}[p]
 \centering
-\includegraphics[width=.9\linewidth]{ext/scr/patsquare.png}
+\includegraphics[width=.47\linewidth]{ext/scr/patsquare.png}
 \quad
-\includegraphics[width=.9\linewidth]{ext/scr/patsquaree.png}
+\includegraphics[width=.47\linewidth]{ext/scr/patsquaree.png}
 \caption{The first figure shows a water drop composed from square pattern shapes. The second figure shows an explosions effect caused by the square pattern shape. }
 \label{fig:spell:patsquare}
 \end{figure}
 
 \begin{figure}[p]
 \centering
-\includegraphics[width=.9\linewidth]{ext/scr/pattriangle.png}
+\includegraphics[width=.47\linewidth]{ext/scr/pattriangle.png}
 \quad
-\includegraphics[width=.9\linewidth]{ext/scr/pattrianglee.png}
+\includegraphics[width=.47\linewidth]{ext/scr/pattrianglee.png}
 \caption{The first figure shows a triangle composed from triangle pattern shapes. The second figure shows the \emph{Tower} effect caused by the triangle pattern shape. }
 \label{fig:spell:pattriangle}
 \end{figure}
 
+
+\chapter{Third party software}
+The following libraries and projects has been used in the implementation:
+\begin{description}
+	\item[\citet{urho}] The game prototype has been implemented in the Urho3D engine. 
+	\item[\citet{fann}] The algorithm is built around the \citet{fann}, using its simple interface to train and use the neural networks.
+	\item[\citet{bmp}] The \citet{bmp} has been used to save the debug images of the algorithm to the hard disk in the \texttt{bmp} format.
+	\item[\citet{linalg}] The \citet{linalg} has been used for several matrix transformations in the algorithm.
+\end{description}

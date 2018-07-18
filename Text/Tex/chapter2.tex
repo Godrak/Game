@@ -148,42 +148,42 @@ When the player presses the button to cast the spell, the \texttt{Caster} compon
 
 \begin{figure}[p]
 \centering
-\includegraphics[width=.9\linewidth]{ext/scr/komix1.png}
+\includegraphics[width=.6\linewidth]{ext/scr/komix1.png}
 \caption{There are three mutants in the image, one is controlled by the player, others are controlled by AI. The player starts drawing the spell on the ground by pushing the left mouse button. The mouse position is projected in the \texttt{Caster} component to the game surface and added to the \texttt{DrawableTexture} component which creates a new line.}
 \label{fig:start}
 \end{figure}
 
 \begin{figure}[p]
 \centering
-\includegraphics[width=.9\linewidth]{ext/scr/komix2.png}
+\includegraphics[width=.6\linewidth]{ext/scr/komix2.png}
 \caption{The blue glowing line in the image represents the drawing. While the player holds the mouse button, the mouse positions are repeatedly sampled and projected to the surface. The projection points are then added to the line and the space between the points is filled with a blue glow dots to show the line. }
 \label{fig:drawing}
 \end{figure}
 
 \begin{figure}[p]
 \centering
-\includegraphics[width=.9\linewidth]{ext/scr/komix3.png}
+\includegraphics[width=.6\linewidth]{ext/scr/komix3.png}
 \caption{The image shows a finished square shape. When the player releases the mouse, the current line is ended. It is possible to continue drawing other shapes. However, when the player casts spell, all lines in a large area around the character are consumed and used for the spell. The extraction of the lines from \texttt{DrawableTexture} and conversion into \texttt{ImageLines} class is done in the \texttt{Caster} component. }
 \label{fig:square}
 \end{figure}
 
 \begin{figure}[p]
 \centering
-\includegraphics[width=.9\linewidth]{ext/scr/komix4.png}
+\includegraphics[width=.6\linewidth]{ext/scr/komix4.png}
 \caption{When the player casts a spell, the extracted lines are removed and a node with the \texttt{Spell} component is created to handle the spell.  The node is represented by green glowing orb and it marks the place where the totem will be created. It invokes the \texttt{ImageAnalyer::Analyze} method with the lines in another thread to avoid the freezing while the analysis is performed. }
 \label{fig:orb}
 \end{figure}
 
 \begin{figure}[p]
 \centering
-\includegraphics[width=.9\linewidth]{ext/scr/komix5.png}
+\includegraphics[width=.6\linewidth]{ext/scr/komix5.png}
 \caption{When the analysis is finished, the \texttt{SpellSystem} component parses the output. It creates a node with the \texttt{Totem} component, and for each shape, the corresponding effect is added to the totem. The totem is then placed on the spot of the \texttt{Spell}. The totem's area of effect is marked by a rotating circle of elements. }
 \label{fig:totem}
 \end{figure}
 
 \begin{figure}[p]
 \centering
-\includegraphics[width=.9\linewidth]{ext/scr/komix6.png}
+\includegraphics[width=.6\linewidth]{ext/scr/komix6.png}
 \caption{The recognized shape was square. Since square represents fire, the totem has the \texttt{FireEffect} component attached to it. When the characters are detected inside the area of effect, the totem applies all of its effect on them. In the figure, the \texttt{FireEffect} is applied to the enemy inside the circle, causing it to have \texttt{FireState} component attached. This component makes the enemy burn, periodically decreasing its health.}
 \label{fig:effect}
 \end{figure}
