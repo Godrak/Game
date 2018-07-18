@@ -22,11 +22,11 @@ At the same time, \cite{imageRecognition} remark:
 \cite{skeletonMatching} proposes in the work different classification based on the creation process of the classifier. The algorithms are divided into learning-based approaches and template-based approaches. In the learning-based approaches, pattern classifiers are obtained through training on pre-classified samples. In the template based approaches, patterns are described by templates and the recognition problem is transformed into searching for the best matching template for a given input image.
 
 Another classification proposed by \citet{distanceTransform} divides the algorithms into three classes based on the level of preprocessing:
-\begin{description}
+\begin{itemize}
 \item Algorithms that use pixel values directly, e.g. correlation-based methods. Example from this category is the normalized cross-correlation, described in \cref{normalizedCC}.
 \item Algorithms that use low-level features such as edges and corners, e.g. distance transform method, described in \citet{distanceTransform}.
 \item Algorithms that use high-level features such as identified objects or relation between the features, e.g. graph-theoretic-methods \cite{graph}.
-\end{description}
+\end{itemize}
 
 Given the amount of algorithms to choose from, we have decided to describe only a few of them, namely normalized cross-correlation, shape contexts object matching and matching of shapes using dynamic programming, which are described on this chapter. Then we dedicate the last section to neural networks, which we use in our algorithm implementation.
 
@@ -60,7 +60,7 @@ Normalized cross-correlation is defined as:
 where $\bar{t}$ is the mean of the feature pixel brightnesses and $\bar{f}_{u,v}$ is the mean of the values of $f(x,y)$ in the region under the feature \cite{crossCorrLewis}.
 
 \section{Shape matching and object recognition using shape contexts}
-Shape matching approaches that use shape contexts are usually based on the extracted features, which generally introduces a more robust recognition of deformed images. Shape context is usually a group of shape features and their relations and the shape class is then defined by their similarity. We review the algorithm by \citet{simple}. The approach attempts to find corresponding feature points of the image and the template, and we attempt to compute their distance as a sum of errors of corresponding points. 
+Shape matching approaches that use shape contexts are usually based on the extracted features, which generally introduces a more robust recognition of deformed images. Shape context is usually a group of shape features and their relations and the shape class is then defined by their similarity. We review the algorithm by \citet{simple}. The approach attempts to find corresponding feature points of the image and the template, and we attempt to compute their distance as a sum of errors of corresponding points.
 
 We treat an image as a set of points, and we assume that each shape is represented by a finite subset of its points. We extract from both image and template a certain number of feature points, 100 is recommended by the authors. These points do not need to be the key-points, such as maxima of curvature or corners. This allows us to use a simple extraction method like edge detection.
 
@@ -245,11 +245,11 @@ It is however recommended to apply several pre-processing transformations that c
 One of the common forms of pre-processing is input normalization. By applying a linear transformation we can arrange all of the inputs to have zero mean and unit standard deviation over the transformed training set.
 In practice, input normalization ensures that the inputs and target outputs stay in unit range, and we can expect that the weights should also be in unit range. We can then initialize the weights with suitable random number. Otherwise, we would have to find a solution, where the weight values differ distinctly.
 \item [Training with noise]
-Another technique that improves generalization capabilities of the network is training with noise. It involves the addition of a random vector to the input vectors during training. A remark by \citet{bishop} states that: 
+Another technique that improves generalization capabilities of the network is training with noise. It involves the addition of a random vector to the input vectors during training. A remark by \citet{bishop} states that:
 \begin{quotation} Heuristically, we might expect that the noise will 'smear out' each data point
 and make it difficult for the network to fit individual data points precisely, and
 hence will reduce over-fitting. In practice, it has been demonstrated that training
-with noise can indeed lead to improvements in network generalization. 
+with noise can indeed lead to improvements in network generalization.
 \end{quotation}
 \item [Data dimensionality reduction]
 Data dimensionality reduction is a pre-processing method that allows the network to have fewer input neurons. It can take the the form of color information removal or pixel averaging, where we group several pixel to one block and use average of each block as an input. By lowering the number of inputs, we lower the number of parameters that the learning process has to optimize.
