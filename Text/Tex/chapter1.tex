@@ -2,8 +2,7 @@
 In this chapter, we describe several classes of algorithms that solve pattern recognition. In the next part, we review some of the algorithms, namely the \emph{Normalized cross-correlation}, \emph{Shape matching and object recognition using shape contexts} and \emph{Matching of Shapes Using Dynamic Programming}. The last section is devoted to the \emph{Artificial neural networks} in the context of pattern recognition, which are later used for the implementation.
 
 Pattern recognition problem is a broad term for classification problems that are based on the similarity of the features of classified objects. Precise mathematical definition can be found in the work \citet{formalMethods}. We will focus more on the shape recognition problems category, which is a form of pattern recognition. A shape can be typically defined as an equivalence class under the group of transformations, and the problem is then to algorithmically approximate the human-like visual pattern recognition. 
-
-\todo{mozna by bylo lepsi to napsat obracene: Uplne vynechat tu citaci. Pattern recognition is X. Shape recognition is P.R. specialized to shapes; shapes are defined as Y. Je potreba specifikovat co to je za tridu ekvivalence, jakyma transformacema je definovana ta grupa, a co je human-like visual pattern (shape?) recognition.}
+For example, \citet{simple} proposes an algorithm that uses shape context of shape class representant to describe a shape class. The equivalence classes are then defined by a computed distance of the shape contexts of the representant and the shape, and the group of transformations are changes in the shape context.
 
 \section{Algorithms classification}
 There are variety of algorithms on pattern recognition and they can be categorized based on different features. \citet{imageRecognition} categorize the algorithms to following approach-based classes:
