@@ -22,11 +22,11 @@ At the same time, \cite{imageRecognition} remark:
 \cite{skeletonMatching} proposes in the work different classification based on the creation process of the classifier. The algorithms are divided into learning-based approaches and template-based approaches. In the learning-based approaches, pattern classifiers are obtained through training on pre-classified samples. In the template based approaches, patterns are described by templates and the recognition problem is transformed into searching for the best matching template for a given input image.
 
 Another classification proposed by \citet{distanceTransform} divides the algorithms into three classes based on the level of preprocessing:
-\begin{description}
+\begin{itemize}
 \item Algorithms that use pixel values directly, e.g. correlation \todo{tohle znamena correlation-based?} methods. Example from this category is the normalized cross-correlation, described in \cref{normalizedCC}.
 \item Algorithms that use low-level features such as edges and corners, e.g. distance transform method. \todo{taky, citace}
 \item Algorithms that use high-level features such as identified objects or relation between the features, e.g. graph-theoretic-methods. \todo{citace}
-\end{description}
+\end{itemize}
 
 Given the amount of algorithms to choose from, we have decided to describe only a few of them, namely normalized cross-correlation, shape contexts object matching and matching of shapes using dynamic programming, which are described on this chapter. Then we dedicate the last section to neural networks, which we use in our algorithm implementation.
 
@@ -47,7 +47,7 @@ Other two terms express the energy (brightness) of the template and the image, r
 
 Computing distance this way has several serious drawbacks. It is computationally demanding since we have to consider every position and every pixel appears in the computation many times, based on the size of the template. The method may also give false matches if the image energy changes a lot with the position. Also, the range of values of cross-correlation term depends on the size of the template and it is not invariant to scaling and rotation.
 
-The performance of the method can be improved substantially if we use convolution. Convolution is an integral that expresses the amount of overlap of one function \emhp{g} as it is shifted over another function \emhp{f}, which is similar to the cross-correlation. For discrete real valued signals such as pixels of an image, they differ only in a time reversal in one of the signals. We can then apply the convolution theorem.
+The performance of the method can be improved substantially if we use convolution. Convolution is an integral that expresses the amount of overlap of one function \emph{g} as it is shifted over another function \emph{f}, which is similar to the cross-correlation. For discrete real valued signals such as pixels of an image, they differ only in a time reversal in one of the signals. We can then apply the convolution theorem.
 
 Convolution theorem \todo{cite} states that when certain conditions are met, Fourier transform of a convolution is an element-wise product of Fourier transforms of input signals. From Convolution theorem follows that time domain or space domain convolution is equivalent to element-wise multiplication in the frequency domain. To compute convolution, we simply need to take element-wise multiplications of Fourier transforms of signals to be convoluted. Cross-correlation differs in that we take the complex conjugate of the Fourier transform of the second signal.
 
