@@ -1,6 +1,21 @@
 \chapter*{Conclusion}
-\todo{2-3 odstavce, o tom co jsem udelal co neudelal vuci intru. v present perfect. future work, improvements. create game - turn based ideally alternativni pristup ke kompozicim - kreslit mysi neprakticiky, gpu pararelizace}
+The goal of this work has been to develop a recognition algorithm that recognizes structured combinations, such as conglomerations and embeddings. We have reviewed the literature for pattern recognition and found out that the topic is not very well covered. From the reviewed algorithms we have chosen the artificial neural networks as a base for our recognition algorithm. 
 
-\todo{obrazky - ukazat co je conglomeration, pattern shape, embedded shape atd..}
+We have developed a recognition library that allows users to define their own shapes, train the appropriate neural network and use the library for recognition of structures of the defined shapes. For the purpose of the neural network learning, we have also developed a shape images generator that attempts to approximate human imprecise drawing.
 
-\todo{line drawer je pomaly, dela bottleneck algoritmu}
+We have then used the library in our game prototype to demonstrate its functionality. The game supports four defined shapes and their combinations in the form of embeddings and composition, which all map to different spell effects. 
+
+In the Results chapter, we have benchmarked the performance of our library and optimized the algorithm parameters for the used shape descriptors. The results suggest that while the success rate of the recognition of the composed shape is high, the recognition of the pattern shape of composition still needs improvements.
+
+\section{Future work}
+There are several directions that might be worth exploring:
+\begin{itemize}
+\item One of the main problems is the noise from the surroundings introduced when extracting the area of embeddings and pattern shapes. Heuristics, like extracting only continuous segments of lines, or neural network with stronger generalization power, might be used to improve the recognition.
+
+\item Speed of the algorithm might be an issue in more demanding game environments. While the analysis of several images can be performed in parallel, the algorithm can be even further parallelized. The large number of repeated computations is especially well suited for the usage of the GPU.
+
+\item Developing a game that uses the library. The provided game prototype is arguably not very well suited for the library, as it forces the players to draw shape in combat and while moving the character, which discourages the players from trying more complex shapes.
+Strategy game might be a better candidate. Instead of building the base with player's units, players could create them by drawing the correct shape. The advanced shape structures would then create buildings with stronger units.
+Using different interface to mouse might also enhance the player's experience greatly.
+
+\end{itemize}

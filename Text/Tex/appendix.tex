@@ -1,6 +1,5 @@
 \appendix
 \chapter{User guide}
-\todo{Tohle je tradicne Appendix --- pro vlastni text prace to neni moc podstatny, krome toho ze tam chces nekam velice jednoduse (idealne v obrazku) popsat to API a rict proc je skvely, a pak se jen odkazes na appendix kde to vysvetlujes.}
 \section{Recognition system}
 \todo{ schema and interface overview - files IMageAanlyzer and training}
 
@@ -23,6 +22,7 @@ The user can create a shape descriptor by including the \texttt{ImageAnalyzer.h}
 Examples of shapes descriptors can be found in the \texttt{ExampleShapeDescriptors.h} file. Be careful to return the points only in the normalized range $[0,1]^2$.
 
 \subsection{Algorithm properties}
+\label{sec:properties}
 There are several variables then can be set up and influence the functionality of the software. They can be found in the \texttt{ImageAnalyzer} namespace. Some of them are used both in the training and in the recognition. It is necessary then for the user to be consistent and use the same settings for the recognition as they used for the training.
 
 \begin{description}
