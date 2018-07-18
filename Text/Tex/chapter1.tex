@@ -23,9 +23,9 @@ At the same time, \cite{imageRecognition} remark:
 
 Another classification proposed by \citet{distanceTransform} divides the algorithms into three classes based on the level of preprocessing:
 \begin{description}
-\item Algorithms that use pixel values directly, e.g. correlation \todo{tohle znamena correlation-based?} methods. Example from this category is the normalized cross-correlation, described in \cref{normalizedCC}.
-\item Algorithms that use low-level features such as edges and corners, e.g. distance transform method. \todo{taky, citace}
-\item Algorithms that use high-level features such as identified objects or relation between the features, e.g. graph-theoretic-methods. \todo{citace}
+\item Algorithms that use pixel values directly, e.g. correlation-based methods. Example from this category is the normalized cross-correlation, described in \cref{normalizedCC}.
+\item Algorithms that use low-level features such as edges and corners, e.g. distance transform method, described in \citet{distanceTransform}.
+\item Algorithms that use high-level features such as identified objects or relation between the features, e.g. graph-theoretic-methods \cite{graph}.
 \end{description}
 
 Given the amount of algorithms to choose from, we have decided to describe only a few of them, namely normalized cross-correlation, shape contexts object matching and matching of shapes using dynamic programming, which are described on this chapter. Then we dedicate the last section to neural networks, which we use in our algorithm implementation.
@@ -47,9 +47,9 @@ Other two terms express the energy (brightness) of the template and the image, r
 
 Computing distance this way has several serious drawbacks. It is computationally demanding since we have to consider every position and every pixel appears in the computation many times, based on the size of the template. The method may also give false matches if the image energy changes a lot with the position. Also, the range of values of cross-correlation term depends on the size of the template and it is not invariant to scaling and rotation.
 
-The performance of the method can be improved substantially if we use convolution. Convolution is an integral that expresses the amount of overlap of one function \emhp{g} as it is shifted over another function \emhp{f}, which is similar to the cross-correlation. For discrete real valued signals such as pixels of an image, they differ only in a time reversal in one of the signals. We can then apply the convolution theorem.
+The performance of the method can be improved substantially if we use convolution. Convolution is an integral that expresses the amount of overlap of one function \emph{g} as it is shifted over another function \emph{f}, which is similar to the cross-correlation. For discrete real valued signals such as pixels of an image, they differ only in a time reversal in one of the signals. We can then apply the convolution theorem.
 
-Convolution theorem \todo{cite} states that when certain conditions are met, Fourier transform of a convolution is an element-wise product of Fourier transforms of input signals. From Convolution theorem follows that time domain or space domain convolution is equivalent to element-wise multiplication in the frequency domain. To compute convolution, we simply need to take element-wise multiplications of Fourier transforms of signals to be convoluted. Cross-correlation differs in that we take the complex conjugate of the Fourier transform of the second signal.
+Convolution theorem \cite{convtheorem} states that when certain conditions are met, Fourier transform of a convolution is an element-wise product of Fourier transforms of input signals. From Convolution theorem follows that time domain or space domain convolution is equivalent to element-wise multiplication in the frequency domain. To compute convolution, we simply need to take element-wise multiplications of Fourier transforms of signals to be convoluted. Cross-correlation differs in that we take the complex conjugate of the Fourier transform of the second signal.
 
 Problems with the range of cross-correlation value and dependency on brightness can be fixed by using normalized cross-correlation, where the image and the template vectors are normalized to unit length. Other desired aspects, such as scale invariance, has been addressed in many algorithms using a cross-correlation method. However, they usually introduce some trade-offs and they may not achieve all the required properties together.
 
@@ -60,13 +60,13 @@ Normalized cross-correlation is defined as:
 where $\bar{t}$ is the mean of the feature pixel brightnesses and $\bar{f}_{u,v}$ is the mean of the values of $f(x,y)$ in the region under the feature \cite{crossCorrLewis}.
 
 \section{Shape matching and object recognition using shape contexts}
-Shape matching approaches that use shape contexts are usually based on the extracted features, which generally introduces a more robust recognition of deformed images. We review the algorithm by \citet{simple}. The approach attempts to find corresponding feature points of the image and the template, and we attempt to compute their distance as a sum of errors of corresponding points. \todo{what is shape context?}
+Shape matching approaches that use shape contexts are usually based on the extracted features, which generally introduces a more robust recognition of deformed images. Shape context is usually a group of shape features and their relations and the shape class is then defined by their similarity. We review the algorithm by \citet{simple}. The approach attempts to find corresponding feature points of the image and the template, and we attempt to compute their distance as a sum of errors of corresponding points. 
 
 We treat an image as a set of points, and we assume that each shape is represented by a finite subset of its points. We extract from both image and template a certain number of feature points, 100 is recommended by the authors. These points do not need to be the key-points, such as maxima of curvature or corners. This allows us to use a simple extraction method like edge detection.
 
 With feature points extracted, we need to find the corresponding points. To do so, \citet{simple} introduces a \emph{shape context descriptor} \ref{fig:polarbins}, defined by the sample points and their relations. For each sample point $p$, we can create a set of vectors originating from $p$ to all other feature points. Such set of vectors represents positions of other sample points relative to the origin point. The more sample points we choose, the more is this shape descriptor exact.
 
-However, such descriptor might be too detailed and too sensitive to intraclass variations. In the paper, the authors presented a more robust and compact shape descriptor. The idea is that for each point $p$, we compute coarse histogram by assigning other points to bins in polar coordinates with a center in $p$. Polar coordinates are more sensitive to points near p. We can then compute the cost of matching two \XX{pints} as
+However, such descriptor might be too detailed and too sensitive to intraclass variations. In the paper, the authors presented a more robust and compact shape descriptor. The idea is that for each point $p$, we compute coarse histogram by assigning other points to bins in polar coordinates with a center in $p$. Polar coordinates are more sensitive to points near p. We can then compute the cost of matching two points as
 \[ C_{ij} =  C(p_{i},q_{j}) = \frac{1}{2} \sum_{k=1}^{K} \frac{(h_{i}(k) - h_{j}(k))^2}{h_{i}(k) + h_{j}(k)}, \]
 
 where $ h_{i}(k) $ and $ h_{j}(k) $ represent the K-bin normalized histogram at $p_{i}$ and $q_{j}$. Given a set of costs $C_{i,j}$ between all pairs of points $p_{i}$ and $q_{j}$, we need to find the best alignment, which means that we want to minimize the total cost of matching 
@@ -132,7 +132,7 @@ Artificial neural networks are structures based on the parallel computational mo
 \caption{The model of neuron unit}
 \end{figure}
 
-Activation function characterizes the behavior of the neuron. When the values from the input connections are computed \todo{available?}, the activation function is applied onto the sum of the values and the result is passed further to other neurons. Two common examples of activation functions are the step function and the sigmoid function:
+Activation function characterizes the behavior of the neuron. When the values from the input connections are available, the activation function is applied onto the sum of the values and the result is passed further to other neurons. Two common examples of activation functions are the step function and the sigmoid function:
 
 \begin{itemize}
 \item $\textsc{Step}(x)=\begin{cases} 1 & (x \geq 0) \\ 0 & (x < 0) \end{cases}$
@@ -152,7 +152,7 @@ $M  =  (N,C,I,O,w,t)$,  where:
 \item $t : N\to R$  bias  function.
 \end{itemize}
 
-In practice, multilayer neural networks are commonly used. Multilayer networks are networks, in which \todo{the} neurons are organized in layers starting with the input layer and ending with the output layer, with hidden layers in between. For each neuron in this structure, its input connections originate only in a \todo{the?} previous layer, and its output connections reach only to the following layer.
+In practice, multilayer neural networks are commonly used. Multilayer networks are networks, in which the neurons are organized in layers starting with the input layer and ending with the output layer, with hidden layers in between. For each neuron in this structure, its input connections originate only in the previous layer, and its output connections reach only to the following layer.
 
 \subsection{Learning process}
 Learning process of an neural network is an optimization problem, where we want to optimize the error function. Error function describes a difference between actual and expected output values for given set of training data. One of the popular error functions is mean square error function:
@@ -208,7 +208,7 @@ We can then use the following rule to update the weights:
 \[
 \Delta^{t} w_{ij} = - \epsilon \frac {\partial E}{\partial w_{ij}} + \alpha \Delta w^{t-1}_{ij}.
 \]
-$\Delta^{t} w_{ij}$ is the change at time $t$ for the weight $w_{ij}$. The value $\epsilon$ is called the learning rate. If the learning rate is too low, it will take much longer to train the network. If it is too high, the algorithm will cross large section in the search space and \todo{will probably?} oscillate.
+$\Delta^{t} w_{ij}$ is the change at time $t$ for the weight $w_{ij}$. The value $\epsilon$ is called the learning rate. If the learning rate is too low, it will take much longer to train the network. If it is too high, the algorithm will cross large section in the search space and will probably oscillate.
 
 In summary, the input is evaluated and the difference between the correct and actual output is computed using error function. The difference is propagated back through the network and weights are updated using the gradient descent method. The whole process is repeated until the desired error value is achieved.
 
@@ -233,11 +233,11 @@ Convolutional networks can be considered a special case of deep neural networks,
 For convolutional networks the convolutional layer is characteristic. This layer is essentially a filter, that performs feature extraction. The filter is composed from neurons that have shared weights, so that the filter performs the same operation on every part of the input. This in turn lowers the number of parameters of the network. Usually, more than one filter is used on the input image, allowing the network to extract different features from the simple ones like edges and corners, to very complex features, such as a house or a tree.
 \end{description}
 
-However, \todo{despite of the advantages?} we have decided to use the classic feed-forward neural networks with two hidden layers. Because we want to allow the users train the network for their own defined shapes, we need to be able to perform the learning on the user side and offer a simple interface to do so.
-This does not correspond well with the advanced neural network structures, which may require certain \todo{costly?} hardware or complicated learning process. Learning of classic neural networks is cheap in comparison, and they can still perform quite well in the recognition tasks.
+Despite of the performance advantages, we have decided to use the classic feed-forward neural networks with two hidden layers. Because we want to allow the users train the network for their own defined shapes, we need to be able to perform the learning on the user side and offer a simple interface to do so.
+This does not correspond well with the advanced neural network structures, which may require certain costly hardware or complicated learning process. Learning of classic neural networks is cheap in comparison, and they can still perform quite well in the recognition tasks.
 
 \subsection{Data preparation for pattern recognition}
-\cite{bishop} \todo{citace az za fakta} Because of their generalization properties, neural network are successfully used in pattern recognition. They are able to approximate an arbitrary mapping between the input values and the output values \cite{bishop}. With this ability, we are not forced to do feature extraction and we can initialize the network with pixel values directly.
+Because of their generalization properties, neural network are successfully used in pattern recognition. They are able to approximate an arbitrary mapping between the input values and the output values \cite{bishop}. With this ability, we are not forced to do feature extraction and we can initialize the network with pixel values directly.
 
 It is however recommended to apply several pre-processing transformations that can improve the generalization performance significantly.
 \begin{description}
@@ -245,9 +245,14 @@ It is however recommended to apply several pre-processing transformations that c
 One of the common forms of pre-processing is input normalization. By applying a linear transformation we can arrange all of the inputs to have zero mean and unit standard deviation over the transformed training set.
 In practice, input normalization ensures that the inputs and target outputs stay in unit range, and we can expect that the weights should also be in unit range. We can then initialize the weights with suitable random number. Otherwise, we would have to find a solution, where the weight values differ distinctly.
 \item [Training with noise]
-Another technique that improves generalization capabilities of the network is training with noise. It involves the addition of a random vector to the input vectors during training. in practice, it has been shown that training with noise can reduce over-fitting and improve network generalization. \todo{jestli mas citaci tak ted nastal cas :D}
+Another technique that improves generalization capabilities of the network is training with noise. It involves the addition of a random vector to the input vectors during training. A remark by \citet{bishop} states that: 
+\begin{quotation} Heuristically, we might expect that the noise will 'smear out' each data point
+and make it difficult for the network to fit individual data points precisely, and
+hence will reduce over-fitting. In practice, it has been demonstrated that training
+with noise can indeed lead to improvements in network generalization. 
+\end{quotation}
 \item [Data dimensionality reduction]
-Data dimensionality reduction is a pre-processing method that actually results \todo{allows the network to have.. ?} in fewer input neurons. It can be for example in the form \todo{It can take the form?} of color information removal or pixel averaging, where we group several pixel to one block and use average of each block as an input. By lowering the number of inputs, we lower the number of parameters that the learning process has to optimize.
+Data dimensionality reduction is a pre-processing method that allows the network to have fewer input neurons. It can take the the form of color information removal or pixel averaging, where we group several pixel to one block and use average of each block as an input. By lowering the number of inputs, we lower the number of parameters that the learning process has to optimize.
 \item [Feature extraction]
 Some of the more complicated techniques use feature extraction as a pre-processing step. Simple geometric primitives extractions are common, such as extraction of lines with their lengths and angles.
 \end{description}

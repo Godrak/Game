@@ -53,7 +53,7 @@ public:
             totem->AddEffect(spellNode->CreateComponent<FrozenEffect>());
         } else if (index == drop) {
             totem->AddEffect(spellNode->CreateComponent<HealingEffect>());
-        }
+        } else totem->ExtendDuration(-TOTEM_DURATION);
 
         CreateAdvancedEffects(shape.shapePattern, spellNode, totem);
 

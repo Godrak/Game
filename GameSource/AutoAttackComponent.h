@@ -65,7 +65,7 @@ URHO3D_OBJECT(AutoAttackComponent, LogicComponent);
             if (distance < 2.f) {
                 entity->Attack(targetNode);
             } else {
-                entity->Move(targetPos - ownPos, 1);
+                entity->Move(targetPos - ownPos, 3);
             }
         }
     }

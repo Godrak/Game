@@ -1,15 +1,10 @@
-\todo{predelat na spravny format pdf}
-\todo{zeptat se na odkazy u obrazku a odkazy u FANN a URHO3D}
-\todo{vytvorit apendix}
-\todo{ma byt intorduction chapter s cislem?}
-
 \chapter{Introduction}
 Magic has always been a popular part of computer games. In many games, magic has its own lore and laws that make it systematical. Great examples of the complexity of magical spell systems include the games \emph{Magicka} and \emph{Magicka 2}, where the player casts spells by combining eight elements (as seen on \cref{fig:magicka}): For example, using only earth element results in a rock thrown at the enemy, but adding fire will create a classic fireball.
 
 \begin{figure}
   \centering
   \includegraphics[width=0.5\textwidth]{ext/magicka.png}
-  \caption{\emph{Magicka} spell interface}
+  \caption{\emph{Magicka} spell interface. Image taken from \citet{magicka}. }
   \label{fig:magicka}
 \end{figure}
 
@@ -36,7 +31,7 @@ The restriction to pre-existing following grid takes away a part of the creative
 \includegraphics[width=.3\linewidth]{ext/castlevania.png}
 \quad
 \includegraphics[width=.3\linewidth]{ext/castlevania2.png}
-\caption{\emph{Castlevania: Dawn of Sorrow} spell interface \XX{(image taken from ?)}}
+\caption{\emph{Castlevania: Dawn of Sorrow} spell interface. Images taken from \citet{castlevania}.}
 \label{fig:castlevania} %label se vaze na caption a musi bejt az po nem
 \end{figure}
 
@@ -50,7 +45,7 @@ A similar approach to recognition of player-drawn spells is used in \emph{Arx Fa
 \includegraphics[width=.3\linewidth]{ext/gestureteleport.png}
 \quad
 \includegraphics[width=.3\linewidth]{ext/gesturefireball.png}
-\caption{\emph{Black \& White} teleport and fireball gestures}
+\caption{\emph{Black \& White} teleport and fireball gestures. Images taken from \citet{bandw}.}
 \label{fig:blackwhite}
 \end{figure}
 
@@ -92,10 +87,10 @@ For the purpose of evaluation the work, we specify the following requirements on
 Since we want to recognize hand-drawn shapes, our system has to be prepared for human-like imprecise drawing, especially when drawing with a mouse. However, drawing an exact line between a shape that should still be recognized and a shape that should be rejected is difficult and possibly subjective; we therefore only evaluate the performance on deformed shapes.
 
 \item [Extensibility]
-We would like to offer an easy-to-use library that can be utilitized in other projects. For this purpose, we need to let the users define their own shapes that should be recognized. The library should provide interfaces for both preparing custom shapes and using them in the pattern recognition.
+We would like to offer an easy-to-use library that can be used in other projects. For this purpose, we need to let the users define their own shapes that should be recognized. The library should provide interfaces for both preparing custom shapes and using them in the pattern recognition.
 
 \item [Performance]
-Our system should be applicable in demanding video games environment, prepared for the possibility of many players drawing their spells at once. To achieve this, we require fast recognition technique preferably usable in a parallel environment.
+Our system should be applicable in demanding video games environment, prepared for the possibility of many players drawing their spells at once. To achieve this, we require fast, ideally parallelizable recognition technique.
 
 \item [Recognition of embedded shapes]
 To allow players cast complex spells, we need to give them an ability to somehow encode multiple symbols in one spell. One possible way to do it are shape embeddings. Each defined shape can contain several areas, where other shapes might occur. These areas are then processed in our recognition system and classified.
