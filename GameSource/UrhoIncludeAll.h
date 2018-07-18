@@ -113,7 +113,7 @@ static const float WALL_RADIUS = 9;
 
 //TOTEMS
 static const float TOTEM_SCALE = 2;
-static const float TOTEM_DURATION = 12;
+static const float TOTEM_DURATION = 60;
 static const float TOTEM_EFFECT_TRIGGER_TIME = 1;
 static const float TOTEM_EFFECT_TRIGGER_WINDOW = 0.05;
 static const float TOTEM_EFFECT_SIZE = 7;
@@ -134,4 +134,4 @@ static const float EXPLOSION_TIME_LIMIT = 0.3f;
 static const float MUTANT_HEALTH = 200;
 static const float MUTANT_SPEED = 0.3f;
 static const float MUTANT_ATTACK_DURATION = 1.3f;
-static const float MUTANT_ATTACK_DAMAGE = 0;//25.f;
+static const float MUTANT_ATTACK_DAMAGE = 15.f;

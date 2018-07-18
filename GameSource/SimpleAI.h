@@ -69,7 +69,7 @@ URHO3D_OBJECT(SimpleAI, LogicComponent);
     }
 
     WeakPtr<Node> currentTarget;
-    bool active = true;
+    bool active = false;
     float newTargetTimer{};
     float dirChangeTime{};
     Vector3 rndDirection;

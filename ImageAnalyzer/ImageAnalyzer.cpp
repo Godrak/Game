@@ -14,6 +14,7 @@ namespace { //private
 
 namespace ImageAnalyzer {
     bool DEBUG_IMAGE_SAVE = false;
+    int DEBUG_IMAGE_SAVE_SIDE_SIZE = 128;
     bool COMPOSED_SHAPES_ENABLED = true;
     int COMPOSITION_SAMPLES_COUNT = 40;
     int COMPOSITION_SAMPLES_LIMIT = 1;
@@ -121,7 +122,7 @@ ShapeNode AnalyzeRec(ImageLines imageLines, int recursionDepth) {
     node.shape = AnalyzeImageLines(imageLines, matchingRotation, maxValue);
 
     if (DEBUG_IMAGE_SAVE) {
-        DrawLines(imageLines, IMAGE_SIDE_SIZE, LINE_DRAWING_STEP_SIZE).SaveToFile(
+        DrawLines(imageLines, DEBUG_IMAGE_SAVE_SIDE_SIZE, LINE_DRAWING_STEP_SIZE).SaveToFile(
                 "debug/im" + to_string(randomizer.ratio()));
     }
 
@@ -146,7 +147,7 @@ ShapeNode AnalyzeRec(ImageLines imageLines, int recursionDepth) {
 
                 if (!copy.Empty() && DEBUG_IMAGE_SAVE) {
                     copy.Normalize();
-                    DrawLines(copy, IMAGE_SIDE_SIZE, LINE_DRAWING_STEP_SIZE).SaveToFile(
+                    DrawLines(copy, DEBUG_IMAGE_SAVE_SIDE_SIZE, LINE_DRAWING_STEP_SIZE).SaveToFile(
                             "debug/pat" + to_string(randomizer.ratio()));
                 }
             }
@@ -168,7 +169,7 @@ ShapeNode AnalyzeRec(ImageLines imageLines, int recursionDepth) {
                 copy.Transform(CreateRotationMatrix(matchingRotation, float2(0.5f, 0.5f)));
                 copy.Normalize();
                 if (DEBUG_IMAGE_SAVE) {
-                    DrawLines(copy, IMAGE_SIDE_SIZE, LINE_DRAWING_STEP_SIZE).SaveToFile(
+                    DrawLines(copy, DEBUG_IMAGE_SAVE_SIDE_SIZE, LINE_DRAWING_STEP_SIZE).SaveToFile(
                             "debug/r" + to_string(randomizer.ratio()));
                 }
                 copy.Clip(float2(poi.x, poi.y), float2(poi.x, poi.y) + float2(poi.z, poi.z));

@@ -1,7 +1,7 @@
 \appendix
 \chapter{User guide}
 \section{Recognition system}
-\todo{ schema and interface overview - files IMageAanlyzer and training}
+The interface of the library is located in two headers: \texttt{ImageAnalyzer.h} and \texttt{Training.h} in the corresponding namespaces \texttt{ImageAnalyzer.h} and \texttt{Training.h}, respectively. 
 
 \subsection{Creation of shape descriptor}
 For both the training and for the recognition shape descriptors are required. The shape descriptors have several rules, that need to be followed by the user in their implementation. The intended purpose of the descriptor is to describe a single 2D shape in a $[0,1]^2$ rectangular area. The descriptor is expected to return the exactly same shape every time and all of its methods should return the same values when called with the same parameters. 
@@ -69,4 +69,140 @@ First, it is necessary to load the neural network into the algorithm, using \tex
 Alternatively, the \texttt{ShapeIndex} instance can be created from the order number of the corresponding shape descriptor when registered for the training. It is also necessary to set up the algorithm properties the same way they have been set up during network training. When these steps are done, the user can repeatedly call the \texttt{ImageAnalyzer::Analyze} function to determine the shape hierarchy in the provided \texttt{ImageLines} instance. The \texttt{Analyze} function is thread safe, so many calls can be done at the same time. However, the set up has to be done synchronously and only once, before the first call of \texttt{Analyze} function. 
 
 \section{Game}
-TODO
+The game is a simple prototype. When the game is started the character controlled by player is located in the middle of the screen. The character can move over the surface plane, but falling of the edge results in death. There will be also numerous enemies around. initially, all the enemies are harmless and the player has control over the AI activity. This feature was added because it was too difficult to draw more complicated spells without dying. The goal of the game is to destroy all the enemies, either trough usage of totems or character's attacks.
+
+\subsection{Controls}
+The game uses both keyboard and mouse with the following mappings:
+\begin{itemize}
+\item[W, A, S, D] The player can control the character using the keys W,A,S,D to move the character up, left, down and right respectively.
+\item[E, R] The keys E and R can be used to turn off, respectively on, the AI of the enemies.
+\item[Q] Using the Q key and pointing the mouse over the enemy, the players character starts moving towards the enemy and attacking it.
+\item[Left mouse button] The player can draw shapes on the ground using the left mouse button.
+\item[Right mouse button] By pushing the right mouse button, the player invokes spell casting.
+\item[Mouse wheel] Mouse wheel can be used to zoom in/zoom out.
+\end{itemize}
+
+\subsection{Spells}
+The spells in the game are represented by totems. When the player casts a spell, a totem is created with corresponding effects on it, described by the rules below.
+The game supports four shapes: circle, square, triangle and water drop. Each of these shapes maps to a different effect, based on its position in the drawing. We distinguish between 3 positions of shapes: the root position, the embedded shape and the pattern shape.
+\begin{itemize}
+\item The root position is assigned to the biggest shape, i.e. the shape that forms the drawing. 
+\item The embedded shape is a shape that is located in the center of another shape. 
+\item The pattern shape is a shape that forms a composition of another shape.
+\end{itemize}
+Relations between the shape position, shape and effect are described by the following rules:
+\begin{description}
+	\item The root shape mappings: 
+	\begin{itemize}
+		\item[Circle] The \emph{Shield} effect \ref{fig:spell:circle} is added to the totem. If the players character is inside the area of effect of this totem, its shield is slowly recharged.
+		\item[Square] The \emph{Fire} effect \ref{fig:spell:square} is added to the totem. The fire effect causes all enemies near the totem to burn, decreasing their health periodically.
+		\item[Triangle] The \emph{Freezing} \ref{fig:spell:triangle} effect is added to the totem. The freezing effect causes the enemies to move slowly.
+		\item[Water drop] The \emph{Healing} \ref{fig:spell:waterDrop} effect is added to the totem. When the players character is nearby, it is healed over time.
+	\end{itemize}
+	\item The embedded shape mappings:
+	\begin{itemize}
+		\item[Circle] The \emph{Reach} effect \ref{fig:spell:embcircle} is added to the totem, extending its area of effect twice.
+		\item[Square] The \emph{Power} effect \ref{fig:spell:embsquare} is added to the totem. The power effect causes all the attacks of the player do substantially more damage to the enemies.
+		\item[Triangle] The \emph{Durability} effect is added to the totem. The durability effect extends the duration of the totem twice.
+		\item[Water drop] The \emph{Distraction} effect \ref{fig:spell:embwaterDrop} is added to the totem. Enemies under the distraction effect start attacking the totem instead of the player.
+	\end{itemize}
+	\item The pattern shape mappings:
+	\begin{itemize}
+		\item[Circle] The \emph{DefenseWall} effect \ref{fig:spell:patcircle} is added to the totem. When the totem with the defense wall is created, it creates a wall around it.
+		\item[Square] The \emph{Explosions} effect \ref{fig:spell:patsquare} is added to the totem. This effect causes the enemies to explode, slowing them and reducing their health.
+		\item[Triangle] The \emph{Tower} effect \ref{fig:spell:pattriangle} is added to the totem. The totem with the tower effect starts shooting at any enemy that appears in its area of effect.
+		\item[Water drop] The \emph{Madness} effect is added to the totem. Enemies under the madness effect start attacking randomly each other.\footnote {While this effect is supported in theory, in reality since it the pattern shape is always classified as an circle rather than a water drop, due to the imperfections of the algorithm.}
+	\end{itemize}
+\end{description}
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=.9\linewidth]{ext/scr/circle.png}
+\quad
+\includegraphics[width=.9\linewidth]{ext/scr/circlee.png}
+\caption{The figures show a drawn circle and the created \emph{Shield} effect totem. The player's character has a shield recharging on it. }
+\label{fig:spell:circle}
+\end{figure}
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=.9\linewidth]{ext/scr/square.png}
+\quad
+\includegraphics[width=.9\linewidth]{ext/scr/squaree.png}
+\caption{The figures show a drawn square and the created \emph{Fire} effect totem. The enemies in the area of effect of the totem are burning. }
+\label{fig:spell:square}
+\end{figure}
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=.9\linewidth]{ext/scr/triangle.png}
+\quad
+\includegraphics[width=.9\linewidth]{ext/scr/trianglee.png}
+\caption{The figures show a drawn triangle and the created \emph{Freezing} effect totem. The enemies in the area of effect of the totem are slower.}
+\label{fig:spell:triangle}
+\end{figure}
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=.9\linewidth]{ext/scr/waterDrop.png}
+\quad
+\includegraphics[width=.9\linewidth]{ext/scr/waterDrope.png}
+\caption{The figures show a drawn water drop and the created \emph{Healing} effect totem. The player's character is healed in the presence of the totem.}
+\label{fig:spell:waterDrop}
+\end{figure}
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=.9\linewidth]{ext/scr/embcircle.png}
+\quad
+\includegraphics[width=.9\linewidth]{ext/scr/embcirclee.png}
+\caption{The first figure shows a triangle with an embedded circle. The second figure shows the created totem has the are of effect increased twice. }
+\label{fig:spell:embcircle}
+\end{figure}
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=.9\linewidth]{ext/scr/embsquare.png}
+\quad
+\includegraphics[width=.9\linewidth]{ext/scr/embsquaree.png}
+\caption{The first figure shows a circle with an embedded square. The second figure shows the created totem shields the character and grants it power state, increasing its attack.}
+\label{fig:spell:embsquare}
+\end{figure}
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=.9\linewidth]{ext/scr/embwaterDrop.png}
+\quad
+\includegraphics[width=.9\linewidth]{ext/scr/embwaterDrop.png}
+\caption{The first figure shows a circle with an embedded water drop. The second figure shows the created totem shields the character and its \emph{Distraction} effect lures the enemies.}
+\label{fig:spell:embwaterDrop}
+\end{figure}
+
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=.9\linewidth]{ext/scr/patcircle.png}
+\quad
+\includegraphics[width=.9\linewidth]{ext/scr/patcirclee.png}
+\caption{The first figure shows a square composed from circle pattern shapes. The second figure shows the \emph{WallEffect} caused by the circle pattern shape. }
+\label{fig:spell:patcircle}
+\end{figure}
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=.9\linewidth]{ext/scr/patsquare.png}
+\quad
+\includegraphics[width=.9\linewidth]{ext/scr/patsquaree.png}
+\caption{The first figure shows a water drop composed from square pattern shapes. The second figure shows an explosions effect caused by the square pattern shape. }
+\label{fig:spell:patsquare}
+\end{figure}
+
+\begin{figure}[p]
+\centering
+\includegraphics[width=.9\linewidth]{ext/scr/pattriangle.png}
+\quad
+\includegraphics[width=.9\linewidth]{ext/scr/pattrianglee.png}
+\caption{The first figure shows a triangle composed from triangle pattern shapes. The second figure shows the \emph{Tower} effect caused by the triangle pattern shape. }
+\label{fig:spell:pattriangle}
+\end{figure}
+

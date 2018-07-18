@@ -13,6 +13,7 @@ namespace ImageAnalyzer {
 
 
     extern bool DEBUG_IMAGE_SAVE;
+    extern int DEBUG_IMAGE_SAVE_SIDE_SIZE;
     extern bool COMPOSED_SHAPES_ENABLED;
     extern int COMPOSITION_SAMPLES_COUNT;
     extern int COMPOSITION_SAMPLES_LIMIT;
