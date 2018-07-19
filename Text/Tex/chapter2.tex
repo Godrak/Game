@@ -32,7 +32,7 @@ Output of the algorithm implementation is in the form of instance of \texttt{Sha
 \includegraphics[width=.3\linewidth]{ext/images/example_output0.png}
 \quad
 \includegraphics[width=.3\linewidth]{ext/images/example_output0.pdf}
-\caption{Input image with expected output. The embeddings form a tree hierarchy, with a single shape in the root and it's embedded shapes as its sons. The \texttt{unknown} shape index marks both unrecognized shapes and empty space.}
+\caption{Input image with expected output. The embeddings form a tree hierarchy, with a single shape in the root and it is embedded shapes as its sons. The \texttt{unknown} shape index marks both unrecognized shapes and empty space.}
 \label{fig:output0}
 \end{figure}
 
@@ -56,7 +56,7 @@ We have then decided to create the interface for the vector graphics form of inp
 \begin{figure}[p]
 \centering
 \includegraphics[width=.9\linewidth]{ext/images/algoschema.pdf}
-\caption{The figure shows a general algorithm schema. The dashed arrows show appearances of important data structures: \texttt{ImageLines}, \texttt{ShapeIndex} and \texttt{ShapeDescriptor}. The full lines describe the algorithm flow. The algorithm starts with the input, the output is built during the analysis. The algorithm stops when the shape is not recognized.}
+\caption{The figure shows the high-level schema of the algorithm. The dashed arrows show appearances of important data structures: \texttt{ImageLines}, \texttt{ShapeIndex} and \texttt{ShapeDescriptor}. The full lines describe the algorithm flow. The algorithm starts with the input, the output is built during the analysis. The algorithm stops when the shape is not recognized.}
 \label{fig:algoschema}
 \end{figure}
 
@@ -110,9 +110,7 @@ In the case of the shape conglomeration, the shape curve is sampled less frequen
 Training is done using the generated data from the previous methods and the \emph{FANN} library. 
 First, the training data and test data are generated,The size of the test data is one-third of the size of training data. Then the network is repeatedly trained on the training data until it reaches the user set up MSE, or until it stops improving.
 
-Internally, the training starts with a high MSE target value, which is then gradually lowered, and in between the improvement ratio is checked. We use the resilient backpropagation (rprop) algorithm from the FANN library, because we achieved best results with this algorithm in terms of the improvements stability. In the neural network, we use an \emph{Elliot} activation function \footnote{The Elliot activation function is:
-	$y = \frac {\frac{(x*s)}{2}} {1+\abs{x*s})+ 0.5}$, where $s$ is the steepness parameter.
-}.
+Internally, the training starts with a high MSE target value, which is then gradually lowered, and in between the improvement ratio is checked. We use the resilient backpropagation (rprop) algorithm from the FANN library, because we achieved best results with this algorithm in terms of the improvements stability. In the neural network, we use an \emph{Elliot} activation function \footnote{The Elliot activation function is defined as $\textsc{Elliot}(x) = \frac {\frac{x\cdot s}{2}} {1+\abs{x\cdot s}}+ 0.5$, where $s$ is the steepness parameter.}.
 
 \section{Game prototype}
 The game, which demonstrates the usage of this pattern recognition work, has been developed using the \citet{urho} game engine in version 1.7. Urho3D is, as stated by authors, a free, lightweight, cross-platform 2D and 3D game engine implemented in C++ and released under the MIT license.
@@ -131,7 +129,7 @@ We now describe some of the constructs of the game implementation:
 
 \item [SpellSystem] The \texttt{SpellSystem} component is a initialization component for the recognition algorithm. It is created only once for the game and the algorithm setup is situated in the constructor. It holds the shape indexes and is responsible for the algorithm output parsing and construction of the spell.
 
-\item [Spell] An instance of a node with the spell component is created each time the player casts a spell. It is a temporary class, serving as a placeholder for the totem object. It invokes the algorithm's \texttt{Analyze} method in a separate thread and waits for the result. This way, the game doesn't freeze while the algorithm analyzes the image. The place of the totem is marked by a green fire, as shown in \cref{fig:orb}, while the image is analyzed. 
+\item [Spell] An instance of a node with the spell component is created each time the player casts a spell. It is a temporary class, serving as a placeholder for the totem object. It invokes the algorithm's \texttt{Analyze} method in a separate thread and waits for the result. This way, the game does not freeze while the algorithm analyzes the image. The place of the totem is marked by a green fire, as shown in \cref{fig:orb}, while the image is analyzed. 
 
 \item [Totem] The core of the game are totem objects (see \cref{fig:totem}) and all the spell effects are represented by them. Each totem has a duration for which it exists and an area of effect around it, where the characters are influenced by its presence. The totem can have several effects to it attached. 
 
