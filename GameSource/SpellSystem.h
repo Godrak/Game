@@ -32,7 +32,7 @@ public:
         ImageAnalyzer::COMPOSITION_SAMPLES_LIMIT = 5;
         ImageAnalyzer::SHAPE_VALUE_LIMIT = 0.5;
 
-        ImageAnalyzer::DEBUG_IMAGE_SAVE = true;
+        ImageAnalyzer::DEBUG_IMAGE_SAVE = false;
 
         ImageAnalyzer::RegisterShapeDescriptor(square, std::unique_ptr<SquareDescriptor>(new SquareDescriptor()));
         ImageAnalyzer::RegisterShapeDescriptor(circle, std::unique_ptr<CircleDescriptor>(new CircleDescriptor()));
