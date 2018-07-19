@@ -98,9 +98,9 @@ In this section, we test and evaluate the recognition algorithm performance. In 
 \subsection{Composition recognition}
 To measure the precision of recognition of composed shapes we have prepared 100 \texttt{ImageLines} instances of composition examples. Each instance represents a shape composed of instances of another shape. We have also setup the algorithm this way:
 \begin{itemize}
-\item \texttt{COMPOSED\_SHAPES\_ENABLED = true;} --- Indicates whether the algorithm should search for the pattern shape.
-\item \texttt{EMBEDDED\_SHAPES\_ENABLED = false;} --- Indicates whether the areas of interest defined by \texttt{ShapeDescriptors} are examined for embeddings.
-\item \texttt{ROTATION\_ENABLED = false;} --- Indicates whether the shapes should be analyzed at different rotations.
+\item \texttt{COMPOSED\_SHAPES\_ENABLED = true;} --- Indicates that the algorithm should search for the pattern shape.
+\item \texttt{EMBEDDED\_SHAPES\_ENABLED = false;} --- Indicates that the areas of interest defined by \texttt{ShapeDescriptors} are not examined for embeddings.
+\item \texttt{ROTATION\_ENABLED = false;} --- Indicates that the shapes should not be analyzed at different rotations.
 \end{itemize}
 This setting causes the algorithm to search for the pattern shape of the possible composition, but to ignore embeddings locations and to not match different rotations.
 
