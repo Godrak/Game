@@ -1,18 +1,18 @@
 \chapter*{Conclusion}
-The goal of this thesis was to develop a recognition algorithm that recognizes structured combinations, such as conglomerations and embeddings. We have reviewed the literature for pattern recognition and found out that although the topic of recognition of shapes is covered well, approaches to recognition of shape combinations and modifications that this thesis targets are rare. \todo{rict o literature ze je nedostatecna tim puvodnim zpusobem je zasadni strela do vlastnich nohou.} From several reviewed algorithms we have chosen the artificial neural networks as a base for our recognition algorithm.
+The goal of this thesis was to develop a recognition algorithm that recognizes structured combinations, such as conglomerations and embeddings. We have reviewed the literature for pattern recognition and found out that although the topic of recognition of shapes is covered well, approaches to recognition of shape combinations and modifications that this thesis targets are rare. From several reviewed algorithms we have chosen the artificial neural networks as a base for our recognition algorithm.
 
 We have developed a recognition library that allows users to define their own shapes, train the appropriate neural network and use the library for recognition of structures made from the defined shapes. For the purpose of the neural network learning, we have also developed a shape images generator that attempts to approximate human imprecise drawing.
 
 We have then used the library in a game prototype to demonstrate its functionality. The game supports several defined shapes and their combinations in the form of embeddings and composition, which all systematically map to different spell effects.
 
-In the last chapter, we have benchmarked the performance of our library and optimized the algorithm parameters for the used shape descriptors. The results suggest that while the success rate of the recognition of composed and embedded shapes is high, the recognition process of the pattern shape of the composition still needs improvements. \todo{pochopil sem to dobre ze je tezky rozpoznavat veci ze kterejch sou poskladany ty vetsi tvary, zejo? (s vysledkama by to sedelo, jen proveruju)}
+In the last chapter, we have benchmarked the performance of our library and optimized the algorithm parameters for the used shape descriptors. The results suggest that while the success rate of the recognition of composed and embedded shapes is high, the recognition process of the pattern shape of the composition still needs improvements. 
 
 \section{Future work}
 There are several further directions that might be worth exploring:
 \begin{itemize}
-\item One of the main problems is the noise from the surroundings introduced when extracting the area of embeddings and pattern shapes. Heuristics, like extracting only continuous segments of lines, or neural network with stronger generalization power, might be used to improve the recognition.
+\item One of the main problems is the noise from the surroundings introduced when extracting the area of embeddings and pattern shapes. Heuristics, like extracting only continuous segments of lines or using neural networks with stronger generalization power, might be used to improve the recognition.
 
-\item Speed \todo{performance} of the algorithm might be an issue in more demanding game environments. While \todo{Apart from the fact that?} the analysis of several images can be performed in parallel, the algorithm can be even further parallelized. The large number of relatively simple repeated computations is especially well suited for being run on GPU.
+\item Performance of the algorithm might be an issue in more demanding game environments. Apart from the fact that the analysis of several images can be performed in parallel, the algorithm can be even further parallelized. The large number of relatively simple repeated computations is especially well suited for being run on GPU.
 
 \item Developing a playable, gamer-targeting game that uses the library would be a great final step of the development. The provided game prototype is arguably not very well suited for the gamers (which will find it boring after several spells), nor for the library: The game currently forces the players to draw shape during combat and while moving the character, resulting time stress discourages the player from trying out more complex shapes.
 

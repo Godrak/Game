@@ -87,7 +87,7 @@ static const float FIRE_DAMAGE_PER_SECOND = 15;
 static const float FIRE_DURATION = 6;
 
 //HEALING
-static const float HEALING_PER_SECOND = 15;
+static const float HEALING_PER_SECOND = 35;
 static const float HEALING_DURATION = 6;
 
 //FROZEN
@@ -99,7 +99,7 @@ static const float POWER_STATE_DURATION = 5;
 static const float POWER_FACTOR = 5;
 
 //SHIELD
-static const float SHIELD_POWER_CHARGE = 1;
+static const float SHIELD_POWER_CHARGE = 3;
 static const float MAX_SHIELD_POWER = 100;
 
 //DURABILITY
