@@ -90,7 +90,7 @@ int main() {
     /// and the last to the number of shape descriptors registered.
     /// generateData parameter causes the algorithm to generate two data files: test.data and training.data in the bin folder.
     /// if the generateData parameter is false, the algorithm will look for the files in the bin folder, and if they are not found, ends with error.
-//    Training::Train("network",vector<unsigned int>{1024, 300,30,4},true,0.01f);
+    Training::Train("network",vector<unsigned int>{1024, 300,30,4},true,0.01f);
 
     ///example of how the generated data can be reused
     //Training::Train("network2",vector<unsigned int>{1024, 300,30,4},false,0.01f);
@@ -136,13 +136,13 @@ int main() {
     ImageAnalyzer::RegisterShapeDescriptor(waterDrop, std::unique_ptr<WaterDropDescriptor>(new WaterDropDescriptor()));
 
     ///loading the trained neural network. the argument is the path to the network.
-    ImageAnalyzer::LoadNetwork("../network.net");
+    ImageAnalyzer::LoadNetwork("./network.net");
 
     //end of setup, the algorithm is ready
 
     ///To demonstrate the functionality, we reuse the ImageLines instances created in the training process on line 20.
-    /// Note that if you change the shape descriptors or their order, the following part will probably not work correctly.
-    /// however changes in the netowrks structure and in the algorithm settings are ok.
+    /// Note that if you change the shape descriptors or their order, the following part will not work correctly.
+    /// however changes in the network structure and in the algorithm settings are ok.
 
     /// we switch of the debug output, otherwise the terminal becomes cluttered soon
     ImageAnalyzer::DEBUG_OUTPUT = 0;
@@ -168,17 +168,15 @@ int main() {
         toString(result, resultSerialized);
         auto analysis = split(resultSerialized);
 
-        ///serializing the expected output to vector of strings - the shape strucuture is encoded in the file name
+        ///serializing the expected output to vector of strings - the shape structure is encoded in the file name
         squarePath.erase(squarePath.find('.'), 6);
         auto input = split(squarePath);
-
 
         cout << "Input:\t";
         for (int i = 1; i < input.size(); ++i) {
             cout << input[i] << "\t";
         }
         cout << endl;
-
 
         cout << "Analysis:\t";
         for (int i = 1; i < analysis.size(); ++i) {
@@ -188,7 +186,6 @@ int main() {
 
         std::cout << "------------------------" << endl;
     }
-
 
     return 0;
 }
