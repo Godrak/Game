@@ -1,7 +1,7 @@
 #include <glob.h>
 #include <sstream>
 #include "Training.h"
-#include "../ImageAnalyzer/ExampleShapeDescriptors.h""
+#include "../ImageAnalyzer/ExampleShapeDescriptors.h"
 
 
 ///helper functions, skip to main
