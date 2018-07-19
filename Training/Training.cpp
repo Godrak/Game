@@ -1,5 +1,9 @@
 #include "Training.h"
 
+using namespace ImageAnalyzer;
+using namespace LineDrawer;
+using namespace std;
+
 namespace { // training private
     bool inProgress = false;
     Randomizer randomizer{};
@@ -218,7 +222,7 @@ void Training::GenerateData(const std::string &filename, int validDataCount,
             image = OffsetPoints(activeDescriptor, offset, randomizer.ratio(),
                                  randomizer.ratio() * 0.1f,
                                  0.5f * randomizer.ratio(), false);
-            name += "_zero";
+            name += "_unknown";
         }
         image.Normalize();
 
@@ -234,7 +238,7 @@ void Training::GenerateData(const std::string &filename, int validDataCount,
                         ImageLines poiImage;
                         if (randomizer.ratio() > COMPOSED_SHAPE_PROBABILITY) {
                             poiImage = DrawShape(innerShapeDescriptor);
-                            name += "_zero";
+                            name += "_unknown";
                         } else {
                             auto des = RandomShapeDescriptor();
                             poiImage = ComposeShapes(innerShapeDescriptor, des,
@@ -260,7 +264,7 @@ void Training::GenerateData(const std::string &filename, int validDataCount,
                                     ImageLines innerPoiImage;
                                     if (randomizer.ratio() > COMPOSED_SHAPE_PROBABILITY) {
                                         innerPoiImage = DrawShape(innerShapeDescriptor);
-                                        name += "_zero";
+                                        name += "_unknown";
                                     } else {
                                         auto des = RandomShapeDescriptor();
                                         innerPoiImage = ComposeShapes(innerShapeDescriptor, des,

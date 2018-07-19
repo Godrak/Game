@@ -24,7 +24,7 @@ namespace ImageAnalyzer {
     int ROTATION_SAMPLES_COUNT = 13;
     int DEBUG_OUTPUT = 1;
     int IMAGE_SIDE_SIZE = 32;
-    int RECURSION_LIMIT = 2;
+    int RECURSION_LIMIT = 3;
     float SHAPE_VALUE_LIMIT = 0.6;
     float LINE_DRAWING_STEP_SIZE = 0.5f;
 }
