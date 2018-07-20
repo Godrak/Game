@@ -39,7 +39,7 @@ public:
         ImageAnalyzer::RegisterShapeDescriptor(triangle, std::unique_ptr<TriangleDescriptor>(new TriangleDescriptor()));
         ImageAnalyzer::RegisterShapeDescriptor(drop, std::unique_ptr<WaterDropDescriptor>(new WaterDropDescriptor()));
 
-        ImageAnalyzer::LoadNetwork("../network.net");
+        ImageAnalyzer::LoadNetwork("./network.net");
     }
 
     Totem *CreateTotem(ShapeNode shape, Node *spellNode) {

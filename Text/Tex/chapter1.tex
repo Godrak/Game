@@ -96,7 +96,7 @@ Rows and columns of the dynamic programming table represent the inflex points of
 where $\{g(i_T,j_T)\}$ is a cost of a complete match. The complete match is characterized by a complete path $((i_{0},j_{0}),(i_{1},j_{1}, ..., (i_{T},j_{T}))$, i.e., a path that covers all segments of both shapes. In turn, $\{g(i_T,j_T)\}$ is defined as follows:
 
 \[
-g(i_{T},j_{T}) = min_(i_w,j_w) \sum_{w=1}^{T} \phi(a(i_{w-1}|i_{w}), b(j_{w-1}|j_{w}))
+g(i_{T},j_{T}) = min(i_w,j_w) \sum_{w=1}^{T} \phi(a(i_{w-1}|i_{w}), b(j_{w-1}|j_{w}))
 \]
 
 Expression $\phi(a(i_{w-1}|i_{w}), b(j_{w-1}|j_{w}))$ represents the dissimilarity cost function defined as: 
@@ -119,7 +119,7 @@ Differently to the previous algorithm, we now require the extraction of high-lev
 \section{Neural networks}
 Neural networks are mathematical models of computation inspired by a behavior of a biological nervous system \cite{bishop}. They have been successfully used to solve problems in many different areas, including image and pattern recognition. They can be used to solve problems, where we can not easily mathematically describe the solution given the instance of the problem, for reasons of either complexity or lack of existing mathematical model.
 
-Neural networks have several advantages over the previous methods. They do not require feature extraction since they can learn it themselves, so we can use pixel values directly. They also have a great ability to generalize, which can be used for the recognition of the shape compositions and embeddings. On the other hand, they have to learn to solve the problem before they can be used.
+\sloppypar Neural networks have several advantages over the previous methods. They do not require feature extraction since they are able to learn it, so we can use pixel values directly. They also have a great ability to generalize, which can be used for the recognition of the shape compositions and embeddings. On the other hand, they have to go through a learning process before they can be used.
 
 \subsection{Neuron}
 Artificial neural networks are structures based on the parallel computational model of the biological neural systems. The basic network unit is a neuron (see \cref{fig:neuron}), which is characterized by its input and output connection weights, the activation function and a bias. The artificial neural network is built from a number of connected neurons, usually in a layered structure, and the network learning can be characterized as a process of altering the weights of the connections between neurons and the biases of the neurons. 
@@ -128,7 +128,7 @@ Artificial neural networks are structures based on the parallel computational mo
 \centering
 \includegraphics[width=.5\linewidth]{ext/neuron.png}
 \label{fig:neuron}
-\caption{The model of neuron unit}
+\caption{The model of a neuron unit. Image taken from \citet{neuron}}
 \end{figure}
 
 Activation function characterizes the behavior of the neuron. When the values from the input connections are available, the activation function is applied onto the sum of the values and the result is passed further to other neurons. Two common examples of activation functions are the step function and the sigmoid function:

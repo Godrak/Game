@@ -31,7 +31,7 @@ Output of the algorithm implementation is in the form of instance of \texttt{Sha
 \centering
 \includegraphics[width=.3\linewidth]{ext/images/example_output0.png}
 \quad
-\includegraphics[width=.3\linewidth]{ext/images/example_output0.pdf}
+\includegraphics[width=.3\linewidth]{ext/images/example_output0a.png}
 \caption{Input image with expected output. The embeddings form a tree hierarchy, with a single shape in the root and the embedded shapes as its sons. The \texttt{unknown} shape index marks both unrecognized shapes and empty space.}
 \label{fig:output0}
 \end{figure}
@@ -40,7 +40,7 @@ Output of the algorithm implementation is in the form of instance of \texttt{Sha
 \centering
 \includegraphics[width=.3\linewidth]{ext/images/example_output1.png}
 \quad
-\includegraphics[width=.3\linewidth]{ext/images/example_output1.pdf}
+\includegraphics[width=.3\linewidth]{ext/images/example_output1a.png}
 \caption{The output schema for a more complicated image. }
 \label{fig:output1}
 \end{figure}
@@ -55,7 +55,7 @@ We have then decided to create the interface for the vector graphics form of inp
 
 \begin{figure}[p]
 \centering
-\includegraphics[width=.9\linewidth]{ext/images/algoschema.pdf}
+\includegraphics[width=.9\linewidth]{ext/images/algoschema.png}
 \caption{The figure shows the high-level schema of the algorithm. The dashed arrows show appearances of important data structures: \texttt{ImageLines}, \texttt{ShapeIndex} and \texttt{ShapeDescriptor}. The full lines describe the algorithm flow. The algorithm starts with the input, the output is built during the analysis. The algorithm stops when the shape is not recognized.}
 \label{fig:algoschema}
 \end{figure}

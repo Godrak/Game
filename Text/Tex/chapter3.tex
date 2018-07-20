@@ -57,7 +57,7 @@ These rules \label{rules} mimic the usage of the network in the algorithm, where
 
 \begin{figure}
 \centering
-\includegraphics[width=\linewidth]{ext/figure_simples_cmb.pdf}
+\includegraphics[width=\linewidth]{ext/figure_simples_cmb.png}
 \caption{The plot shows results on a dataset containing only a simple shapes, without embeddings or conglomeration. Each point represents a single network. The x-axis shows achieved score according to the rules (see \cref{rules}), and the y-axis shows the achieved MSE of the network during training.
 The first graph shows by color whether was trained to recognize embeddings, and by shape whether the network was trained to recognize conglomerations.
 The second graph shows the structure of the network. The color marks the number of neurons in the first hidden layer and the shape marks the number of neurons in the second hidden layer.}
@@ -66,21 +66,21 @@ The second graph shows the structure of the network. The color marks the number 
 
 \begin{figure}
 \centering
-\includegraphics[width=\linewidth]{ext/figure_embed_cmb.pdf}
+\includegraphics[width=\linewidth]{ext/figure_embed_cmb.png}
 \caption{The plot shows result on a dataset containing embedded shapes. Each sample  contained shape with an embedded shape. The plot follows the same format as in \cref{fig:simples}.}
 \label{fig:embed}
 \end{figure}
 
 \begin{figure}
 \centering
-\includegraphics[width=\linewidth]{ext/figure_comp_cmb.pdf}
+\includegraphics[width=\linewidth]{ext/figure_comp_cmb.png}
 \caption{The plot shows result on a dataset containing composition of shapes. Each sample  contained shape composed from a number of instances of a pattern shape. The plot follows the same format as in \cref{fig:simples}.}
 \label{fig:comp}
 \end{figure}
 
 \begin{figure}
 \centering
-\includegraphics[width=\linewidth]{ext/figure_x_cmb.pdf}
+\includegraphics[width=\linewidth]{ext/figure_x_cmb.png}
 \caption{The plot shows result on a dataset containing combination of embedded and composed shapes. Each sample contained a shape composed from a number of instances of a pattern shape and with an embedded shape. The plot follows the same format as in \cref{fig:simples}.}
 \label{fig:cmb}
 \end{figure}
@@ -110,7 +110,7 @@ We have tested different combinations of settings of these variables:
 \item \texttt{COMPOSITION\_SAMPLES\_COUNT}
 \item \texttt{COMPOSITION\_SAMPLES\_LIMIT}
 \item \texttt{COMPOSITION\_WINDOW\_SIZE} 
-\end{enumerate} Again, see Appendix \cref{sec:properties} for detailed parameter explanation.
+\end{enumerate} Again, see \cref{sec:properties} for detailed parameter explanation.
 
 For each test instance we have compared the correct pattern shape with the recognized pattern shape.
 
@@ -119,7 +119,7 @@ From the results in \cref{fig:com}, we can see that the success rate grows with 
 %obrazky je dobry vkladat okamzite pod mistem kde se o nich mluvi --- latex tak muze podstatne lip odhadnout kde ten obrazek vlastne bude potreba a vysazet to vhodnejc.... tenhle sem presunul trochu zespod.
 \begin{figure}
 \centering
-\includegraphics[width=.8\linewidth]{ext/figure_composition_results.pdf}
+\includegraphics[width=.8\linewidth]{ext/figure_composition_results.png}
 \caption{The x-axis shows the values of \texttt{COMPOSITION\_SAMPLES\_COUNT}, which is actually a count of samples made around the shape contour. The point color denotes the \texttt{COMPOSITION\_WINDOW\_SIZE}, and the point shape denotes the \texttt{COMPOSITION\_SAMPLES\_LIMIT} according to the legend. Each object of the plot then represents a combination of parameters settings and the performance and speed achieved with the parameters over the test samples. The y-axis of the first plot shows the successful recognitions percentage over the test samples, and in the second plot, the y-axis shows an average computation time per one sample.}
 \label{fig:com}
 \end{figure}
@@ -142,7 +142,7 @@ In the results \cref{fig:rotation} we can see that the precision of simple data 
 
 \begin{figure}
 \centering
-\includegraphics[width=\linewidth]{ext/rotation_cmb.pdf}
+\includegraphics[width=\linewidth]{ext/rotation_cmb.png}
 \caption{The x-axis shows the values of \texttt{ROTATION\_SAMPLES\_COUNT}. Each dot represents a test run over the test data. The red dots represent results over the test data with simple shapes, and the blue dots represent results over the test data with composed shapes. The y-axis of the first plot shows success recognition rate and in the second plot the y-axis shows an average computation time per one sample.}
 \label{fig:rotation}
 \end{figure}

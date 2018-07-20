@@ -73,7 +73,7 @@ Possibilities of such combinations include composition (symbol is made from othe
 \includegraphics[width=.3\linewidth]{ext/images/comp_in_comp2.png}
 \quad
 \includegraphics[width=.3\linewidth]{ext/images/triple.png}
-\caption{In the figure, embedded positions are always in the middle of the shape. From left to right: circle with embedded triangle; square composed of triangle; triangle composed of triangle, with water drop embedded; circle composed of triangles, with embedded circle composed of water drop; triangle composed of circle, with embedded triangle composed of circle; square composed of triangle, with embedded triangle, with embedded circle in the triangle}
+\caption{In the figure, embedded positions are always in the middle of the shape. From left to right: circle with embedded triangle; square composed of triangles; triangle composed of triangles, with water drop embedded; circle composed of triangles, with embedded circle composed of water drops; triangle composed of circles, with embedded triangle composed of circles; square composed of triangles, with embedded triangle, with embedded circle}
 \label{fig:examples}
 \end{figure}
 
@@ -84,7 +84,6 @@ For the purpose of evaluation the work, we specify the following requirements on
 \begin{description}
 
 \item [Durability against shape deformations]
-\todo{tadytim sloppyparem se hodne zmenej parametry algoritmu kterej rovna ty slova do odstavcu, beznej vysledek je ze overflow do strany zmizi. Prosim aplikuj i jinde. Druha moznost je pridat hyphenation do slova ktery latex netusi jak rozdelit, to se dela takhle: hyp\-hen\-ation (viz zdrojak)}
 \sloppypar Since we want to recognize hand-drawn shapes, our system has to be prepared for human-like imprecise drawing, especially when drawing with a mouse. However, drawing an exact line between a shape that should still be recognized and a shape that should be rejected is difficult and possibly subjective; we therefore only evaluate the performance on deformed shapes.
 
 \item [Extensibility]

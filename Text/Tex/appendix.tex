@@ -117,7 +117,7 @@ Relations between the shape position, shape and effect are described by the foll
 		\item[Circle] The \emph{DefenseWall} effect \ref{fig:spell:patcircle} is added to the totem. When the totem with the defense wall is created, it creates a wall around it.
 		\item[Square] The \emph{Explosions} effect \ref{fig:spell:patsquare} is added to the totem. This effect causes the enemies to explode, slowing them and reducing their health.
 		\item[Triangle] The \emph{Tower} effect \ref{fig:spell:pattriangle} is added to the totem. The totem with the tower effect starts shooting at any enemy that appears in its area of effect.
-		\item[Water drop] The \emph{Madness} effect is added to the totem. Enemies under the madness effect start attacking randomly each other.\footnote {While this effect is supported in theory, in reality since it the pattern shape is always classified as an circle rather than a water drop, due to the imperfections of the algorithm.}
+		\item[Water drop] The \emph{Madness} effect is added to the totem. Enemies under the madness effect start attacking randomly each other.\footnote {While this effect is supported in theory, in reality it is nearly impossible to draw, since the pattern shape is always classified as an circle rather than a water drop, due to the imperfections of the algorithm.}
 	\end{itemize}
 \end{description}
 
@@ -216,8 +216,8 @@ Relations between the shape position, shape and effect are described by the foll
 \chapter{Third party software}
 The following libraries and projects has been used in the implementation:
 \begin{description}
-	\item[\citet{urho}] The game prototype has been implemented in the Urho3D engine. 
+	\item[\citet{urho}] Urho3D is a game engine and the game prototype has been implemented in it. 
 	\item[\citet{fann}] The algorithm is built around the \citet{fann}, using its simple interface to train and use the neural networks.
 	\item[\citet{bmp}] The \citet{bmp} has been used to save the debug images of the algorithm to the hard disk in the \texttt{bmp} format.
-	\item[\citet{linalg}] The \citet{linalg} has been used for several matrix transformations in the algorithm.
+	\item[\citet{linalg}] The \citet{linalg} is a library for linear algebra computations, which has been used for several matrix transformations in the algorithm.
 \end{description}
